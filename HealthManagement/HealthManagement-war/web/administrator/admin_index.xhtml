@@ -4,10 +4,10 @@
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:f="http://xmlns.jcp.org/jsf/core">
     <h:head>
-        <title>Index</title>
+        <title>Administrator Index</title>
     </h:head>
     <h:body>
-        <h2>View All</h2>
+        <h2>View All Administrators</h2>
         
         <h:dataTable
             var="administrator"
@@ -48,7 +48,7 @@
                         </h:commandLink>
                         
                         <h:commandLink value="Remove" id="remove"
-                                       actionListener="#{administratorManager.removeREST}">
+                                       actionListener="#{administratorManager.removeAdministratorREST}">
                             <f:param name="deleteAdministratorId" id="deleteAdministratorId" value="#{administrator.username}" />
                         </h:commandLink>
                     </h:panelGrid>
@@ -58,6 +58,61 @@
         <h:form>
             <h:commandLink value="Create Administrator"
                            action="admin_administrator_create?faces-redirect=true" />
+        </h:form>
+        
+        <br />
+        
+        <h2>View All Healthcare Professionals</h2>
+        
+        <h:dataTable
+            var="healthcarePro"
+            summary="Table of healthcarePros"
+            value="#{administratorManager.allHealthcareProsREST}"
+            rules="all"
+            cellpadding="5">
+            <h:column>
+                <f:facet name="header">
+                    <h:outputText value="Username" />
+                </f:facet>
+                <h:outputText value="#{healthcarePro.username}" />
+            </h:column>
+            <h:column>
+                <f:facet name="header">
+                    <h:outputText value="Name" />
+                </f:facet>
+                <h:outputText value="#{healthcarePro.name}" />
+            </h:column>
+            <h:column>
+                <f:facet name="header">
+                    <h:outputText value="Mail" />
+                </f:facet>
+                <h:outputText value="#{healthcarePro.mail}" />
+            </h:column>
+              <h:column>
+                <f:facet name="header">
+                    <h:outputText value="Actions" />
+                </f:facet>
+                <h:form>
+                    <h:panelGrid columns="3">
+                        <h:commandLink value="Details" id="details" action="admin_healthcarepro_details?faces-redirect=true">
+                            <f:setPropertyActionListener target="#{administratorManager.currentHealthcarePro}" value="#{healthcarePro}" />
+                        </h:commandLink>
+                        
+                        <h:commandLink value="Update" id="update" action="admin_healthcarepro_update?faces-redirect=true">
+                            <f:setPropertyActionListener target="#{administratorManager.currentHealthcarePro}" value="#{healthcarePro}" />
+                        </h:commandLink>
+                        
+                        <h:commandLink value="Remove" id="remove"
+                                       actionListener="#{administratorManager.removeHealthcareProREST}">
+                            <f:param name="deleteHealthcareProId" id="deleteHealthcareProId" value="#{healthcarePro.username}" />
+                        </h:commandLink>
+                    </h:panelGrid>
+                </h:form>
+            </h:column>
+        </h:dataTable>
+        <h:form>
+            <h:commandLink value="Create Healthcare Professional"
+                           action="admin_healthcarepro_create?faces-redirect=true" />
         </h:form>
     </h:body>
 </html>

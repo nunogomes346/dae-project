@@ -56,6 +56,30 @@
             <url-pattern>/webapi/administrators/all</url-pattern>
             <http-method>GET</http-method>
         </web-resource-collection>
+        <web-resource-collection>
+            <web-resource-name>HealthcarePro Create</web-resource-name>
+            <description/>
+            <url-pattern>/webapi/healthcarepros/create</url-pattern>
+            <http-method>POST</http-method>
+        </web-resource-collection>
+        <web-resource-collection>
+            <web-resource-name>HealthcarePro Update</web-resource-name>
+            <description/>
+            <url-pattern>/webapi/healthcarepros/update</url-pattern>
+            <http-method>PUT</http-method>
+        </web-resource-collection>
+        <web-resource-collection>
+            <web-resource-name>HealthcarePro Delete</web-resource-name>
+            <description/>
+            <url-pattern>/webapi/healthcarepros/delete/*</url-pattern>
+            <http-method>DELETE</http-method>
+        </web-resource-collection>
+        <web-resource-collection>
+            <web-resource-name>HealthcarePro Get All</web-resource-name>
+            <description/>
+            <url-pattern>/webapi/healthcarepros/all</url-pattern>
+            <http-method>GET</http-method>
+        </web-resource-collection>
         <auth-constraint>
             <description/>
             <role-name>Administrator</role-name>

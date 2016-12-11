@@ -88,11 +88,21 @@ public class AdministratorBean {
         }
     }
     
-    public Administrator getAdministrator(String username) {
+    public List<AdministratorDTO> getAll() {
+        try {
+            List<Administrator> administrators = (List<Administrator>) em.createNamedQuery("getAllAdministrators").getResultList();
+            
+            return administratorsToDTOs(administrators); 
+        } catch(EJBException e) {
+            throw new EJBException(e.getMessage());
+        }
+    }
+    
+    public AdministratorDTO getAdministrator(String username) {
         try {
             Administrator administrator = em.find(Administrator.class, username);
             
-            return administrator;  
+            return administratorToDTO(administrator);  
         } catch(EJBException e) {
             throw new EJBException(e.getMessage());
         }
@@ -127,7 +137,7 @@ public class AdministratorBean {
     @RolesAllowed({"Administrator"})
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     @Path("all")
-    public List<AdministratorDTO> getAll() {
+    public List<AdministratorDTO> getAllREST() {
         try {
             List<Administrator> administrators = (List<Administrator>) em.createNamedQuery("getAllAdministrators").getResultList();
             
@@ -141,7 +151,7 @@ public class AdministratorBean {
     @RolesAllowed({"Administrator"})
     @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     @Path("delete/{username}")
-    public void removeREST(@PathParam("username") String username) throws EntityDoesNotExistException {
+    public void removeREST(@PathParam("username") String username) {
         try {
             remove(username);
         } catch (Exception e) {
