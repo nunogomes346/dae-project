@@ -114,6 +114,13 @@
             <h:commandLink value="Create Healthcare Professional"
                            action="admin_healthcarepro_create?faces-redirect=true" />
         </h:form>
+        
+        <br/>
+        <h:form>                
+            <h:panelGrid columns="2">
+                <h:commandButton value="Logout" id="Logout" action="#{userManager.logout}" />
+            </h:panelGrid>
+        </h:form>
     </h:body>
 </html>
 
