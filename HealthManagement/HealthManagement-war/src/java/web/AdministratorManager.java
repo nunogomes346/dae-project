@@ -9,6 +9,7 @@ import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
 import java.util.List;
 import java.util.logging.Logger;
+import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.bean.ManagedBean;
 import javax.faces.component.UIComponent;
@@ -50,8 +51,14 @@ public class AdministratorManager implements Serializable {
     public AdministratorManager() {
         newAdministrator = new AdministratorDTO();
         newHealthcarePro = new HealthcareProDTO();
-        client = ClientBuilder.newClient();
+        client = ClientBuilder.newClient();        
         feature = null;
+    }
+    
+    @PostConstruct
+    public void initClient() {
+        feature = HttpAuthenticationFeature.basic(userManager.getUsername(), userManager.getPassword());
+        client.register(feature);
     }
     
     // ***************************************
@@ -78,7 +85,6 @@ public class AdministratorManager implements Serializable {
     
     public List<AdministratorDTO> getAllAdministrators() {
         try {
-            
             return administratorBean.getAll();
         } catch (Exception e) {
             LOGGER.warning("Error: problem in method getAllAdministrators");
@@ -115,9 +121,6 @@ public class AdministratorManager implements Serializable {
     }
     
     public String createAdministratorREST() { 
-        feature = HttpAuthenticationFeature.basic(userManager.getUsername(), userManager.getPassword());
-        client.register(feature);
-        
         try {
             client.target(baseUri)
                     .path("/administrators/create")
@@ -133,8 +136,7 @@ public class AdministratorManager implements Serializable {
     }
     
     public List<AdministratorDTO> getAllAdministratorsREST() {
-        feature = HttpAuthenticationFeature.basic(userManager.getUsername(), userManager.getPassword());
-        client.register(feature);
+        
         
         List<AdministratorDTO> returnedAdministrators = null;
         try {
@@ -149,13 +151,15 @@ public class AdministratorManager implements Serializable {
     }
     
     public String updateAdministratorREST() {   
-        feature = HttpAuthenticationFeature.basic(userManager.getUsername(), userManager.getPassword());
-        client.register(feature);
-        
         try {
-           client.target(baseUri)
+            client.target(baseUri)
                     .path("/administrators/update")
                     .request(MediaType.APPLICATION_XML).put(Entity.xml(currentAdministrator));
+            
+            if(currentAdministrator.getUsername().compareTo(userManager.getUsername()) == 0) {
+                return userManager.logout();
+            }
+            
             return "admin_index?faces-redirect=true";
            
         } catch (Exception e) {
@@ -165,9 +169,6 @@ public class AdministratorManager implements Serializable {
     }
     
     public void removeAdministratorREST(ActionEvent event) {
-        feature = HttpAuthenticationFeature.basic(userManager.getUsername(), userManager.getPassword());
-        client.register(feature);
-        
         try {
             UIParameter param = (UIParameter) event.getComponent().findComponent("deleteAdministratorId");
             String id = param.getValue().toString();
@@ -243,9 +244,6 @@ public class AdministratorManager implements Serializable {
     }
     
     public String createHealthcareProREST() { 
-        feature = HttpAuthenticationFeature.basic(userManager.getUsername(), userManager.getPassword());
-        client.register(feature);
-        
         try {
             client.target(baseUri)
                     .path("/healthcarepros/create")
@@ -261,9 +259,6 @@ public class AdministratorManager implements Serializable {
     }
     
     public List<HealthcareProDTO> getAllHealthcareProsREST() {
-        feature = HttpAuthenticationFeature.basic(userManager.getUsername(), userManager.getPassword());
-        client.register(feature);
-        
         List<HealthcareProDTO> returnedHealthcarePros = null;
         try {
             returnedHealthcarePros = client.target(baseUri)
@@ -277,9 +272,6 @@ public class AdministratorManager implements Serializable {
     }
     
     public String updateHealthcareProREST() { 
-        feature = HttpAuthenticationFeature.basic(userManager.getUsername(), userManager.getPassword());
-        client.register(feature);
-        
         try {
            client.target(baseUri)
                     .path("/healthcarepros/update")
@@ -293,9 +285,6 @@ public class AdministratorManager implements Serializable {
     }
     
     public void removeHealthcareProREST(ActionEvent event) {
-        feature = HttpAuthenticationFeature.basic(userManager.getUsername(), userManager.getPassword());
-        client.register(feature);
-        
         try {
             UIParameter param = (UIParameter) event.getComponent().findComponent("deleteHealthcareProId");
             String id = param.getValue().toString();
