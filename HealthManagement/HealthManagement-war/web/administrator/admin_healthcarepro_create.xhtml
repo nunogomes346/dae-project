@@ -12,22 +12,22 @@
         <h:form>
             <h:panelGrid columns="3">
                 <h:outputLabel for="username" value="Username: " />
-                <h:inputText id="username" size="52" value="#{administratorManager.username}" 
+                <h:inputText id="username" size="52" value="#{administratorManager.newHealthcarePro.username}" 
                              required="true" requiredMessage="  Username is required"/>
                 <h:message errorStyle="color:red; display:inline" for="username" />
                 
                 <h:outputLabel for="password" value="Password: " />
-                <h:inputSecret id="password" size="52" value="#{administratorManager.password}"
+                <h:inputSecret id="password" size="52" value="#{administratorManager.newHealthcarePro.password}"
                                required="true" requiredMessage="  Password is required"/>
                 <h:message errorStyle="color:red; display:inline" for="password" />
                     
                 <h:outputLabel for="name" value="Name: " />
-                <h:inputText id="name" size="52" value="#{administratorManager.name}"
+                <h:inputText id="name" size="52" value="#{administratorManager.newHealthcarePro.name}"
                              required="true" requiredMessage="  Name is required"/>
                 <h:message errorStyle="color:red; display:inline" for="name" />
                 
                 <h:outputLabel for="mail" value="Mail: " />
-                <h:inputText id="mail" size="52" value="#{administratorManager.mail}"
+                <h:inputText id="mail" size="52" value="#{administratorManager.newHealthcarePro.mail}"
                              required="true" requiredMessage="  Mail is required"
                              validatorMessage="Incorrect mail format">
                     <f:validateRegex pattern="[\w\.-]*[a-zA-Z0-9_]@[\w\.-]*[a-zA-Z0-9]\.[a-zA-Z][a-zA-Z\.]*[a-zA-Z]" />
@@ -35,7 +35,7 @@
                 <h:message errorStyle="color:red; display:inline" for="mail" />
                 
                 <h:commandButton value="Create" id="createButton"
-                                 action="#{administratorManager.createHealthcarePro}"
+                                 action="#{administratorManager.createHealthcareProREST}"
                                  binding="#{administratorManager.component}"/>
                 <h:message errorStyle="color:red; display:inline" for="createButton" />
             </h:panelGrid>
