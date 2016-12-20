@@ -12,7 +12,7 @@
         <h:dataTable
             var="administrator"
             summary="Table of administrators"
-            value="#{administratorManager.allAdministratorsREST}"
+            value="#{administratorManager.allAdministrators}"
             rules="all"
             cellpadding="5">
             <h:column>
@@ -48,7 +48,7 @@
                         </h:commandLink>
                         
                         <h:commandLink value="Remove" id="remove"
-                                       actionListener="#{administratorManager.removeAdministratorREST}">
+                                       actionListener="#{administratorManager.removeAdministrator}">
                             <f:param name="deleteAdministratorId" id="deleteAdministratorId" value="#{administrator.username}" />
                         </h:commandLink>
                     </h:panelGrid>
@@ -67,7 +67,7 @@
         <h:dataTable
             var="healthcarePro"
             summary="Table of healthcarePros"
-            value="#{administratorManager.allHealthcareProsREST}"
+            value="#{administratorManager.allHealthcarePros}"
             rules="all"
             cellpadding="5">
             <h:column>
@@ -103,7 +103,7 @@
                         </h:commandLink>
                         
                         <h:commandLink value="Remove" id="remove"
-                                       actionListener="#{administratorManager.removeHealthcareProREST}">
+                                       actionListener="#{administratorManager.removeHealthcarePro}">
                             <f:param name="deleteHealthcareProId" id="deleteHealthcareProId" value="#{healthcarePro.username}" />
                         </h:commandLink>
                     </h:panelGrid>
