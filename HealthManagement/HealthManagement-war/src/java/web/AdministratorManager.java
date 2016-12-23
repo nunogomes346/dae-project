@@ -31,6 +31,9 @@ public class AdministratorManager implements Serializable {
     private HealthcareProDTO newHealthcarePro;
     private HealthcareProDTO currentHealthcarePro;
     
+    private List<AdministratorDTO> filteredAdmins;
+    private List<HealthcareProDTO> filteredHealthcarePros;
+    
     private UIComponent component;
     private static final Logger LOGGER = Logger.getLogger("web.AdministratorManager");
     
@@ -38,7 +41,7 @@ public class AdministratorManager implements Serializable {
         newAdministrator = new AdministratorDTO();
         newHealthcarePro = new HealthcareProDTO();
     }
-    
+
     // ***************************************
     // ************ ADMINISTRATOR ************
     // ***************************************
@@ -191,6 +194,22 @@ public class AdministratorManager implements Serializable {
 
     public void setCurrentHealthcarePro(HealthcareProDTO currentHealthcarePro) {
         this.currentHealthcarePro = currentHealthcarePro;
+    }
+    
+    public List<AdministratorDTO> getFilteredAdmins() {
+        return filteredAdmins;
+    }
+        
+    public void setFilteredAdmins(List<AdministratorDTO> filteredAdmins) {    
+        this.filteredAdmins = filteredAdmins;
+    }
+
+    public List<HealthcareProDTO> getFilteredHealthcarePros() {
+        return filteredHealthcarePros;
+    }
+
+    public void setFilteredHealthcarePros(List<HealthcareProDTO> filteredHealthcarePros) {
+        this.filteredHealthcarePros = filteredHealthcarePros;
     }
 
     public UIComponent getComponent() {
