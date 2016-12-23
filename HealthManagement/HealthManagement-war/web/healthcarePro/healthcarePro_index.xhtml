@@ -1,0 +1,76 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>
+        <title>HealthcarePro Index</title>
+    </h:head>
+    <h:body>
+        <h2>View All Caregivers</h2>
+        
+        <h:dataTable
+            var="caregiver"
+            summary="Table of Caregivers"
+            value="#{healthcareProManager.allCaregivers}"
+            rules="all"
+            cellpadding="5">
+            <h:column>
+                <f:facet name="header">
+                    <h:outputText value="Name" />
+                </f:facet>
+                <h:outputText value="#{caregiver.username}" />
+            </h:column>
+            <h:column>
+                <f:facet name="header">
+                    <h:outputText value="Name" />
+                </f:facet>
+                <h:outputText value="#{caregiver.name}" />
+            </h:column>
+            <h:column>
+                <f:facet name="header">
+                    <h:outputText value="Name" />
+                </f:facet>
+                <h:outputText value="#{caregiver.mail}" />
+            </h:column>
+              <h:column>
+                <f:facet name="header">
+                    <h:outputText value="Actions" />
+                </f:facet>
+                <h:form>
+                    <h:panelGrid columns="4">
+                        <h:commandLink value="Details" id="details" action="healthcarePro_caregiver_details?faces-redirect=true">
+                            <f:setPropertyActionListener target="#{healthcareProManager.currentCaregiver}" value="#{caregiver}" />
+                        </h:commandLink>
+                        
+                        <h:commandLink value="Update" id="update" action="healthcarePro_caregiver_update?faces-redirect=true">
+                            <f:setPropertyActionListener target="#{healthcareProManager.currentCaregiver}" value="#{caregiver}" />
+                        </h:commandLink>
+                        
+                        <h:commandLink value="Remove" id="remove"
+                                       actionListener="#{healthcareProManager.removeCaregiver}">
+                            <f:param name="deleteCaregiverId" id="deleteCaregiverId" value="#{caregiver.username}" />
+                        </h:commandLink>
+                        
+                        <h:commandLink value="Associate Caregiver" id="enroll" action="healthcarePro_caregiver_associate_patient?faces-redirect=true">
+                            <f:setPropertyActionListener target="#{healthcareProManager.currentCaregiver}" value="#{caregiver}" />
+                        </h:commandLink>
+                    </h:panelGrid>
+                </h:form>
+            </h:column>
+        </h:dataTable>
+        <h:form>
+            <h:commandLink value="Create Caregiver"
+                           action="healthcarePro_caregiver_create?faces-redirect=true" />
+        </h:form>
+        
+        <br />
+        
+        <h:form>                
+            <h:panelGrid columns="2">
+                <h:commandButton value="Logout" id="Logout" action="#{userManager.logout}" />
+            </h:panelGrid>
+        </h:form>
+    </h:body>
+</html>
+

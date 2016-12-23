@@ -15,15 +15,49 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @XmlRootElement(name = "Patient")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class PatientDTO extends UserDTO {
+public class PatientDTO {
+    
+    protected String name;
+    protected String mail;
+    protected String caregiverUsername;
+    
+    public PatientDTO() {
+    }
 
-    public PatientDTO(String username, String password, String name, String mail) {
-        super(username, password, name, mail);
+    public PatientDTO(String name, String mail, String caregiverUsername) {
+        this.name = name;
+        this.mail = mail;
+        this.caregiverUsername = caregiverUsername;
     }
     
-    @Override
     public void reset() {
-        super.reset();
+        setName(null);
+        setMail(null);
     }
+
+    public String getCaregiverUsername() {
+        return caregiverUsername;
+    }
+
+    public void setCaregiverUsername(String caregiverUsername) {
+        this.caregiverUsername = caregiverUsername;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getMail() {
+        return mail;
+    }
+
+    public void setMail(String mail) {
+        this.mail = mail;
+    }
+    
     
 }
