@@ -1,16 +1,9 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package web;
 
 import static com.sun.xml.ws.security.addressing.impl.policy.Constants.logger;
 import dtos.CaregiverDTO;
-import dtos.HealthcareProDTO;
 import dtos.PatientDTO;
 import ejbs.CaregiverBean;
-import ejbs.HealthcareProBean;
 import ejbs.PatientBean;
 import exceptions.EntityDoesNotExistException;
 import java.io.Serializable;
@@ -18,28 +11,16 @@ import java.util.List;
 import java.util.logging.Logger;
 import javax.ejb.EJB;
 import javax.inject.Named;
-import javax.enterprise.context.Dependent;
 import javax.enterprise.context.SessionScoped;
 import javax.faces.bean.ManagedBean;
 import javax.faces.component.UIComponent;
 import javax.faces.component.UIParameter;
 import javax.faces.event.ActionEvent;
 
-/**
- *
- * @author joaoc
- */
 @ManagedBean
 @Named(value="healthcareProManager")
 @SessionScoped
 public class HealthcareProManager implements Serializable{
-
-    /**
-     * Creates a new instance of HealthcareProManager
-     */
-    
-    @EJB
-    private HealthcareProBean healthcareProBean;
     
     @EJB
     private CaregiverBean caregiverBean;
@@ -47,25 +28,19 @@ public class HealthcareProManager implements Serializable{
     @EJB
     private PatientBean patientBean;
     
-    private HealthcareProDTO newHealthcarePro;
-    private HealthcareProDTO currentHealthcarePro;
     private CaregiverDTO newCaregiver;
     private CaregiverDTO currentCaregiver;
-    private PatientDTO newPatient;
-    private PatientDTO currentPatient;
     
     private UIComponent component;
     private static final Logger LOGGER = Logger.getLogger("web.HealthcareProManager");
     
     public HealthcareProManager() {
-        newHealthcarePro = new HealthcareProDTO();
         newCaregiver = new CaregiverDTO();
     }
     
     // ***************************************
     // ************ CAREGIVER ****************
     // ***************************************
-    
     public String createCaregiver() {
         try {
             caregiverBean.create(
@@ -121,11 +96,14 @@ public class HealthcareProManager implements Serializable{
         }
     }
     
-    public void enrollCaregiver(ActionEvent event) {
+    // ***************************************
+    // ************** PATIENT ****************
+    // ***************************************
+    public void associatePatientToCaregiver(ActionEvent event) {
         try {
-            UIParameter param = (UIParameter) event.getComponent().findComponent("caregiverUsername");
-            String username = param.getValue().toString();
-            caregiverBean.enrollCaregiver(username, currentPatient.getName());
+            UIParameter param = (UIParameter) event.getComponent().findComponent("patientId");
+            Long id = Long.parseLong(param.getValue().toString());
+            patientBean.associatePatientToCaregiver(id, currentCaregiver.getUsername());
         } catch (EntityDoesNotExistException e) {
             FacesExceptionHandler.handleException(e, e.getMessage(), logger);
         } catch (Exception e) {
@@ -133,11 +111,11 @@ public class HealthcareProManager implements Serializable{
         }
     }
 
-    public void unrollCaregiver(ActionEvent event) {
+    public void diassociatePatientFromCaregiver(ActionEvent event) {
         try {
-            UIParameter param = (UIParameter) event.getComponent().findComponent("caregiverUsername");
-            String username = param.getValue().toString();
-            caregiverBean.unrollCaregiver(username, currentPatient.getName());
+            UIParameter param = (UIParameter) event.getComponent().findComponent("patientId");
+            Long id = Long.parseLong(param.getValue().toString());
+            patientBean.diassociatePatientFromCaregiver(id, currentCaregiver.getUsername());
         } catch (EntityDoesNotExistException e) {
             FacesExceptionHandler.handleException(e, e.getMessage(), logger);
         } catch (Exception e) {
@@ -145,9 +123,9 @@ public class HealthcareProManager implements Serializable{
         }
     }
     
-    public List<PatientDTO> getEnrolledPatients() {
+    public List<PatientDTO> getCaregiverPatients() {
         try {
-            return caregiverBean.getEnrolledPatients(currentPatient.getName());
+            return patientBean.getCaregiverPatients(currentCaregiver.getUsername());
         } catch (EntityDoesNotExistException e) {
             FacesExceptionHandler.handleException(e, e.getMessage(), logger);
         } catch (Exception e) {
@@ -156,9 +134,9 @@ public class HealthcareProManager implements Serializable{
         return null;
     }
 
-    public List<PatientDTO> getUnrolledPatients() {
+    public List<PatientDTO> getCaregiverNotPatients() {
         try {
-            return caregiverBean.getUnrolledPatients(currentPatient.getName());
+            return patientBean.getCaregiverNotPatients(currentCaregiver.getUsername(), patientBean.getAll());
         } catch (EntityDoesNotExistException e) {
             FacesExceptionHandler.handleException(e, e.getMessage(), logger);
         } catch (Exception e) {
@@ -167,24 +145,9 @@ public class HealthcareProManager implements Serializable{
         return null;
     }
     
-    /////////////// GETTERS & SETTERS ///////////////// 
-
-    public HealthcareProDTO getNewHealthcarePro() {
-        return newHealthcarePro;
-    }
-
-    public void setNewHealthcarePro(HealthcareProDTO newHealthcarePro) {
-        this.newHealthcarePro = newHealthcarePro;
-    }
-
-    public HealthcareProDTO getCurrentHealthcarePro() {
-        return currentHealthcarePro;
-    }
-
-    public void setCurrentHealthcarePro(HealthcareProDTO currentHealthcarePro) {
-        this.currentHealthcarePro = currentHealthcarePro;
-    }
-
+    // ***************************************************
+    // ************** GETTERS AND SETTERS ****************
+    // ***************************************************
     public CaregiverDTO getNewCaregiver() {
         return newCaregiver;
     }
@@ -199,22 +162,6 @@ public class HealthcareProManager implements Serializable{
 
     public void setCurrentCaregiver(CaregiverDTO currentCaregiver) {
         this.currentCaregiver = currentCaregiver;
-    }
-
-    public PatientDTO getNewPatient() {
-        return newPatient;
-    }
-
-    public void setNewPatient(PatientDTO newPatient) {
-        this.newPatient = newPatient;
-    }
-
-    public PatientDTO getCurrentPatient() {
-        return currentPatient;
-    }
-
-    public void setCurrentPatient(PatientDTO currentPatient) {
-        this.currentPatient = currentPatient;
     }
     
     public UIComponent getComponent() {

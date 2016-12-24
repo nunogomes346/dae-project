@@ -52,7 +52,7 @@
                             <f:param name="deleteCaregiverId" id="deleteCaregiverId" value="#{caregiver.username}" />
                         </h:commandLink>
                         
-                        <h:commandLink value="Associate Caregiver" id="enroll" action="healthcarePro_caregiver_associate_patient?faces-redirect=true">
+                        <h:commandLink value="Manage Patients" id="manage" action="healthcarePro_caregiver_manage_patients?faces-redirect=true">
                             <f:setPropertyActionListener target="#{healthcareProManager.currentCaregiver}" value="#{caregiver}" />
                         </h:commandLink>
                     </h:panelGrid>

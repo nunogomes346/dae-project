@@ -1,14 +1,11 @@
 package ejbs;
 
 import dtos.CaregiverDTO;
-import dtos.PatientDTO;
 import entities.Caregiver;
 import entities.Patient;
-import exceptions.CaregiverEnrolledException;
 import exceptions.EntityAlreadyExistsException;
 import exceptions.EntityDoesNotExistException;
 import exceptions.MyConstraintViolationException;
-import exceptions.PatientNotInPatientsException;
 import exceptions.Utils;
 import java.util.ArrayList;
 import java.util.List;
@@ -51,6 +48,10 @@ public class CaregiverBean {
                 throw new EntityDoesNotExistException("There is no caregiver with that username.");
             }
             
+            for (Patient patient : caregiver.getPatients()) {
+                patient.setCaregiver(null);
+            }
+            
             em.remove(caregiver);
         } catch (EntityDoesNotExistException e) {
             throw e;
@@ -83,9 +84,9 @@ public class CaregiverBean {
     
     public List<CaregiverDTO> getAll() {
         try {
-            List<Caregiver> caregiver = (List<Caregiver>) em.createNamedQuery("getAllCaregivers").getResultList();
+            List<Caregiver> caregivers = (List<Caregiver>) em.createNamedQuery("getAllCaregivers").getResultList();
             
-            return caregiversToDTOs(caregiver); 
+            return caregiversToDTOs(caregivers); 
         } catch(EJBException e) {
             throw new EJBException(e.getMessage());
         }
@@ -101,102 +102,6 @@ public class CaregiverBean {
         }
     }
     
-    
-    public void enrollCaregiver(String usernameCaregiver, String usernamePatient) 
-            throws EntityDoesNotExistException, PatientNotInPatientsException, CaregiverEnrolledException{
-        try {
-
-            Caregiver caregiver = em.find(Caregiver.class, usernameCaregiver);
-            if (caregiver == null) {
-                throw new EntityDoesNotExistException("There is no caregiver with that username.");
-            }
-
-            Patient patient = em.find(Patient.class, usernamePatient);
-            if (patient == null) {
-                throw new EntityDoesNotExistException("There is no patient with that code.");
-            }
-
-            if (!caregiver.getPatients().contains(patient)) {
-                throw new PatientNotInPatientsException("Patients list has no such patient.");
-            }
-
-            if (patient.getCaregiver() != null) {
-                throw new CaregiverEnrolledException("Patient has already enrolled with other caregiver.");
-            }
-
-            patient.addCariver(caregiver);
-            caregiver.addPatient(patient);
-
-        } catch (EntityDoesNotExistException | PatientNotInPatientsException | CaregiverEnrolledException e) {
-            throw e;
-        } catch (Exception e) {
-            throw new EJBException(e.getMessage());
-        }
-    }
-    
-    public void unrollCaregiver(String usernameCaregiver, String usernamePatient) 
-            throws EntityDoesNotExistException, PatientNotInPatientsException {
-        try {
-            Patient p = em.find(Patient.class, usernamePatient);
-            if(p == null){
-                throw new EntityDoesNotExistException("There is no patient with that username.");
-            }            
-            
-            Caregiver c = em.find(Caregiver.class, usernameCaregiver);
-            if(c == null){
-                throw new EntityDoesNotExistException("There is no caregiver with that username.");
-            }
-            
-            if(p.getCaregiver() != c){
-                throw new PatientNotInPatientsException();
-            }            
-            
-            p.removeCaregiver(c);
-            c.removePatient(p);
-
-        } catch (EntityDoesNotExistException | PatientNotInPatientsException e) {
-            throw e;             
-        } catch (Exception e) {
-            throw new EJBException(e.getMessage());
-        }
-    }
-    
-    public List<PatientDTO> getEnrolledPatients(String username) throws EntityDoesNotExistException{
-        try {
-            Caregiver caregiver = em.find(Caregiver.class, username);
-            if( caregiver == null){
-                throw new EntityDoesNotExistException("There is no caregiver with that username.");
-            }            
-            List<Patient> patients = (List<Patient>) caregiver.getPatients();
-            return patientsToDTOs(patients);
-        } catch (EntityDoesNotExistException e) {
-            throw e;             
-        } catch (Exception e) {
-            throw new EJBException(e.getMessage());
-        }
-    }
-
-    public List<PatientDTO> getUnrolledPatients(String username) throws EntityDoesNotExistException{
-        try {
-            Caregiver caregiver = em.find(Caregiver.class, username);
-            if( caregiver == null){
-                throw new EntityDoesNotExistException("There is no caregiver with that username.");
-            }            
-            List<Patient> p = (List<Patient>) em.createNamedQuery("getAllPatients")
-                    .setParameter("username", caregiver.getUsername())
-                    .getResultList();
-            List<Patient> enrolled = em.find(Caregiver.class, username).getPatients();
-            p.removeAll(enrolled);
-            return patientsToDTOs(p);
-        } catch (EntityDoesNotExistException e) {
-            throw e;             
-        } catch (Exception e) {
-            throw new EJBException(e.getMessage());
-        }
-    }
-    
-    
-    
     //Build DTOs
     CaregiverDTO caregiverToDTO(Caregiver caregiver) {
         return new CaregiverDTO(
@@ -209,24 +114,9 @@ public class CaregiverBean {
     
     List<CaregiverDTO> caregiversToDTOs(List<Caregiver> caregivers) {
         List<CaregiverDTO> dtos = new ArrayList<>();
-        for (Caregiver a : caregivers) {
-            dtos.add(caregiverToDTO(a));
+        for (Caregiver c : caregivers) {
+            dtos.add(caregiverToDTO(c));
         }
         return dtos;
-    }
-    
-    List<PatientDTO> patientsToDTOs(List<Patient> patients){
-        List<PatientDTO> dtos = new ArrayList<>();
-        for (Patient a : patients) {
-            dtos.add(patientToDTO(a));
-        }
-        return dtos;
-    }
-    
-    PatientDTO patientToDTO(Patient p) {
-        return new PatientDTO(
-                p.getName(),
-                p.getMail(),
-                p.getCaregiver().getUsername());
     }
 }
