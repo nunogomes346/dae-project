@@ -1,125 +1,222 @@
 <?xml version='1.0' encoding='UTF-8' ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:h="http://xmlns.jcp.org/jsf/html"
-      xmlns:f="http://xmlns.jcp.org/jsf/core">
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
     <h:head>
         <title>Administrator Index</title>
+        
+        <style>
+            .noBorders.ui-panelgrid>*>tr, .noBorders.ui-panelgrid .ui-panelgrid-cell {
+                border: none;
+            }
+            
+            .ui-button-text {
+                padding: 5px !important;
+            }
+        </style>
     </h:head>
     <h:body>
-        <h2>View All Administrators</h2>
+        <h1>Welcome #{userManager.username}</h1>
         
-        <h:dataTable
-            var="administrator"
-            summary="Table of administrators"
-            value="#{administratorManager.allAdministrators}"
-            rules="all"
-            cellpadding="5">
-            <h:column>
-                <f:facet name="header">
-                    <h:outputText value="Username" />
-                </f:facet>
-                <h:outputText value="#{administrator.username}" />
-            </h:column>
-            <h:column>
-                <f:facet name="header">
-                    <h:outputText value="Name" />
-                </f:facet>
-                <h:outputText value="#{administrator.name}" />
-            </h:column>
-            <h:column>
-                <f:facet name="header">
-                    <h:outputText value="Mail" />
-                </f:facet>
-                <h:outputText value="#{administrator.mail}" />
-            </h:column>
-              <h:column>
-                <f:facet name="header">
-                    <h:outputText value="Actions" />
-                </f:facet>
-                <h:form>
-                    <h:panelGrid columns="3">
-                        <h:commandLink value="Details" id="details" action="admin_administrator_details?faces-redirect=true">
-                            <f:setPropertyActionListener target="#{administratorManager.currentAdministrator}" value="#{administrator}" />
-                        </h:commandLink>
-                        
-                        <h:commandLink value="Update" id="update" action="admin_administrator_update?faces-redirect=true">
-                            <f:setPropertyActionListener target="#{administratorManager.currentAdministrator}" value="#{administrator}" />
-                        </h:commandLink>
-                        
-                        <h:commandLink value="Remove" id="remove"
-                                       actionListener="#{administratorManager.removeAdministrator}">
-                            <f:param name="deleteAdministratorId" id="deleteAdministratorId" value="#{administrator.username}" />
-                        </h:commandLink>
-                    </h:panelGrid>
-                </h:form>
-            </h:column>
-        </h:dataTable>
+        <br />
+        
+        <h2>View All Administrators</h2>
         <h:form>
-            <h:commandLink value="Create Administrator"
-                           action="admin_administrator_create?faces-redirect=true" />
+            <p:dataTable
+                id="administratorsTable"
+                var="administrator"
+                summary="Table of administrators"
+                value="#{administratorManager.allAdministrators}"
+                widgetVar="administratorsTable"
+                emptyMessage="No admins found with given criteria" 
+                filteredValue="#{administratorManager.filteredAdmins}"
+                rows="10"
+                paginator="true"
+                paginatorPosition="bottom"
+                paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                rowsPerPageTemplate="5,10,15"
+                style="margin-bottom:40px">
+                
+                <f:facet name="header">
+                    <p:commandLink value="Create Administrator" 
+                                   action="admin_administrator_create?faces-redirect=true" style="float: left;"
+                                   update="administratorsTable" oncomplete="PF('administratorsTable').clearFilters()"/>
+                    
+                    <p:outputPanel style="text-align:right;">
+                        <h:outputText value="Search all fields:" />
+                        <p:inputText id="globalFilter" onkeyup="PF('administratorsTable').filter()" style="width:150px" placeholder="Enter keyword"/>
+                    </p:outputPanel>
+                </f:facet>
+                
+                <p:column filterBy="#{administrator.username}" headerText="Username" filterMatchMode="contains">
+                    <h:outputText value="#{administrator.username}" />
+                </p:column>
+                
+                <p:column filterBy="#{administrator.name}" headerText="Name" filterMatchMode="contains">
+                    <h:outputText value="#{administrator.name}" />
+                </p:column>
+                
+                <p:column filterBy="#{administrator.mail}" headerText="Mail" filterMatchMode="contains">
+                    <h:outputText value="#{administrator.mail}" />
+                </p:column>
+                
+                <p:column headerText="Actions">
+                    <p:panelGrid columns="3" styleClass="noBorders">
+                        <p:commandButton value="Details" id="details" action="admin_administrator_details?faces-redirect=true"
+                                         oncomplete="PF('administratorsTable').clearFilters()">
+                            <f:setPropertyActionListener target="#{administratorManager.currentAdministrator}" value="#{administrator}" />
+                        </p:commandButton>
+
+                        <p:commandButton value="Update" id="update" action="admin_administrator_update?faces-redirect=true"
+                                         oncomplete="PF('administratorsTable').clearFilters()">
+                            <f:setPropertyActionListener target="#{administratorManager.currentAdministrator}" value="#{administrator}" />
+                        </p:commandButton>
+
+                        <p:commandButton value="Remove" id="remove" disabled="#{administratorManager.disableRemoveButton(administrator.username)}"
+                                       actionListener="#{administratorManager.removeAdministrator}"
+                                       update="administratorsTable" oncomplete="PF('administratorsTable').clearFilters()">
+                            <f:param name="deleteAdministratorId" id="deleteAdministratorId" value="#{administrator.username}" />
+                        </p:commandButton>
+                    </p:panelGrid>
+                </p:column>
+            </p:dataTable>
         </h:form>
         
         <br />
         
         <h2>View All Healthcare Professionals</h2>
         
-        <h:dataTable
-            var="healthcarePro"
-            summary="Table of healthcarePros"
-            value="#{administratorManager.allHealthcarePros}"
-            rules="all"
-            cellpadding="5">
-            <h:column>
-                <f:facet name="header">
-                    <h:outputText value="Username" />
-                </f:facet>
-                <h:outputText value="#{healthcarePro.username}" />
-            </h:column>
-            <h:column>
-                <f:facet name="header">
-                    <h:outputText value="Name" />
-                </f:facet>
-                <h:outputText value="#{healthcarePro.name}" />
-            </h:column>
-            <h:column>
-                <f:facet name="header">
-                    <h:outputText value="Mail" />
-                </f:facet>
-                <h:outputText value="#{healthcarePro.mail}" />
-            </h:column>
-              <h:column>
-                <f:facet name="header">
-                    <h:outputText value="Actions" />
-                </f:facet>
-                <h:form>
-                    <h:panelGrid columns="3">
-                        <h:commandLink value="Details" id="details" action="admin_healthcarepro_details?faces-redirect=true">
-                            <f:setPropertyActionListener target="#{administratorManager.currentHealthcarePro}" value="#{healthcarePro}" />
-                        </h:commandLink>
-                        
-                        <h:commandLink value="Update" id="update" action="admin_healthcarepro_update?faces-redirect=true">
-                            <f:setPropertyActionListener target="#{administratorManager.currentHealthcarePro}" value="#{healthcarePro}" />
-                        </h:commandLink>
-                        
-                        <h:commandLink value="Remove" id="remove"
-                                       actionListener="#{administratorManager.removeHealthcarePro}">
-                            <f:param name="deleteHealthcareProId" id="deleteHealthcareProId" value="#{healthcarePro.username}" />
-                        </h:commandLink>
-                    </h:panelGrid>
-                </h:form>
-            </h:column>
-        </h:dataTable>
         <h:form>
-            <h:commandLink value="Create Healthcare Professional"
-                           action="admin_healthcarepro_create?faces-redirect=true" />
+            <p:dataTable
+                id="healthcareProsTable"
+                var="healthcarePro"
+                summary="Table of healthcarePros"
+                value="#{administratorManager.allHealthcarePros}"
+                widgetVar="healthcareProsTable"
+                emptyMessage="No admins found with given criteria" 
+                filteredValue="#{administratorManager.filteredHealthcarePros}"
+                rows="10"
+                paginator="true"
+                paginatorPosition="bottom"
+                paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                rowsPerPageTemplate="5,10,15"
+                style="margin-bottom:40px">
+
+                <f:facet name="header">
+                    <p:commandLink value="Create Healthcare Professional"
+                                   action="admin_healthcarepro_create?faces-redirect=true" style="float: left;"
+                                   oncomplete="PF('healthcareProsTable').clearFilters()"/>
+                    
+                    <p:outputPanel style="text-align:right;">
+                        <h:outputText value="Search all fields:" />
+                        <p:inputText id="globalFilter" onkeyup="PF('healthcareProsTable').filter()" style="width:150px" placeholder="Enter keyword"/>
+                    </p:outputPanel>
+                </f:facet>
+
+                <p:column filterBy="#{healthcarePro.username}" headerText="Username" filterMatchMode="contains">
+                    <h:outputText value="#{healthcarePro.username}" />
+                </p:column>
+
+                <p:column filterBy="#{healthcarePro.name}" headerText="Name" filterMatchMode="contains">
+                    <h:outputText value="#{healthcarePro.name}" />
+                </p:column>
+
+                <p:column filterBy="#{healthcarePro.mail}" headerText="Mail" filterMatchMode="contains">
+                    <h:outputText value="#{healthcarePro.mail}" />
+                </p:column>
+
+                <p:column headerText="Actions">
+                    <p:panelGrid columns="3" styleClass="noBorders">
+                        <p:commandButton value="Details" id="details" action="admin_healthcarepro_details?faces-redirect=true"
+                                          oncomplete="PF('healthcareProsTable').clearFilters()">
+                            <f:setPropertyActionListener target="#{administratorManager.currentHealthcarePro}" value="#{healthcarePro}" />
+                        </p:commandButton>
+
+                        <p:commandButton value="Update" id="update" action="admin_healthcarepro_update?faces-redirect=true"
+                                         oncomplete="PF('healthcareProsTable').clearFilters()">
+                            <f:setPropertyActionListener target="#{administratorManager.currentHealthcarePro}" value="#{healthcarePro}" />
+                        </p:commandButton>
+
+                        <p:commandButton value="Remove" id="remove" disabled="#{administratorManager.disableRemoveButton(healthcarePro.username)}"
+                                       actionListener="#{administratorManager.removeHealthcarePro}"
+                                       update="healthcareProsTable" oncomplete="PF('healthcareProsTable').clearFilters()">
+                            <f:param name="deleteHealthcareProId" id="deleteHealthcareProId" value="#{healthcarePro.username}" />
+                        </p:commandButton>
+                    </p:panelGrid>
+                </p:column>
+            </p:dataTable>
         </h:form>
         
-        <br/>
-        <h:form>                
-            <h:panelGrid columns="2">
-                <h:commandButton value="Logout" id="Logout" action="#{userManager.logout}" />
-            </h:panelGrid>
+        <br />
+        
+        <h2>View All Caregivers</h2>
+        <h:form>
+            <p:dataTable
+                id="caregiversTable"
+                var="caregiver"
+                summary="Table of caregivers"
+                value="#{administratorManager.allCaregivers}"
+                widgetVar="caregiversTable"
+                emptyMessage="No caregivers found with given criteria" 
+                filteredValue="#{administratorManager.filteredCaregivers}"
+                rows="10"
+                paginator="true"
+                paginatorPosition="bottom"
+                paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                rowsPerPageTemplate="5,10,15"
+                style="margin-bottom:40px">
+                
+                <f:facet name="header">
+                    <p:commandLink value="Create Caregiver"
+                                   action="admin_caregiver_create?faces-redirect=true" style="float: left;"
+                                   oncomplete="PF('caregiversTable').clearFilters()"/>
+
+                    <p:outputPanel style="text-align:right;">
+                        <h:outputText value="Search all fields:" />
+                        <p:inputText id="globalFilter" onkeyup="PF('caregiversTable').filter()" style="width:150px" placeholder="Enter keyword"/>
+                    </p:outputPanel>
+                </f:facet>
+                
+                <p:column filterBy="#{caregiver.username}" headerText="Username" filterMatchMode="contains">
+                    <h:outputText value="#{caregiver.username}" />
+                </p:column>
+                
+                <p:column filterBy="#{caregiver.name}" headerText="Name" filterMatchMode="contains">
+                    <h:outputText value="#{caregiver.name}" />
+                </p:column>
+                
+                <p:column filterBy="#{caregiver.mail}" headerText="Mail" filterMatchMode="contains">
+                    <h:outputText value="#{caregiver.mail}" />
+                </p:column>
+                
+                <p:column headerText="Actions">
+                    <p:panelGrid columns="3" styleClass="noBorders">
+                        <p:commandButton value="Details" id="details" action="admin_caregiver_details?faces-redirect=true"
+                                         oncomplete="PF('caregiversTable').clearFilters()">
+                            <f:setPropertyActionListener target="#{administratorManager.currentCaregiver}" value="#{caregiver}" />
+                        </p:commandButton>
+                        
+                        <p:commandButton value="Update" id="update" action="admin_caregiver_update?faces-redirect=true"
+                                         oncomplete="PF('caregiversTable').clearFilters()">
+                            <f:setPropertyActionListener target="#{administratorManager.currentCaregiver}" value="#{caregiver}" />
+                        </p:commandButton>
+                        
+                        <p:commandButton value="Remove" id="remove" disabled="#{administratorManager.disableRemoveButton(caregiver.username)}"
+                                       actionListener="#{administratorManager.removeCaregiver}" 
+                                       update="caregiversTable" oncomplete="PF('caregiversTable').clearFilters()">
+                            <f:param name="deleteCaregiverId" id="deleteCaregiverId" value="#{caregiver.username}" />
+                        </p:commandButton>
+                    </p:panelGrid>
+                </p:column>
+            </p:dataTable>
+        </h:form>
+		
+        <br />
+        
+        <h:form>             
+            <p:commandButton value="Logout" id="Logout" action="#{userManager.logout}" />
         </h:form>
     </h:body>
 </html>

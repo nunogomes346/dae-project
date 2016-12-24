@@ -19,7 +19,5 @@ public class HealthcarePro extends User implements Serializable {
     public HealthcarePro(String username, String password, String name, String mail) {
         super(username, password, name, mail, GROUP.HealthcarePro);
     }
-
-    
     
 }

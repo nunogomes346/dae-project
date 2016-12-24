@@ -6,7 +6,6 @@ import java.io.Serializable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -65,7 +64,7 @@ public class UserManager implements Serializable {
         }
         
         if(isUserInRole("HealthcarePro")){
-            return "/faces/healthcarepro/healthcarepro_index?faces-redirect=true";
+            return "/faces/healthcarePro/healthcarePro_index?faces-redirect=true";
         }
         
         if(isUserInRole("Caregiver")){

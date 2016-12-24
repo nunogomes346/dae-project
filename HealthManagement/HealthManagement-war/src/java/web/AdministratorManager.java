@@ -1,8 +1,10 @@
 package web;
 
 import dtos.AdministratorDTO;
+import dtos.CaregiverDTO;
 import dtos.HealthcareProDTO;
 import ejbs.AdministratorBean;
+import ejbs.CaregiverBean;
 import ejbs.HealthcareProBean;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
@@ -14,22 +16,35 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.component.UIComponent;
 import javax.faces.component.UIParameter;
 import javax.faces.event.ActionEvent;
+import javax.inject.Inject;
 
 @ManagedBean
 @Named(value="administratorManager")
 @SessionScoped
 public class AdministratorManager implements Serializable {
 
+    @Inject
+    private UserManager userManager;
+    
     @EJB
     private AdministratorBean administratorBean; 
     
     @EJB
     private HealthcareProBean healthcareProBean;
     
+    @EJB
+    private CaregiverBean caregiverBean;
+    
     private AdministratorDTO newAdministrator;
     private AdministratorDTO currentAdministrator;
     private HealthcareProDTO newHealthcarePro;
     private HealthcareProDTO currentHealthcarePro;
+    private CaregiverDTO newCaregiver;
+    private CaregiverDTO currentCaregiver;
+    
+    private List<AdministratorDTO> filteredAdmins;
+    private List<HealthcareProDTO> filteredHealthcarePros;
+    private List<CaregiverDTO> filteredCaregivers;
     
     private UIComponent component;
     private static final Logger LOGGER = Logger.getLogger("web.AdministratorManager");
@@ -37,8 +52,9 @@ public class AdministratorManager implements Serializable {
     public AdministratorManager() {
         newAdministrator = new AdministratorDTO();
         newHealthcarePro = new HealthcareProDTO();
+        newCaregiver = new CaregiverDTO();
     }
-    
+
     // ***************************************
     // ************ ADMINISTRATOR ************
     // ***************************************
@@ -49,9 +65,16 @@ public class AdministratorManager implements Serializable {
                     newAdministrator.getPassword(),
                     newAdministrator.getName(),
                     newAdministrator.getMail());
-
+            
+            filteredAdmins.add(new AdministratorDTO(
+                    newAdministrator.getUsername(),
+                    newAdministrator.getPassword(),
+                    newAdministrator.getName(),
+                    newAdministrator.getMail())
+            );
+            
             newAdministrator.reset();
-
+            
             return "admin_index?faces-redirect=true";
         } catch (Exception e) {
             LOGGER.warning("Error: problem in method createAdministrator");
@@ -79,6 +102,15 @@ public class AdministratorManager implements Serializable {
                     currentAdministrator.getName(), 
                     currentAdministrator.getMail());
 
+            for (AdministratorDTO admin : filteredAdmins) {
+                if(admin.getUsername().compareTo(currentAdministrator.getUsername()) == 0) {
+                    admin.setPassword(currentAdministrator.getPassword());
+                    admin.setName(currentAdministrator.getName());
+                    admin.setMail(currentAdministrator.getMail());
+                    break;
+                }
+            }
+            
             return "admin_index?faces-redirect=true";
         } catch (Exception e) {
             LOGGER.warning("Error: problem in method updateAdministrator");
@@ -109,6 +141,13 @@ public class AdministratorManager implements Serializable {
                     newHealthcarePro.getName(),
                     newHealthcarePro.getMail());
 
+            filteredHealthcarePros.add(new HealthcareProDTO(
+                    newHealthcarePro.getUsername(),
+                    newHealthcarePro.getPassword(),
+                    newHealthcarePro.getName(),
+                    newHealthcarePro.getMail())
+            );
+            
             newHealthcarePro.reset();
 
             return "admin_index?faces-redirect=true";
@@ -138,6 +177,15 @@ public class AdministratorManager implements Serializable {
                     currentHealthcarePro.getPassword(),
                     currentHealthcarePro.getName(), 
                     currentHealthcarePro.getMail());
+            
+            for (HealthcareProDTO healthcarePro : filteredHealthcarePros) {
+                if(healthcarePro.getUsername().compareTo(currentHealthcarePro.getUsername()) == 0) {
+                    healthcarePro.setPassword(currentHealthcarePro.getPassword());
+                    healthcarePro.setName(currentHealthcarePro.getName());
+                    healthcarePro.setMail(currentHealthcarePro.getMail());
+                    break;
+                }
+            }
 
             return "admin_index?faces-redirect=true";
         } catch (Exception e) {
@@ -157,6 +205,84 @@ public class AdministratorManager implements Serializable {
             LOGGER.warning("Error: problem in method removeHealthcarePro");
         }
     }  
+    
+    // ***************************************
+    // ************ CAREGIVER ****************
+    // ***************************************
+    public String createCaregiver() {
+        try {
+            caregiverBean.create(
+                    newCaregiver.getUsername(),
+                    newCaregiver.getPassword(),
+                    newCaregiver.getName(),
+                    newCaregiver.getMail());
+            
+            filteredCaregivers.add(new CaregiverDTO(
+                    newCaregiver.getUsername(),
+                    newCaregiver.getPassword(),
+                    newCaregiver.getName(),
+                    newCaregiver.getMail())
+            );
+
+            newCaregiver.reset();
+
+            return "admin_index?faces-redirect=true";
+        } catch (Exception e) {
+            LOGGER.warning("Error: problem in method createCaregiver");
+        }
+
+        return "admin_caregiver_create?faces-redirect=true";
+    }
+    
+    public List<CaregiverDTO> getAllCaregivers() {
+        try {
+            return caregiverBean.getAll();
+        } catch (Exception e) {
+            LOGGER.warning("Error: problem in method getAllCaregivers");
+        }
+
+        return null;
+    }
+    
+    public String updateCaregiver() {
+        try {
+            caregiverBean.update(
+                    currentCaregiver.getUsername(),
+                    currentCaregiver.getPassword(),
+                    currentCaregiver.getName(), 
+                    currentCaregiver.getMail());
+            
+            for (CaregiverDTO caregiver : filteredCaregivers) {
+                if(caregiver.getUsername().compareTo(currentCaregiver.getUsername()) == 0) {
+                    caregiver.setPassword(currentCaregiver.getPassword());
+                    caregiver.setName(currentCaregiver.getName());
+                    caregiver.setMail(currentCaregiver.getMail());
+                    break;
+                }
+            }
+
+            return "admin_index?faces-redirect=true";
+        } catch (Exception e) {
+            LOGGER.warning("Error: problem in method updateCaregiver");
+        }
+
+        return "admin_caregiver_update?faces-redirect=true";
+    }
+    
+    public void removeCaregiver(ActionEvent event) {
+        try {
+            UIParameter param = (UIParameter) event.getComponent().findComponent("deleteCaregiverId");
+            String id = param.getValue().toString();
+
+            caregiverBean.remove(id);
+        } catch (Exception e) {
+            LOGGER.warning("Error: problem in method removeCaregiver");
+        }
+    }
+    
+    public boolean disableRemoveButton(String username) {
+        return (username.compareTo(userManager.getUsername()) == 0);
+    }
     
     // **********************************
     // ************ GETS&SETS *******
@@ -191,6 +317,46 @@ public class AdministratorManager implements Serializable {
 
     public void setCurrentHealthcarePro(HealthcareProDTO currentHealthcarePro) {
         this.currentHealthcarePro = currentHealthcarePro;
+    }
+
+    public CaregiverDTO getNewCaregiver() {
+        return newCaregiver;
+    }
+
+    public void setNewCaregiver(CaregiverDTO newCaregiver) {
+        this.newCaregiver = newCaregiver;
+    }
+
+    public CaregiverDTO getCurrentCaregiver() {
+        return currentCaregiver;
+    }
+
+    public void setCurrentCaregiver(CaregiverDTO currentCaregiver) {
+        this.currentCaregiver = currentCaregiver;
+    }
+    
+    public List<AdministratorDTO> getFilteredAdmins() {
+        return filteredAdmins;
+    }
+        
+    public void setFilteredAdmins(List<AdministratorDTO> filteredAdmins) {    
+        this.filteredAdmins = filteredAdmins;
+    }
+
+    public List<HealthcareProDTO> getFilteredHealthcarePros() {
+        return filteredHealthcarePros;
+    }
+
+    public void setFilteredHealthcarePros(List<HealthcareProDTO> filteredHealthcarePros) {
+        this.filteredHealthcarePros = filteredHealthcarePros;
+    }
+
+    public List<CaregiverDTO> getFilteredCaregivers() {
+        return filteredCaregivers;
+    }
+
+    public void setFilteredCaregivers(List<CaregiverDTO> filteredCaregivers) {
+        this.filteredCaregivers = filteredCaregivers;
     }
 
     public UIComponent getComponent() {
