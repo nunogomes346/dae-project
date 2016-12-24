@@ -51,12 +51,7 @@ public class HealthcareProManager implements Serializable{
                     newCaregiver.getName(),
                     newCaregiver.getMail());
 
-            filteredCaregivers.add(new CaregiverDTO(
-                    newCaregiver.getUsername(),
-                    newCaregiver.getPassword(),
-                    newCaregiver.getName(),
-                    newCaregiver.getMail())
-            );
+            setFilteredCaregivers(null);
             
             newCaregiver.reset();
 
@@ -86,14 +81,7 @@ public class HealthcareProManager implements Serializable{
                     currentCaregiver.getName(), 
                     currentCaregiver.getMail());
             
-            for (CaregiverDTO caregiver : filteredCaregivers) {
-                if(caregiver.getUsername().compareTo(currentCaregiver.getUsername()) == 0) {
-                    caregiver.setPassword(currentCaregiver.getPassword());
-                    caregiver.setName(currentCaregiver.getName());
-                    caregiver.setMail(currentCaregiver.getMail());
-                    break;
-                }
-            }
+            setFilteredCaregivers(null);
 
             return "healthcarePro_index?faces-redirect=true";
         } catch (Exception e) {

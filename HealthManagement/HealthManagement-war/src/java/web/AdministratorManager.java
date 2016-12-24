@@ -66,12 +66,7 @@ public class AdministratorManager implements Serializable {
                     newAdministrator.getName(),
                     newAdministrator.getMail());
             
-            filteredAdmins.add(new AdministratorDTO(
-                    newAdministrator.getUsername(),
-                    newAdministrator.getPassword(),
-                    newAdministrator.getName(),
-                    newAdministrator.getMail())
-            );
+            setFilteredAdmins(null);
             
             newAdministrator.reset();
             
@@ -102,14 +97,7 @@ public class AdministratorManager implements Serializable {
                     currentAdministrator.getName(), 
                     currentAdministrator.getMail());
 
-            for (AdministratorDTO admin : filteredAdmins) {
-                if(admin.getUsername().compareTo(currentAdministrator.getUsername()) == 0) {
-                    admin.setPassword(currentAdministrator.getPassword());
-                    admin.setName(currentAdministrator.getName());
-                    admin.setMail(currentAdministrator.getMail());
-                    break;
-                }
-            }
+            setFilteredAdmins(null);
             
             return "admin_index?faces-redirect=true";
         } catch (Exception e) {
@@ -141,12 +129,7 @@ public class AdministratorManager implements Serializable {
                     newHealthcarePro.getName(),
                     newHealthcarePro.getMail());
 
-            filteredHealthcarePros.add(new HealthcareProDTO(
-                    newHealthcarePro.getUsername(),
-                    newHealthcarePro.getPassword(),
-                    newHealthcarePro.getName(),
-                    newHealthcarePro.getMail())
-            );
+            setFilteredHealthcarePros(null);
             
             newHealthcarePro.reset();
 
@@ -178,14 +161,7 @@ public class AdministratorManager implements Serializable {
                     currentHealthcarePro.getName(), 
                     currentHealthcarePro.getMail());
             
-            for (HealthcareProDTO healthcarePro : filteredHealthcarePros) {
-                if(healthcarePro.getUsername().compareTo(currentHealthcarePro.getUsername()) == 0) {
-                    healthcarePro.setPassword(currentHealthcarePro.getPassword());
-                    healthcarePro.setName(currentHealthcarePro.getName());
-                    healthcarePro.setMail(currentHealthcarePro.getMail());
-                    break;
-                }
-            }
+            setFilteredHealthcarePros(null);
 
             return "admin_index?faces-redirect=true";
         } catch (Exception e) {
@@ -217,12 +193,7 @@ public class AdministratorManager implements Serializable {
                     newCaregiver.getName(),
                     newCaregiver.getMail());
             
-            filteredCaregivers.add(new CaregiverDTO(
-                    newCaregiver.getUsername(),
-                    newCaregiver.getPassword(),
-                    newCaregiver.getName(),
-                    newCaregiver.getMail())
-            );
+            setFilteredCaregivers(null);
 
             newCaregiver.reset();
 
@@ -252,14 +223,7 @@ public class AdministratorManager implements Serializable {
                     currentCaregiver.getName(), 
                     currentCaregiver.getMail());
             
-            for (CaregiverDTO caregiver : filteredCaregivers) {
-                if(caregiver.getUsername().compareTo(currentCaregiver.getUsername()) == 0) {
-                    caregiver.setPassword(currentCaregiver.getPassword());
-                    caregiver.setName(currentCaregiver.getName());
-                    caregiver.setMail(currentCaregiver.getMail());
-                    break;
-                }
-            }
+            setFilteredCaregivers(null);
 
             return "admin_index?faces-redirect=true";
         } catch (Exception e) {
