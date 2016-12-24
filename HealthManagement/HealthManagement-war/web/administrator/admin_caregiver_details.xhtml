@@ -8,22 +8,22 @@
     </h:head>
     <h:body>
 
-        <h2 name="title">Details for Caregiver #{healthcareProManager.currentCaregiver.username}</h2>
+        <h2 name="title">Details for Caregiver #{administratorManager.currentCaregiver.username}</h2>
         
         <h:panelGrid columns="2">
             <h:outputLabel for="username" value="Username: " />
-            <h:outputText id="username" value="#{healthcareProManager.currentCaregiver.username}"/>
+            <h:outputText id="username" value="#{administratorManager.currentCaregiver.username}"/>
 
             <h:outputLabel for="name" value="Name: " />
-            <h:outputText id="name" value="#{healthcareProManager.currentCaregiver.name}"/>
+            <h:outputText id="name" value="#{administratorManager.currentCaregiver.name}"/>
 
             <h:outputLabel for="mail" value="Mail: " />
-            <h:outputText id="mail" value="#{healthcareProManager.currentCaregiver.mail}"/>
+            <h:outputText id="mail" value="#{administratorManager.currentCaregiver.mail}"/>
         </h:panelGrid>
         
         <h:form>                
             <h:panelGrid columns="2">
-                <h:commandButton value="Back" id="BackButton" action="/healthcarePro/healthcarePro_index?faces-redirect=true" />
+                <h:commandButton value="Back" id="BackButton" action="/administrator/admin_index?faces-redirect=true" />
             </h:panelGrid>
         </h:form>
     </h:body>

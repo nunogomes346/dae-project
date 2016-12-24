@@ -8,22 +8,22 @@
     </h:head>
     <h:body>
         
-        <h2 name="title">Update Information for Caregiver #{healthcareProManager.currentCaregiver.username}</h2>
+        <h2 name="title">Update Information for Caregiver #{administratorManager.currentCaregiver.username}</h2>
         
         <h:form>
             <h:panelGrid columns="3">
                 <h:outputLabel for="password" value="Password: " />
-                <h:inputSecret id="password" size="52" value="#{healthcareProManager.currentCaregiver.password}"
+                <h:inputSecret id="password" size="52" value="#{administratorManager.currentCaregiver.password}"
                                 required="true" requiredMessage="  Password is required"/>
                 <h:message errorStyle="color:red; display:inline" for="password" />
                 
                 <h:outputLabel for="name" value="Name: " />
-                <h:inputText id="name" size="52" value="#{healthcareProManager.currentCaregiver.name}"
+                <h:inputText id="name" size="52" value="#{administratorManager.currentCaregiver.name}"
                              required="true" requiredMessage="  Name is required"/>
                 <h:message errorStyle="color:red; display:inline" for="name" />
                 
                 <h:outputLabel for="mail" value="Mail: " />
-                <h:inputText id="mail" size="52" value="#{healthcareProManager.currentCaregiver.mail}"
+                <h:inputText id="mail" size="52" value="#{administratorManager.currentCaregiver.mail}"
                              required="true" requiredMessage="  Mail is required"
                              validatorMessage="Incorrect mail format">
                     <f:validateRegex pattern="[\w\.-]*[a-zA-Z0-9_]@[\w\.-]*[a-zA-Z0-9]\.[a-zA-Z][a-zA-Z\.]*[a-zA-Z]" />
@@ -31,7 +31,7 @@
                 <h:message errorStyle="color:red; display:inline" for="mail" />
                 
                 <h:commandButton value="Update" id="updateButton"
-                                 action="#{healthcareProManager.updateCaregiver}" />
+                                 action="#{administratorManager.updateCaregiver}" />
                 <h:message for="updateButton" />
             </h:panelGrid>
         </h:form>

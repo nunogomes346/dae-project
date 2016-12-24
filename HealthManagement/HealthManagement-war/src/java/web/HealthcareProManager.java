@@ -31,6 +31,8 @@ public class HealthcareProManager implements Serializable{
     private CaregiverDTO newCaregiver;
     private CaregiverDTO currentCaregiver;
     
+    private List<CaregiverDTO> filteredCaregivers;
+    
     private UIComponent component;
     private static final Logger LOGGER = Logger.getLogger("web.HealthcareProManager");
     
@@ -162,6 +164,14 @@ public class HealthcareProManager implements Serializable{
 
     public void setCurrentCaregiver(CaregiverDTO currentCaregiver) {
         this.currentCaregiver = currentCaregiver;
+    }
+
+    public List<CaregiverDTO> getFilteredCaregivers() {
+        return filteredCaregivers;
+    }
+
+    public void setFilteredCaregivers(List<CaregiverDTO> filteredCaregivers) {
+        this.filteredCaregivers = filteredCaregivers;
     }
     
     public UIComponent getComponent() {
