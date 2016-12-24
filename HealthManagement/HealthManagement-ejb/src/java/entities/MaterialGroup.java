@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package entities;
 
 import java.io.Serializable;
@@ -15,10 +10,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
-/**
- *
- * @author sphinx
- */
 @Entity
 @Table(name = "MATERIALS_GROUPS")
 public class MaterialGroup implements Serializable {
@@ -30,7 +21,7 @@ public class MaterialGroup implements Serializable {
     @Id
     @Enumerated(EnumType.STRING)
     @Column(name="GROUP_NAME")
-    private MaterialGroup.GROUP groupName;
+    private GROUP groupName;
     
     @Id
     @OneToOne

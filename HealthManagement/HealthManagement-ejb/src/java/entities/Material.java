@@ -5,11 +5,15 @@
  */
 package entities;
 
+import entities.MaterialGroup.GROUP;
 import java.io.Serializable;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 /**
@@ -20,15 +24,19 @@ import javax.persistence.Table;
 @Table(name = "MATERIALS")
 public class Material implements Serializable {
 
-    private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "material")
+    protected MaterialGroup group;
     
     public Material(){
     }
     
+    public Material(GROUP group){
+        this.group = new MaterialGroup(group, this);
+    }
 
     public Long getId() {
         return id;
@@ -37,6 +45,4 @@ public class Material implements Serializable {
     public void setId(Long id) {
         this.id = id;
     }
-
-    
 }

@@ -5,11 +5,12 @@
  */
 package entities;
 
+import entities.MaterialGroup.GROUP;
 import java.io.Serializable;
+import javax.persistence.Basic;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import static javax.persistence.FetchType.EAGER;
+import javax.persistence.Lob;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 
@@ -23,14 +24,18 @@ import javax.persistence.NamedQuery;
     query = "SELECT f FROM FAQ f ORDER BY f.id")
 })
 public class FAQ extends Material implements Serializable {
-
+    
+    @Lob @Basic(fetch=EAGER)
     private String question;
+    
+    @Lob @Basic(fetch=EAGER)
     private String answer;
     
     public FAQ(){
     }
     
     public FAQ(String question, String answer){
+        super(GROUP.Faq);
         this.question = question;
         this.answer = answer;
     }

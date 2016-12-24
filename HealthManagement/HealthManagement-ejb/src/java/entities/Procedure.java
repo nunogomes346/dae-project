@@ -5,11 +5,12 @@
  */
 package entities;
 
+import entities.MaterialGroup.GROUP;
 import java.io.Serializable;
+import javax.persistence.Basic;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import static javax.persistence.FetchType.EAGER;
+import javax.persistence.Lob;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 
@@ -23,14 +24,15 @@ import javax.persistence.NamedQuery;
     query = "SELECT p FROM Procedure p ORDER BY p.id")
 })
 public class Procedure extends Material implements Serializable {
-
+    
+    @Lob @Basic(fetch=EAGER)
     private String text;
 
     public Procedure(){
     }
     
     public Procedure(String text) {
-        super();
+        super(GROUP.Procedure);
         this.text = text;
     }
 

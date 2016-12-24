@@ -5,8 +5,6 @@
  */
 package ejbs;
 
-import entities.Caregiver;
-import entities.EmergencyContact;
 import entities.FAQ;
 import java.util.List;
 import javax.ejb.EJBException;

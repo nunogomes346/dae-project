@@ -5,7 +5,6 @@
  */
 package ejbs;
 
-import entities.Caregiver;
 import entities.EmergencyContact;
 import java.util.List;
 import javax.ejb.EJBException;
@@ -24,7 +23,7 @@ public class EmergencyContactBean {
     EntityManager em;
 
     /* Mesmo parametros */
-    public void create(String name, int telephoneNumber) {
+    public void create(String name, String telephoneNumber) {
         try {
             EmergencyContact emergencyContact = new EmergencyContact(name, telephoneNumber);
 
@@ -34,7 +33,7 @@ public class EmergencyContactBean {
         }
     }
 
-    public void update(int id, String name, int telephoneNumber) {
+    public void update(int id, String name, String telephoneNumber) {
         try {
             EmergencyContact emergencyContact = em.find(EmergencyContact.class, id);
             if (emergencyContact == null) {

@@ -3,37 +3,31 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package entities;
+package dtos;
 
-import entities.MaterialGroup.GROUP;
-import java.io.Serializable;
-import javax.persistence.Entity;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
- * @author joaoc
+ * @author sphinx
  */
-@Entity
-@NamedQueries({
-    @NamedQuery(name = "getAllEmergencyContacts",
-    query = "SELECT e FROM EmergencyContact e ORDER BY e.id")
-})
-public class EmergencyContact extends Material implements Serializable {
-
+@XmlRootElement(name = "EmergencyContact")
+@XmlAccessorType(XmlAccessType.FIELD)
+public class EmergencyContactDTO extends MaterialDTO {
+    
     private String name;
     private String telephoneNumber;
     
-    public EmergencyContact(){
-    }
+    public EmergencyContactDTO(){ }
     
-    public EmergencyContact(String name, String telephoneNumber){
-        super(GROUP.EmergencyContact);
+    public EmergencyContactDTO(String name, String telephoneNumber) {
+        super();
         this.name = name;
         this.telephoneNumber = telephoneNumber;
     }
-
+    
     public String getName() {
         return name;
     }
@@ -50,6 +44,9 @@ public class EmergencyContact extends Material implements Serializable {
         this.telephoneNumber = telephoneNumber;
     }
     
-    
-    
+    @Override
+    public void reset() {
+        setName(null);
+        setTelephoneNumber(null);
+    }
 }
