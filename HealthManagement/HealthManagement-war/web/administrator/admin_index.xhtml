@@ -74,7 +74,7 @@
                             <f:setPropertyActionListener target="#{administratorManager.currentAdministrator}" value="#{administrator}" />
                         </p:commandButton>
 
-                        <p:commandButton value="Remove" id="remove"
+                        <p:commandButton value="Remove" id="remove" disabled="#{administratorManager.disableRemoveButton(administrator.username)}"
                                        actionListener="#{administratorManager.removeAdministrator}"
                                        update="administratorsTable" oncomplete="PF('administratorsTable').clearFilters()">
                             <f:param name="deleteAdministratorId" id="deleteAdministratorId" value="#{administrator.username}" />
@@ -139,7 +139,7 @@
                             <f:setPropertyActionListener target="#{administratorManager.currentHealthcarePro}" value="#{healthcarePro}" />
                         </p:commandButton>
 
-                        <p:commandButton value="Remove" id="remove"
+                        <p:commandButton value="Remove" id="remove" disabled="#{administratorManager.disableRemoveButton(healthcarePro.username)}"
                                        actionListener="#{administratorManager.removeHealthcarePro}"
                                        update="healthcareProsTable" oncomplete="PF('healthcareProsTable').clearFilters()">
                             <f:param name="deleteHealthcareProId" id="deleteHealthcareProId" value="#{healthcarePro.username}" />
@@ -170,7 +170,7 @@
                 
                 <f:facet name="header">
                     <p:commandLink value="Create Caregiver"
-                                   action="healthcarePro_caregiver_create?faces-redirect=true" style="float: left;"
+                                   action="admin_caregiver_create?faces-redirect=true" style="float: left;"
                                    oncomplete="PF('caregiversTable').clearFilters()"/>
 
                     <p:outputPanel style="text-align:right;">
@@ -203,7 +203,7 @@
                             <f:setPropertyActionListener target="#{administratorManager.currentCaregiver}" value="#{caregiver}" />
                         </p:commandButton>
                         
-                        <p:commandButton value="Remove" id="remove"
+                        <p:commandButton value="Remove" id="remove" disabled="#{administratorManager.disableRemoveButton(caregiver.username)}"
                                        actionListener="#{administratorManager.removeCaregiver}" 
                                        update="caregiversTable" oncomplete="PF('caregiversTable').clearFilters()">
                             <f:param name="deleteCaregiverId" id="deleteCaregiverId" value="#{caregiver.username}" />
