@@ -26,7 +26,7 @@ public class Material implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    private int id; // it was long before being int
     
     @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "material")
     protected MaterialGroup group;
@@ -38,11 +38,11 @@ public class Material implements Serializable {
         this.group = new MaterialGroup(group, this);
     }
 
-    public Long getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(int id) {
         this.id = id;
     }
 }

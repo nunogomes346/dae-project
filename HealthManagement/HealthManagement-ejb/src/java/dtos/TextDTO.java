@@ -19,8 +19,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class TextDTO extends MaterialDTO{
         private String text;
         
-        public TextDTO (String text){
-            super();
+        public TextDTO (int id,String text){
+            super(id);
             this.text = text;
         }
 

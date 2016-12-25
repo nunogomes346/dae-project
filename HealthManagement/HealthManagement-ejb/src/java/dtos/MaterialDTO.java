@@ -12,8 +12,22 @@ import java.io.Serializable;
  */
 public abstract class MaterialDTO implements Serializable{
     
+    private int id;
+    
     public MaterialDTO() { }
     
+    public MaterialDTO(int id) { 
+        this.id = id;
+    }
+    
     public abstract void reset();
+    
+    public int getId(){
+        return this.id;
+    }
+    
+    public void setId(int id){
+        this.id = id;
+    }
     
 }

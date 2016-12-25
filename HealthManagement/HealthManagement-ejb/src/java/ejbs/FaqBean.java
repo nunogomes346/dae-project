@@ -5,7 +5,9 @@
  */
 package ejbs;
 
+import dtos.FaqDTO;
 import entities.FAQ;
+import java.util.ArrayList;
 import java.util.List;
 import javax.ejb.EJBException;
 import javax.ejb.Stateless;
@@ -69,14 +71,31 @@ public class FaqBean {
         }
     }
 
-    public List<FAQ> getAll() {
+    public List<FaqDTO> getAll() {
         try {
             List<FAQ> faqs = (List<FAQ>) em.createNamedQuery("getAllFAQs").getResultList();
 
-            return faqs;
+            return faqsToDTOs(faqs);
         } catch (EJBException e) {
             throw new EJBException(e.getMessage());
         }
+    }
+
+    
+    FaqDTO faqToDTO(FAQ faq) {        
+        return new FaqDTO(
+                faq.getId(),
+                faq.getAnswer(),
+                faq.getQuestion()
+        );
+    }
+    
+    List<FaqDTO> faqsToDTOs(List<FAQ> faqs) {
+        List<FaqDTO> dtos = new ArrayList<>();
+        for (FAQ f : faqs) {
+            dtos.add(faqToDTO(f));
+        }
+        return dtos;
     }
 
 }

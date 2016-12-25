@@ -5,7 +5,11 @@
  */
 package ejbs;
 
+import dtos.AdministratorDTO;
+import dtos.EmergencyContactDTO;
+import entities.Administrator;
 import entities.EmergencyContact;
+import java.util.ArrayList;
 import java.util.List;
 import javax.ejb.EJBException;
 import javax.ejb.Stateless;
@@ -68,14 +72,32 @@ public class EmergencyContactBean {
         }
     }
 
-    public List<EmergencyContact> getAll() {
+    public List<EmergencyContactDTO> getAll() {
         try {
             List<EmergencyContact> emergencyContacts = (List<EmergencyContact>) em.createNamedQuery("getAllEmergencyContacts").getResultList();
             
-            return emergencyContacts;  
+            return emergencyContactsToDTOs(emergencyContacts);
         } catch(EJBException e) {
             throw new EJBException(e.getMessage());
         }
     }
+    
+    EmergencyContactDTO emergencyContactToDTO(EmergencyContact emergencyContact) {
+        return new EmergencyContactDTO(
+                emergencyContact.getId(),
+                emergencyContact.getName(),
+                emergencyContact.getTelephoneNumber()
+        );
+    }
+    
+    List<EmergencyContactDTO> emergencyContactsToDTOs(List<EmergencyContact> emergencyContacts) {
+        List<EmergencyContactDTO> dtos = new ArrayList<>();
+        for (EmergencyContact a : emergencyContacts) {
+            dtos.add(emergencyContactToDTO(a));
+        }
+        return dtos;
+    }
+    
+
 
 }

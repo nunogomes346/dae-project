@@ -19,8 +19,8 @@ public class ProcedureDTO extends MaterialDTO{
     
     private String text;
     
-    public ProcedureDTO(String text) {
-        super();
+    public ProcedureDTO(int id, String text) {
+        super(id);
         this.text = text;
     }
 

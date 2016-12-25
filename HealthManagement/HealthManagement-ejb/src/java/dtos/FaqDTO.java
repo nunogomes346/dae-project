@@ -20,8 +20,8 @@ public class FaqDTO extends MaterialDTO {
     private String question;
     private String answer;
     
-    public FaqDTO(String question, String answer){
-        super();
+    public FaqDTO(int id, String question, String answer){
+        super(id);
         this.question = question;
         this.answer = answer;
     }

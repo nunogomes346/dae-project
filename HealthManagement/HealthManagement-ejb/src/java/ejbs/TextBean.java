@@ -5,7 +5,9 @@
  */
 package ejbs;
 
+import dtos.TextDTO;
 import entities.Text;
+import java.util.ArrayList;
 import java.util.List;
 import javax.ejb.EJBException;
 import javax.ejb.Stateless;
@@ -68,13 +70,30 @@ public class TextBean {
         }
     }
 
-    public List<Text> getAll() {
+    public List<TextDTO> getAll() {
         try {
             List<Text> texts = (List<Text>) em.createNamedQuery("getAllTexts").getResultList();
 
-            return texts;
+            return textsToDTOs(texts);
         } catch (EJBException e) {
             throw new EJBException(e.getMessage());
         }
     }
+
+
+    TextDTO textToDTO(Text text) {
+        return new TextDTO(
+                text.getId(),
+                text.getText()
+        );
+    }
+
+    List<TextDTO> textsToDTOs(List<Text> texts) {
+        List<TextDTO> dtos = new ArrayList<>();
+        for (Text t : texts) {
+            dtos.add(textToDTO(t));
+        }
+        return dtos;
+    }
+
 }

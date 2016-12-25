@@ -19,8 +19,8 @@ public class VideoDTO extends MaterialDTO {
     
     private String url;
     
-    public VideoDTO(String url){
-        super();
+    public VideoDTO(int id, String url){
+        super(id);
         this.url = url;
     }
 

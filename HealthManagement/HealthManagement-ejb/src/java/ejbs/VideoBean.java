@@ -5,7 +5,9 @@
  */
 package ejbs;
 
+import dtos.VideoDTO;
 import entities.Video;
+import java.util.ArrayList;
 import java.util.List;
 import javax.ejb.EJBException;
 import javax.ejb.Stateless;
@@ -69,13 +71,29 @@ public class VideoBean {
         }
     }
 
-    public List<Video> getAll() {
+    public List<VideoDTO> getAll() {
         try {
             List<Video> videos = (List<Video>) em.createNamedQuery("getAllVideos").getResultList();
 
-            return videos;
+            return videosToDTOs(videos);
         } catch (EJBException e) {
             throw new EJBException(e.getMessage());
         }
     }
+
+    VideoDTO videoToDTO(Video video) {
+        return new VideoDTO(
+                video.getId(),
+                video.getUrl()
+        );
+    }
+
+    List<VideoDTO> videosToDTOs(List<Video> videos) {
+        List<VideoDTO> dtos = new ArrayList<>();
+        for (Video v : videos) {
+            dtos.add(videoToDTO(v));
+        }
+        return dtos;
+    }
+
 }
