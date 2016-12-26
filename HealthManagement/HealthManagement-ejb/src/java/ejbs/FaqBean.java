@@ -1,23 +1,14 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package ejbs;
 
-import entities.Caregiver;
-import entities.EmergencyContact;
+import dtos.FaqDTO;
 import entities.FAQ;
+import java.util.ArrayList;
 import java.util.List;
 import javax.ejb.EJBException;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-/**
- *
- * @author sphinx
- */
 @Stateless
 public class FaqBean {
 
@@ -27,7 +18,7 @@ public class FaqBean {
     /* Mesmo parametros */
     public void create(String question, String answer) {
         try {
-            FAQ faq = new FAQ(question,answer);
+            FAQ faq = new FAQ(question, answer);
 
             em.persist(faq);
         } catch(EJBException e) {
@@ -71,14 +62,32 @@ public class FaqBean {
         }
     }
 
-    public List<FAQ> getAll() {
+    public List<FaqDTO> getAll() {
         try {
             List<FAQ> faqs = (List<FAQ>) em.createNamedQuery("getAllFAQs").getResultList();
 
-            return faqs;
+            return faqsToDTOs(faqs);
         } catch (EJBException e) {
             throw new EJBException(e.getMessage());
         }
+    }
+
+    //Build DTOs
+    FaqDTO faqToDTO(FAQ faq) {        
+        return new FaqDTO(
+                faq.getId(),
+                faq.getQuestion(),
+                faq.getAnswer()
+                
+        );
+    }
+    
+    List<FaqDTO> faqsToDTOs(List<FAQ> faqs) {
+        List<FaqDTO> dtos = new ArrayList<>();
+        for (FAQ f : faqs) {
+            dtos.add(faqToDTO(f));
+        }
+        return dtos;
     }
 
 }

@@ -1,0 +1,28 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>
+        <title>Administrator Details</title>
+    </h:head>
+    <h:body>
+
+        <h2 name="title">Details for FAQ</h2>
+        
+        <h:panelGrid columns="2">
+            <h:outputLabel for="question" value="Question: " />
+            <h:outputText id="question" value="#{healthcareProManager.currentFaq.question}"/>
+
+            <h:outputLabel for="answer" value="Answer: " />
+            <h:outputText id="answer" value="#{healthcareProManager.currentFaq.answer}"/>
+        </h:panelGrid>
+        
+        <h:form>                
+            <h:panelGrid columns="2">
+                <h:commandButton value="Back" id="BackButton" action="/healthcarePro/healthcarePro_index?faces-redirect=true" />
+            </h:panelGrid>
+        </h:form>
+    </h:body>
+</html>
+

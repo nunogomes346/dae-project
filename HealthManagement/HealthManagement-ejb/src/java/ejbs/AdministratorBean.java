@@ -168,7 +168,6 @@ public class AdministratorBean {
                 administrator.getMail());
     }
     
-    
     List<AdministratorDTO> administratorsToDTOs(List<Administrator> administrators) {
         List<AdministratorDTO> dtos = new ArrayList<>();
         for (Administrator a : administrators) {

@@ -1,22 +1,11 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package entities;
 
+import entities.MaterialGroup.GROUP;
 import java.io.Serializable;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 
-/**
- *
- * @author joaoc
- */
 @Entity
 @NamedQueries({
     @NamedQuery(name = "getAllEmergencyContacts",
@@ -25,13 +14,13 @@ import javax.persistence.NamedQuery;
 public class EmergencyContact extends Material implements Serializable {
 
     private String name;
-    private int telephoneNumber;
+    private String telephoneNumber;
     
     public EmergencyContact(){
     }
     
-    public EmergencyContact(String name, int telephoneNumber){
-        super();
+    public EmergencyContact(String name, String telephoneNumber){
+        super(GROUP.EmergencyContact);
         this.name = name;
         this.telephoneNumber = telephoneNumber;
     }
@@ -44,11 +33,11 @@ public class EmergencyContact extends Material implements Serializable {
         this.name = name;
     }
 
-    public int getTelephoneNumber() {
+    public String getTelephoneNumber() {
         return telephoneNumber;
     }
 
-    public void setTelephoneNumber(int telephoneNumber) {
+    public void setTelephoneNumber(String telephoneNumber) {
         this.telephoneNumber = telephoneNumber;
     }
     

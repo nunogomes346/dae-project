@@ -1,24 +1,14 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package ejbs;
 
-import entities.EmergencyContact;
-import entities.FAQ;
-import static entities.MaterialGroup.GROUP.Procedure;
+import dtos.ProcedureDTO;
 import entities.Procedure;
+import java.util.ArrayList;
 import java.util.List;
 import javax.ejb.EJBException;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-/**
- *
- * @author sphinx
- */
 @Stateless
 public class ProcedureBean {
 
@@ -71,13 +61,30 @@ public class ProcedureBean {
         }
     }
 
-    public List<Procedure> getAll() {
+    public List<ProcedureDTO> getAll() {
         try {
             List<Procedure> procedures = (List<Procedure>) em.createNamedQuery("getAllProcedures").getResultList();
 
-            return procedures;
+            return proceduresToDTOs(procedures);
         } catch (EJBException e) {
             throw new EJBException(e.getMessage());
         }
     }
+
+    //Build DTOs
+    ProcedureDTO procedureToDTO(Procedure procedure) {
+        return new ProcedureDTO(
+                procedure.getId(),
+                procedure.getText()
+        );
+    }
+
+    List<ProcedureDTO> proceduresToDTOs(List<Procedure> procedures) {
+        List<ProcedureDTO> dtos = new ArrayList<>();
+        for (Procedure p : procedures) {
+            dtos.add(procedureToDTO(p));
+        }
+        return dtos;
+    }
+
 }

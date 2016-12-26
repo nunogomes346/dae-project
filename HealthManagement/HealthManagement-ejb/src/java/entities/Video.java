@@ -1,22 +1,11 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package entities;
 
+import entities.MaterialGroup.GROUP;
 import java.io.Serializable;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 
-/**
- *
- * @author joaoc
- */
 @Entity
 @NamedQueries({
     @NamedQuery(name = "getAllVideos",
@@ -30,7 +19,7 @@ public class Video extends Material implements Serializable {
     }
     
     public Video(String url){
-        super();
+        super(GROUP.Video);
         this.url = url;
     }
 
