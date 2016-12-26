@@ -1,13 +1,6 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package ejbs;
 
-import dtos.AdministratorDTO;
 import dtos.EmergencyContactDTO;
-import entities.Administrator;
 import entities.EmergencyContact;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,10 +9,6 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-/**
- *
- * @author sphinx
- */
 @Stateless
 public class EmergencyContactBean {
 
@@ -82,6 +71,7 @@ public class EmergencyContactBean {
         }
     }
     
+    //Build DTOs
     EmergencyContactDTO emergencyContactToDTO(EmergencyContact emergencyContact) {
         return new EmergencyContactDTO(
                 emergencyContact.getId(),
@@ -92,8 +82,8 @@ public class EmergencyContactBean {
     
     List<EmergencyContactDTO> emergencyContactsToDTOs(List<EmergencyContact> emergencyContacts) {
         List<EmergencyContactDTO> dtos = new ArrayList<>();
-        for (EmergencyContact a : emergencyContacts) {
-            dtos.add(emergencyContactToDTO(a));
+        for (EmergencyContact ec : emergencyContacts) {
+            dtos.add(emergencyContactToDTO(ec));
         }
         return dtos;
     }

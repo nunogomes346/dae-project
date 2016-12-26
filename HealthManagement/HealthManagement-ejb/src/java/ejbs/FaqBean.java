@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package ejbs;
 
 import dtos.FaqDTO;
@@ -14,10 +9,6 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-/**
- *
- * @author sphinx
- */
 @Stateless
 public class FaqBean {
 
@@ -27,7 +18,7 @@ public class FaqBean {
     /* Mesmo parametros */
     public void create(String question, String answer) {
         try {
-            FAQ faq = new FAQ(question,answer);
+            FAQ faq = new FAQ(question, answer);
 
             em.persist(faq);
         } catch(EJBException e) {
@@ -81,12 +72,13 @@ public class FaqBean {
         }
     }
 
-    
+    //Build DTOs
     FaqDTO faqToDTO(FAQ faq) {        
         return new FaqDTO(
                 faq.getId(),
-                faq.getAnswer(),
-                faq.getQuestion()
+                faq.getQuestion(),
+                faq.getAnswer()
+                
         );
     }
     
