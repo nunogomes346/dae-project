@@ -41,8 +41,15 @@ public class ConfigBean {
             healthcareProBean.create("teddy", "propw", "Bruno Fonseca", "teddy@gmail.com");
 
             caregiverBean.create("piteu", "carepw", "Bruno Anastácio", "piteu@gmail.com");
-
-            patientBean.create("sousa", "patientpw", "João Sousa", "sousa@gmail.com");
+			caregiverBean.create("piteu2", "carepw", "Bruno Anastácio2", "piteu@gmail.com");
+            caregiverBean.create("piteu3", "carepw", "Bruno Anastácio3", "piteu@gmail.com");
+            
+            patientBean.create("João Sousa", "sousa@gmail.com");
+            patientBean.create("João Sousa1", "sousa@gmail.com");
+            patientBean.create("João Sousa2", "sousa@gmail.com");
+            patientBean.create("João Sousa3", "sousa@gmail.com");
+            patientBean.create("João Sousa4", "sousa@gmail.com");
+            patientBean.create("João Sousa5", "sousa@gmail.com");
 
             /*
                 Materials 

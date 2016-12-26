@@ -1,16 +1,18 @@
 package web;
 
 import dtos.AdministratorDTO;
+import dtos.HealthcareProDTO;
+import dtos.CaregiverDTO;
 import dtos.EmergencyContactDTO;
 import dtos.FaqDTO;
-import dtos.HealthcareProDTO;
 import dtos.ProcedureDTO;
 import dtos.TextDTO;
 import dtos.VideoDTO;
 import ejbs.AdministratorBean;
+import ejbs.HealthcareProBean;
+import ejbs.CaregiverBean;
 import ejbs.EmergencyContactBean;
 import ejbs.FaqBean;
-import ejbs.HealthcareProBean;
 import ejbs.ProcedureBean;
 import ejbs.TextBean;
 import ejbs.VideoBean;
@@ -24,17 +26,24 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.component.UIComponent;
 import javax.faces.component.UIParameter;
 import javax.faces.event.ActionEvent;
+import javax.inject.Inject;
 
 @ManagedBean
 @Named(value = "administratorManager")
 @SessionScoped
 public class AdministratorManager implements Serializable {
 
+    @Inject
+    private UserManager userManager;
+    
     @EJB
     private AdministratorBean administratorBean;
 
     @EJB
     private HealthcareProBean healthcareProBean;
+	
+	@EJB
+    private CaregiverBean caregiverBean;
 
     /* MATERIALS */
     @EJB
@@ -47,6 +56,13 @@ public class AdministratorManager implements Serializable {
     private TextBean textBean;
     @EJB
     private VideoBean videoBean;
+	
+	private AdministratorDTO newAdministrator;
+    private AdministratorDTO currentAdministrator;
+    private HealthcareProDTO newHealthcarePro;
+    private HealthcareProDTO currentHealthcarePro;
+	private CaregiverDTO newCaregiver;
+    private CaregiverDTO currentCaregiver;
 
     private EmergencyContactDTO newEmergencyContact;
     private EmergencyContactDTO currentEmergencyContact;
@@ -58,18 +74,18 @@ public class AdministratorManager implements Serializable {
     private TextDTO currentText;
     private VideoDTO newVideo;
     private VideoDTO currentVideo;
-
-    private AdministratorDTO newAdministrator;
-    private AdministratorDTO currentAdministrator;
-    private HealthcareProDTO newHealthcarePro;
-    private HealthcareProDTO currentHealthcarePro;
-
+    
+	private List<AdministratorDTO> filteredAdmins;
+    private List<HealthcareProDTO> filteredHealthcarePros;
+    private List<CaregiverDTO> filteredCaregivers;
+    
     private UIComponent component;
     private static final Logger LOGGER = Logger.getLogger("web.AdministratorManager");
 
     public AdministratorManager() {
         newAdministrator = new AdministratorDTO();
         newHealthcarePro = new HealthcareProDTO();
+        newCaregiver = new CaregiverDTO();
     }
 
     // ***************************************
@@ -82,9 +98,11 @@ public class AdministratorManager implements Serializable {
                     newAdministrator.getPassword(),
                     newAdministrator.getName(),
                     newAdministrator.getMail());
-
+            
+            setFilteredAdmins(null);
+            
             newAdministrator.reset();
-
+            
             return "admin_index?faces-redirect=true";
         } catch (Exception e) {
             LOGGER.warning("Error: problem in method createAdministrator");
@@ -111,6 +129,8 @@ public class AdministratorManager implements Serializable {
                     currentAdministrator.getName(),
                     currentAdministrator.getMail());
 
+            setFilteredAdmins(null);
+            
             return "admin_index?faces-redirect=true";
         } catch (Exception e) {
             LOGGER.warning("Error: problem in method updateAdministrator");
@@ -141,6 +161,8 @@ public class AdministratorManager implements Serializable {
                     newHealthcarePro.getName(),
                     newHealthcarePro.getMail());
 
+            setFilteredHealthcarePros(null);
+            
             newHealthcarePro.reset();
 
             return "admin_index?faces-redirect=true";
@@ -169,6 +191,8 @@ public class AdministratorManager implements Serializable {
                     currentHealthcarePro.getPassword(),
                     currentHealthcarePro.getName(),
                     currentHealthcarePro.getMail());
+            
+            setFilteredHealthcarePros(null);
 
             return "admin_index?faces-redirect=true";
         } catch (Exception e) {
@@ -187,54 +211,77 @@ public class AdministratorManager implements Serializable {
         } catch (Exception e) {
             LOGGER.warning("Error: problem in method removeHealthcarePro");
         }
-    }
+    } 
+    
+    // ***************************************
+    // ************ CAREGIVER ****************
+    // ***************************************
+    public String createCaregiver() {
+        try {
+            caregiverBean.create(
+                    newCaregiver.getUsername(),
+                    newCaregiver.getPassword(),
+                    newCaregiver.getName(),
+                    newCaregiver.getMail());
+            
+            setCurrentCaregiver(null);
 
-    // **********************************
-    // ************ GETS&SETS *******
-    // **********************************    
-    public AdministratorDTO getNewAdministrator() {
-        return newAdministrator;
-    }
+            newCaregiver.reset();
 
-    public void setNewAdministrator(AdministratorDTO newAdministrator) {
-        this.newAdministrator = newAdministrator;
-    }
+            return "admin_index?faces-redirect=true";
+        } catch (Exception e) {
+            LOGGER.warning("Error: problem in method createCaregiver");
+        }
 
-    public AdministratorDTO getCurrentAdministrator() {
-        return currentAdministrator;
+        return "admin_caregiver_create?faces-redirect=true";
     }
+    
+    public List<CaregiverDTO> getAllCaregivers() {
+        try {
+            return caregiverBean.getAll();
+        } catch (Exception e) {
+            LOGGER.warning("Error: problem in method getAllCaregivers");
+        }
 
-    public void setCurrentAdministrator(AdministratorDTO currentAdministrator) {
-        this.currentAdministrator = currentAdministrator;
+        return null;
     }
+    
+    public String updateCaregiver() {
+        try {
+            caregiverBean.update(
+                    currentCaregiver.getUsername(),
+                    currentCaregiver.getPassword(),
+                    currentCaregiver.getName(), 
+                    currentCaregiver.getMail());
+            
+            setCurrentCaregiver(null);
 
-    public HealthcareProDTO getNewHealthcarePro() {
-        return newHealthcarePro;
+            return "admin_index?faces-redirect=true";
+        } catch (Exception e) {
+            LOGGER.warning("Error: problem in method updateCaregiver");
+        }
+
+        return "admin_caregiver_update?faces-redirect=true";
     }
+    
+    public void removeCaregiver(ActionEvent event) {
+        try {
+            UIParameter param = (UIParameter) event.getComponent().findComponent("deleteCaregiverId");
+            String id = param.getValue().toString();
 
-    public void setNewHealthcarePro(HealthcareProDTO newHealthcarePro) {
-        this.newHealthcarePro = newHealthcarePro;
+            caregiverBean.remove(id);
+        } catch (Exception e) {
+            LOGGER.warning("Error: problem in method removeCaregiver");
+        }
     }
-
-    public HealthcareProDTO getCurrentHealthcarePro() {
-        return currentHealthcarePro;
+    
+    public boolean disableRemoveButton(String username) {
+        return (username.compareTo(userManager.getUsername()) == 0);
     }
-
-    public void setCurrentHealthcarePro(HealthcareProDTO currentHealthcarePro) {
-        this.currentHealthcarePro = currentHealthcarePro;
-    }
-
-    public UIComponent getComponent() {
-        return component;
-    }
-
-    public void setComponent(UIComponent component) {
-        this.component = component;
-    }
-
-    /*
-        Materials
-     */
+	
+	// ***********************************************
+    // ************ EMERGENCY CONTACT ****************
+    // ***********************************************
     public String createEmergencyContact() {
         try {
             emergencyContactBean.create(
@@ -289,7 +336,9 @@ public class AdministratorManager implements Serializable {
         }
     }
 
-    /* Faq */
+    // *********************************
+    // ************ FAQ ****************
+    // *********************************
     public String createFaq() {
         try {
             faqBean.create(
@@ -343,6 +392,9 @@ public class AdministratorManager implements Serializable {
         }
     }
 
+	// ***************************************
+    // ************ PROCEDURE ****************
+    // ***************************************
     public String procedureCreate() {
         try {
 
@@ -395,7 +447,9 @@ public class AdministratorManager implements Serializable {
         }
     }
     
-    /* Text */
+    // **********************************
+    // ************ TEXT ****************
+    // **********************************
     public String createText() {
         try {
             
@@ -449,7 +503,9 @@ public class AdministratorManager implements Serializable {
         }
     }
 
-    /* Video */
+    // ***********************************
+    // ************ VIDEO ****************
+    // ***********************************
     public String createVideo() {
         try {
      
@@ -501,6 +557,89 @@ public class AdministratorManager implements Serializable {
         } catch (Exception e) {
             LOGGER.warning("Error: problem in method removeVideo");
         }
+    }
+    
+    // *******************************************
+    // ************ GETTERS & SETTERS ************
+    // *******************************************  
+    public AdministratorDTO getNewAdministrator() {
+        return newAdministrator;
+    }
+
+    public void setNewAdministrator(AdministratorDTO newAdministrator) {
+        this.newAdministrator = newAdministrator;
+    }
+
+    public AdministratorDTO getCurrentAdministrator() {
+        return currentAdministrator;
+    }
+
+    public void setCurrentAdministrator(AdministratorDTO currentAdministrator) {
+        this.currentAdministrator = currentAdministrator;
+    }
+
+    public HealthcareProDTO getNewHealthcarePro() {
+        return newHealthcarePro;
+    }
+
+    public void setNewHealthcarePro(HealthcareProDTO newHealthcarePro) {
+        this.newHealthcarePro = newHealthcarePro;
+    }
+
+    public HealthcareProDTO getCurrentHealthcarePro() {
+        return currentHealthcarePro;
+    }
+
+    public void setCurrentHealthcarePro(HealthcareProDTO currentHealthcarePro) {
+        this.currentHealthcarePro = currentHealthcarePro;
+    }
+
+    public CaregiverDTO getNewCaregiver() {
+        return newCaregiver;
+    }
+
+    public void setNewCaregiver(CaregiverDTO newCaregiver) {
+        this.newCaregiver = newCaregiver;
+    }
+
+    public CaregiverDTO getCurrentCaregiver() {
+        return currentCaregiver;
+    }
+
+    public void setCurrentCaregiver(CaregiverDTO currentCaregiver) {
+        this.currentCaregiver = currentCaregiver;
+    }
+    
+    public List<AdministratorDTO> getFilteredAdmins() {
+        return filteredAdmins;
+    }
+        
+    public void setFilteredAdmins(List<AdministratorDTO> filteredAdmins) {    
+        this.filteredAdmins = filteredAdmins;
+    }
+
+    public List<HealthcareProDTO> getFilteredHealthcarePros() {
+        return filteredHealthcarePros;
+    }
+
+    public void setFilteredHealthcarePros(List<HealthcareProDTO> filteredHealthcarePros) {
+        this.filteredHealthcarePros = filteredHealthcarePros;
+    }
+
+    public List<CaregiverDTO> getFilteredCaregivers() {
+        return filteredCaregivers;
+    }
+
+    public void setFilteredCaregivers(List<CaregiverDTO> filteredCaregivers) {
+        this.filteredCaregivers = filteredCaregivers;
+    }
+
+    public UIComponent getComponent() {
+        return component;
+    }
+
+    public void setComponent(UIComponent component) {
+        this.component = component;
     }
 
 }
