@@ -92,6 +92,8 @@ public class CaregiverBean {
         }
     }
     
+    //public List<CaregiverDTO> getAllByCaregiver(id do caregiver) {}
+    
     public CaregiverDTO getCaregiver(String username) {
         try {
             Caregiver caregiver = em.find(Caregiver.class, username);

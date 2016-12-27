@@ -5,14 +5,23 @@
  */
 package ejbs;
 
+import dtos.AdministratorDTO;
 import dtos.VideoDTO;
+import entities.Administrator;
 import entities.Video;
 import java.util.ArrayList;
 import java.util.List;
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJBException;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
 
 /**
  *
@@ -72,6 +81,20 @@ public class VideoBean {
     }
 
     public List<VideoDTO> getAll() {
+        try {
+            List<Video> videos = (List<Video>) em.createNamedQuery("getAllVideos").getResultList();
+
+            return videosToDTOs(videos);
+        } catch (EJBException e) {
+            throw new EJBException(e.getMessage());
+        }
+    }
+
+    @GET
+    @RolesAllowed({"Caregiver"})
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Path("all")
+    public List<VideoDTO> getAllREST() {
         try {
             List<Video> videos = (List<Video>) em.createNamedQuery("getAllVideos").getResultList();
 

@@ -8,9 +8,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CaregiverDTO extends UserDTO {
 
-    
-    public CaregiverDTO() {
-    }
+    public CaregiverDTO() {}
 
     public CaregiverDTO(String username, String password, String name, String mail) {
         super(username, password, name, mail);

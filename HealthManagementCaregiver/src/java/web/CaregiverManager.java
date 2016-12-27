@@ -1,6 +1,7 @@
 package web;
 
 import dtos.AdministratorDTO;
+import dtos.CaregiverDTO;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
@@ -20,24 +21,26 @@ import javax.ws.rs.core.MediaType;
 import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
 
 @ManagedBean
-@Named(value="administratorManager")
+@Named(value="caregiverManager")
 @SessionScoped
-public class AdministratorManager implements Serializable {
+public class CaregiverManager implements Serializable {
 
     @Inject
     private UserManager userManager;
     
     private AdministratorDTO newAdministrator;
     private AdministratorDTO currentAdministrator;
+    private CaregiverDTO newCaregiver;
+    private CaregiverDTO currentCaregiver;
     private HttpAuthenticationFeature feature;
     
     private Client client;
     private final String baseUri = "http://localhost:8080/HealthManagement-war/webapi";
     private UIComponent component;
-    private static final Logger LOGGER = Logger.getLogger("web.AdministratorManager");
+    private static final Logger LOGGER = Logger.getLogger("web.CaregiverManager");
     
-    public AdministratorManager() {
-        newAdministrator = new AdministratorDTO();
+    public CaregiverManager() {
+        newCaregiver = new CaregiverDTO();
         client = ClientBuilder.newClient();        
         feature = null;
     }
@@ -49,8 +52,10 @@ public class AdministratorManager implements Serializable {
     }
     
     // ***************************************
-    // ************ ADMINISTRATOR ************
-    // ***************************************    
+    // ************ CAREGIVER ************
+    // *************************************** 
+    
+    /*
     public String createAdministratorREST() { 
         try {
             client.target(baseUri)
@@ -65,6 +70,7 @@ public class AdministratorManager implements Serializable {
         }
         return null;
     }
+    */
     
     public List<AdministratorDTO> getAllAdministratorsREST() {
         
@@ -81,6 +87,7 @@ public class AdministratorManager implements Serializable {
         return returnedAdministrators;
     }
     
+    /*
     public String updateAdministratorREST() {   
         try {
             client.target(baseUri)
@@ -98,7 +105,9 @@ public class AdministratorManager implements Serializable {
         }
         return "admin_administrator_update";
     }
+    */
     
+    /*
     public void removeAdministratorREST(ActionEvent event) {
         try {
             UIParameter param = (UIParameter) event.getComponent().findComponent("deleteAdministratorId");
@@ -113,6 +122,7 @@ public class AdministratorManager implements Serializable {
             FacesExceptionHandler.handleException(e, "Unexpected error! Try again latter!", LOGGER);
         }
     }
+    */
     
     // **********************************
     // ************ GETS&SETS *******
