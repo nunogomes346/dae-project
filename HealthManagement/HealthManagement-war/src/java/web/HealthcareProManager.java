@@ -17,6 +17,7 @@ import ejbs.TextBean;
 import ejbs.VideoBean;
 import exceptions.EntityDoesNotExistException;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 import javax.ejb.EJB;
@@ -145,6 +146,20 @@ public class HealthcareProManager implements Serializable{
         }
     }
     
+    public String rateCaregiver(){
+        try {
+            caregiverBean.rate(
+                    currentCaregiver.getUsername(),
+                    currentCaregiver.getRate());
+            
+            setFilteredCaregivers(null);
+
+            return "healthcarePro_index?faces-redirect=true";
+        } catch (Exception e) {
+            return "healthcarePro_caregiver_update?faces-redirect=true"; 
+        }
+    }   
+    
     // ***************************************
     // ************** PATIENT ****************
     // ***************************************
@@ -193,6 +208,8 @@ public class HealthcareProManager implements Serializable{
         }
         return null;
     }
+    
+    
     
     // ***********************************************
     // ************ EMERGENCY CONTACT ****************
@@ -648,5 +665,6 @@ public class HealthcareProManager implements Serializable{
     public void setComponent(UIComponent component) {
         this.component = component;
     }
+    
     
 }

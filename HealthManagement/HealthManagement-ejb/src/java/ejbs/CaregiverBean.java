@@ -1,6 +1,7 @@
 package ejbs;
 
 import dtos.CaregiverDTO;
+import dtos.PatientDTO;
 import entities.Caregiver;
 import entities.Patient;
 import exceptions.EntityAlreadyExistsException;
@@ -14,8 +15,14 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.validation.ConstraintViolationException;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
 
 @Stateless
+@Path("/caregivers")
 public class CaregiverBean {
     
     @PersistenceContext
@@ -72,6 +79,27 @@ public class CaregiverBean {
             caregiver.setName(name);
             caregiver.setMail(mail);
             
+            
+            em.merge(caregiver);
+        } catch (EntityDoesNotExistException e) {
+            throw e;
+        } catch (ConstraintViolationException e) {
+            throw new MyConstraintViolationException(Utils.getConstraintViolationMessages(e));            
+        } catch (Exception e) {
+            throw new EJBException(e.getMessage());
+        }
+    }
+    
+    public void rate(String username, String rate) 
+            throws EntityDoesNotExistException, MyConstraintViolationException {
+        try {
+            Caregiver caregiver = em.find(Caregiver.class, username);
+            if (caregiver == null) {
+                throw new EntityDoesNotExistException("There is no caregiver with that username.");
+            }
+            
+            caregiver.setRate(rate);
+            
             em.merge(caregiver);
         } catch (EntityDoesNotExistException e) {
             throw e;
@@ -92,8 +120,6 @@ public class CaregiverBean {
         }
     }
     
-    //public List<CaregiverDTO> getAllByCaregiver(id do caregiver) {}
-    
     public CaregiverDTO getCaregiver(String username) {
         try {
             Caregiver caregiver = em.find(Caregiver.class, username);
@@ -104,13 +130,36 @@ public class CaregiverBean {
         }
     }
     
+    
+    
+    @GET
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Path("{username}/patients")
+    public List<PatientDTO> getCaregiverPatientsREST(@PathParam("username") String username) throws EntityDoesNotExistException{
+        try {
+            Caregiver caregiver = em.find(Caregiver.class, username);
+            if(caregiver == null){
+                throw new EntityDoesNotExistException("There is no caregiver with that username.");
+            }            
+            
+            List<Patient> patients = (List<Patient>) caregiver.getPatients();
+            
+            return patientsToDTOs(patients);
+        } catch (EntityDoesNotExistException e) {
+            throw e;             
+        } catch (Exception e) {
+            throw new EJBException(e.getMessage());
+        }
+    }
+    
     //Build DTOs
     CaregiverDTO caregiverToDTO(Caregiver caregiver) {
         return new CaregiverDTO(
                 caregiver.getUsername(),
                 null,
                 caregiver.getName(),
-                caregiver.getMail());
+                caregiver.getMail(),
+                caregiver.getRate());
     }
     
     
@@ -120,5 +169,26 @@ public class CaregiverBean {
             dtos.add(caregiverToDTO(c));
         }
         return dtos;
+    }
+    
+    PatientDTO patientToDTO(Patient patient) {
+        return new PatientDTO(
+                patient.getId(),
+                patient.getName(),
+                patient.getMail(),
+                (patient.getCaregiver() == null) ? null : patient.getCaregiver().getUsername());
+    }
+    
+    
+    List<PatientDTO> patientsToDTOs(List<Patient> patients) {
+        List<PatientDTO> dtos = new ArrayList<>();
+        for (Patient p : patients) {
+            dtos.add(patientToDTO(p));
+        }
+        return dtos;
+    }
+
+    public void rate(int rate) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }
