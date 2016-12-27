@@ -92,7 +92,7 @@ public class PatientBean {
         }
     }
     
-        public void associatePatientToCaregiver(Long patientId, String username) 
+    public void associatePatientToCaregiver(Long patientId, String username) 
             throws EntityDoesNotExistException, CaregiverAssociatedException {
         try {
             Patient patient = em.find(Patient.class, patientId);

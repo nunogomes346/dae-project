@@ -16,10 +16,10 @@ import javax.persistence.OneToMany;
 })
 public class Caregiver extends User implements Serializable {
    
-   @OneToMany(mappedBy = "caregiver")
-   private List<Patient> patients;
+    @OneToMany(mappedBy = "caregiver")
+    private List<Patient> patients;
     
-   public Caregiver() {  
+    public Caregiver() {  
        this.patients = new LinkedList<>();
     }
     

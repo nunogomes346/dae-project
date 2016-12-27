@@ -19,6 +19,9 @@ public class ConfigBean {
     CaregiverBean caregiverBean;
     @EJB
     PatientBean patientBean;
+    
+    @EJB
+    NeedBean needBean;
 
     @EJB
     EmergencyContactBean emergencyBean;
@@ -44,6 +47,7 @@ public class ConfigBean {
             caregiverBean.create("piteu2", "carepw", "Bruno Anastácio2", "piteu@gmail.com");
             caregiverBean.create("piteu3", "carepw", "Bruno Anastácio3", "piteu@gmail.com");
             
+            // IDs -> 1 - 6
             patientBean.create("João Sousa", "sousa@gmail.com");
             patientBean.create("João Sousa1", "sousa@gmail.com");
             patientBean.create("João Sousa2", "sousa@gmail.com");
@@ -51,10 +55,20 @@ public class ConfigBean {
             patientBean.create("João Sousa4", "sousa@gmail.com");
             patientBean.create("João Sousa5", "sousa@gmail.com");
             
-
-            /*
-                Materials 
-            */
+            // NEEDS: IDs -> 7 - 9
+            needBean.create("Mudar sonda gastrica");
+            needBean.create("Dar comprimidos po colesterol");
+            needBean.create("Levar o paciente ao wc");
+            
+            needBean.associateNeedToPatient(Long.parseLong("7"), Long.parseLong("5"));
+            needBean.associateNeedToPatient(Long.parseLong("8"), Long.parseLong("5"));
+            needBean.associateNeedToPatient(Long.parseLong("9"), Long.parseLong("4"));
+            needBean.associateNeedToPatient(Long.parseLong("7"), Long.parseLong("3"));
+            needBean.associateNeedToPatient(Long.parseLong("8"), Long.parseLong("2"));
+            needBean.associateNeedToPatient(Long.parseLong("7"), Long.parseLong("2"));
+            needBean.associateNeedToPatient(Long.parseLong("9"), Long.parseLong("1"));
+            
+            // MATERIALS: IDs -> 12 - 24
             emergencyBean.create("Numero de Emergencia Nacional", "112");
             emergencyBean.create("Urgência Geral da Unidade Hospitalar de Leiria", "244 817 078");
             emergencyBean.create("Saude 24", "808 242 424");
@@ -99,6 +113,16 @@ public class ConfigBean {
             videoBean.create("https://www.youtube.com/watch?v=-vSXINtEPpE");
             videoBean.create("https://www.youtube.com/watch?v=NzV6h9K8ApQ");
             videoBean.create("https://www.youtube.com/watch?v=W3EHXiuktgM");
+            
+            needBean.associateMaterialToNeed(12, Long.parseLong("7"));
+            needBean.associateMaterialToNeed(14, Long.parseLong("8"));
+            needBean.associateMaterialToNeed(17, Long.parseLong("7"));
+            needBean.associateMaterialToNeed(22, Long.parseLong("9"));
+            needBean.associateMaterialToNeed(23, Long.parseLong("9"));
+            needBean.associateMaterialToNeed(15, Long.parseLong("9"));
+            needBean.associateMaterialToNeed(19, Long.parseLong("8"));
+            needBean.associateMaterialToNeed(20, Long.parseLong("7"));
+            needBean.associateMaterialToNeed(24, Long.parseLong("7"));
             
         } catch (EntityAlreadyExistsException | MyConstraintViolationException e) {
             System.err.println("Error: " + e.getMessage());

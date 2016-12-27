@@ -1,11 +1,14 @@
 package entities;
 
 import java.io.Serializable;
+import java.util.LinkedList;
+import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -31,13 +34,19 @@ public class Patient implements Serializable {
     @ManyToOne
     @JoinColumn(name = "CAREGIVER_USERNAME")
     private Caregiver caregiver;
+    
+    @ManyToMany(mappedBy = "patients")
+    private List<Need> needs;
 
-    public Patient() { }
+    public Patient() {
+        this.needs = new LinkedList<Need>();
+    }
     
     public Patient(String name, String mail) {
         this.name = name;
         this.mail = mail;
         this.caregiver = null;
+        this.needs = new LinkedList<Need>();
     }
     
     public Long getId() {
@@ -70,5 +79,21 @@ public class Patient implements Serializable {
 
     public void setCaregiver(Caregiver caregiver) {
         this.caregiver = caregiver;
+    }
+
+    public List<Need> getNeeds() {
+        return needs;
+    }
+
+    public void setNeeds(List<Need> needs) {
+        this.needs = needs;
+    }
+    
+    public void addNeed(Need need) {
+        this.needs.add(need);
+    }
+    
+    public void removeNeed(Need need) {
+        this.needs.remove(need);
     }
 }
