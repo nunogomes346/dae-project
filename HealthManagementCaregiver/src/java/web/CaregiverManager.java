@@ -1,6 +1,7 @@
 package web;
 
-import dtos.AdministratorDTO;
+import dtos.CaregiverDTO;
+import dtos.PatientDTO;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
@@ -20,24 +21,26 @@ import javax.ws.rs.core.MediaType;
 import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
 
 @ManagedBean
-@Named(value="administratorManager")
+@Named(value="caregiverManager")
 @SessionScoped
-public class AdministratorManager implements Serializable {
+public class CaregiverManager implements Serializable {
 
     @Inject
     private UserManager userManager;
     
-    private AdministratorDTO newAdministrator;
-    private AdministratorDTO currentAdministrator;
+ 
+    private PatientDTO currentPatient;
+    private CaregiverDTO newCaregiver;
+    private CaregiverDTO currentCaregiver;
     private HttpAuthenticationFeature feature;
     
     private Client client;
     private final String baseUri = "http://localhost:8080/HealthManagement-war/webapi";
     private UIComponent component;
-    private static final Logger LOGGER = Logger.getLogger("web.AdministratorManager");
+    private static final Logger LOGGER = Logger.getLogger("web.CaregiverManager");
     
-    public AdministratorManager() {
-        newAdministrator = new AdministratorDTO();
+    public CaregiverManager() {
+        newCaregiver = new CaregiverDTO();
         client = ClientBuilder.newClient();        
         feature = null;
     }
@@ -49,8 +52,10 @@ public class AdministratorManager implements Serializable {
     }
     
     // ***************************************
-    // ************ ADMINISTRATOR ************
-    // ***************************************    
+    // ************ CAREGIVER ************
+    // *************************************** 
+    
+    /*
     public String createAdministratorREST() { 
         try {
             client.target(baseUri)
@@ -65,22 +70,29 @@ public class AdministratorManager implements Serializable {
         }
         return null;
     }
+    */
     
-    public List<AdministratorDTO> getAllAdministratorsREST() {
+    public List<PatientDTO> getCaregiversPatientsREST() {
         
         
-        List<AdministratorDTO> returnedAdministrators = null;
+        List<PatientDTO> returnedPatients = null;
         try {
-            returnedAdministrators = client.target(baseUri)
-                .path("/administrators/all")
+            returnedPatients = client.target(baseUri)
+                .path("/caregivers/{username}/patients")
+                .resolveTemplate("username", userManager.getUsername())
                 .request(MediaType.APPLICATION_XML)
-                .get(new GenericType<List<AdministratorDTO>>() {});
+                .get(new GenericType<List<PatientDTO>>() {});
         } catch (Exception e){
             FacesExceptionHandler.handleException(e, "Unexpected error! Try again latter!", LOGGER);
         }
-        return returnedAdministrators;
+        return returnedPatients;
     }
     
+    public void patientMaterials(){
+        
+    }
+    
+    /*
     public String updateAdministratorREST() {   
         try {
             client.target(baseUri)
@@ -98,7 +110,9 @@ public class AdministratorManager implements Serializable {
         }
         return "admin_administrator_update";
     }
+    */
     
+    /*
     public void removeAdministratorREST(ActionEvent event) {
         try {
             UIParameter param = (UIParameter) event.getComponent().findComponent("deleteAdministratorId");
@@ -113,6 +127,7 @@ public class AdministratorManager implements Serializable {
             FacesExceptionHandler.handleException(e, "Unexpected error! Try again latter!", LOGGER);
         }
     }
+    */
     
     // **********************************
     // ************ GETS&SETS *******
@@ -124,22 +139,32 @@ public class AdministratorManager implements Serializable {
     public void setUserManager(UserManager userManager) {
         this.userManager = userManager;
     }
-    
-    public AdministratorDTO getNewAdministrator() {
-        return newAdministrator;
+
+    public PatientDTO getCurrentPatient() {
+        return currentPatient;
     }
 
-    public void setNewAdministrator(AdministratorDTO newAdministrator) {
-        this.newAdministrator = newAdministrator;
-    }
-    
-    public AdministratorDTO getCurrentAdministrator() {
-        return currentAdministrator;
+    public void setCurrentPatient(PatientDTO currentPatient) {
+        this.currentPatient = currentPatient;
     }
 
-    public void setCurrentAdministrator(AdministratorDTO currentAdministrator) {
-        this.currentAdministrator = currentAdministrator;
+    public CaregiverDTO getNewCaregiver() {
+        return newCaregiver;
     }
+
+    public void setNewCaregiver(CaregiverDTO newCaregiver) {
+        this.newCaregiver = newCaregiver;
+    }
+
+    public CaregiverDTO getCurrentCaregiver() {
+        return currentCaregiver;
+    }
+
+    public void setCurrentCaregiver(CaregiverDTO currentCaregiver) {
+        this.currentCaregiver = currentCaregiver;
+    }
+    
+    
 
     public UIComponent getComponent() {
         return component;

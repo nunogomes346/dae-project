@@ -62,8 +62,8 @@
                     <h:outputText value="#{caregiver.mail}" />
                 </p:column>
                 
-                <p:column headerText="Actions" style="width: 370px">
-                    <p:panelGrid columns="4" styleClass="noBorders">
+                <p:column headerText="Actions" style="width: 450px">
+                    <p:panelGrid columns="5" styleClass="noBorders">
                         <p:commandButton value="Details" id="details" action="healthcarePro_caregiver_details?faces-redirect=true"
                                          oncomplete="PF('caregiversTable').clearFilters()">
                             <f:setPropertyActionListener target="#{healthcareProManager.currentCaregiver}" value="#{caregiver}" />
@@ -83,6 +83,11 @@
                                        actionListener="#{healthcareProManager.removeCaregiver}"
                                        update="caregiversTable" oncomplete="PF('caregiversTable').clearFilters()">
                             <f:param name="deleteCaregiverId" id="deleteCaregiverId" value="#{caregiver.username}" />
+                        </p:commandButton>
+                        
+                        <p:commandButton value="Rate" id="rate" action="healthcarePro_caregiver_rate?faces-redirect=true"
+                                         oncomplete="PF('caregiversTable').clearFilters()">
+                            <f:setPropertyActionListener target="#{healthcareProManager.currentCaregiver}" value="#{caregiver}" />
                         </p:commandButton>
                     </p:panelGrid>
                 </p:column>

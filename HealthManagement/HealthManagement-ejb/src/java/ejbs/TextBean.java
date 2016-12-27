@@ -1,13 +1,20 @@
 package ejbs;
 
 import dtos.TextDTO;
+import dtos.VideoDTO;
 import entities.Text;
+import entities.Video;
 import java.util.ArrayList;
 import java.util.List;
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJBException;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
 
 @Stateless
 public class TextBean {
@@ -67,6 +74,20 @@ public class TextBean {
 
             return textsToDTOs(texts);
         } catch (EJBException e) {
+            throw new EJBException(e.getMessage());
+        }
+    }
+    
+    @GET
+    @RolesAllowed({"Caregiver"})
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Path("all")
+    public List<TextDTO> getAllREST() {
+        try {
+            List<Text> texts = (List<Text>) em.createNamedQuery("getAllTexts").getResultList();
+            
+            return textsToDTOs(texts);
+        } catch(EJBException e) {
             throw new EJBException(e.getMessage());
         }
     }

@@ -16,8 +16,11 @@ import javax.persistence.OneToMany;
 })
 public class Caregiver extends User implements Serializable {
    
+
     @OneToMany(mappedBy = "caregiver")
     private List<Patient> patients;
+   
+    private String rate;
     
     public Caregiver() {  
        this.patients = new LinkedList<>();
@@ -26,6 +29,7 @@ public class Caregiver extends User implements Serializable {
     public Caregiver(String username, String password, String name, String mail) {
         super(username, password, name, mail, GROUP.Caregiver);
         this.patients = new LinkedList<>();
+        this.rate = "No rate";
     }
 
     public List<Patient> getPatients() {
@@ -43,4 +47,14 @@ public class Caregiver extends User implements Serializable {
     public void removePatient(Patient p){
         this.patients.remove(p);
     }
+
+    public String getRate() {
+        return rate;
+    }
+
+    public void setRate(String rate) {
+        this.rate = rate;
+    }
+    
+    
 }
