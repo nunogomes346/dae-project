@@ -4,6 +4,7 @@ import static com.sun.xml.ws.security.addressing.impl.policy.Constants.logger;
 import dtos.CaregiverDTO;
 import dtos.EmergencyContactDTO;
 import dtos.FaqDTO;
+import dtos.NeedDTO;
 import dtos.PatientDTO;
 import dtos.TutorialDTO;
 import dtos.TextDTO;
@@ -70,6 +71,9 @@ public class HealthcareProManager implements Serializable{
     private List<TutorialDTO> filteredTutorials;
     private List<TextDTO> filteredTexts;
     private List<VideoDTO> filteredVideos;
+    
+    private Long needId;
+    private int materialId;
     
     private UIComponent component;
     private static final Logger LOGGER = Logger.getLogger("web.HealthcareProManager");
@@ -145,6 +149,17 @@ public class HealthcareProManager implements Serializable{
         }
     }
     
+    public List<NeedDTO> getCaregiverPatientsNeeds() {
+        try {
+            return caregiverBean.getCaregiverPatientsNeeds(currentCaregiver.getUsername());
+        } catch (EntityDoesNotExistException e) {
+            FacesExceptionHandler.handleException(e, e.getMessage(), logger);
+        } catch (Exception e) {
+            FacesExceptionHandler.handleException(e, "Unexpected error! Try again latter!", logger);
+        }
+        return null;
+    }
+    
     public String rateCaregiver(){
         try {
             caregiverBean.rate(
@@ -208,7 +223,15 @@ public class HealthcareProManager implements Serializable{
         return null;
     }
     
-    
+    public void associateMaterial() {
+        try {
+            caregiverBean.associateMaterial(currentCaregiver.getUsername(), materialId, needId);
+        } catch (EntityDoesNotExistException e) {
+            FacesExceptionHandler.handleException(e, e.getMessage(), logger);
+        } catch (Exception e) {
+            FacesExceptionHandler.handleException(e, "Unexpected error! Try again latter!", logger);
+        }
+    }
     
     // ***********************************************
     // ************ EMERGENCY CONTACT ****************
@@ -331,9 +354,9 @@ public class HealthcareProManager implements Serializable{
         }
     }
 
-    // ***************************************
-    // ************ PROCEDURE ****************
-    // ***************************************
+    // **************************************
+    // ************ TUTORIAL ****************
+    // **************************************
     public String createTutorial() {
         try {
 
@@ -664,6 +687,20 @@ public class HealthcareProManager implements Serializable{
     public void setComponent(UIComponent component) {
         this.component = component;
     }
-    
-    
+
+    public Long getNeedId() {
+        return needId;
+    }
+
+    public void setNeedId(Long needId) {
+        this.needId = needId;
+    }
+
+    public int getMaterialId() {
+        return materialId;
+    }
+
+    public void setMaterialId(int materialId) {
+        this.materialId = materialId;
+    }
 }

@@ -1,8 +1,11 @@
 package ejbs;
 
 import dtos.CaregiverDTO;
+import dtos.NeedDTO;
 import dtos.PatientDTO;
 import entities.Caregiver;
+import entities.Material;
+import entities.Need;
 import entities.Patient;
 import exceptions.EntityAlreadyExistsException;
 import exceptions.EntityDoesNotExistException;
@@ -110,6 +113,66 @@ public class CaregiverBean {
         }
     }
     
+    public List<NeedDTO> getCaregiverPatientsNeeds(String username)
+            throws EntityDoesNotExistException, MyConstraintViolationException {
+        try {
+            List<Need> caregiverPatientsNeeds = new ArrayList<Need>();
+            
+            Caregiver caregiver = em.find(Caregiver.class, username);
+            if (caregiver == null) {
+                throw new EntityDoesNotExistException("There is no caregiver with that username.");
+            }
+            
+            for (Patient patient : caregiver.getPatients()) {
+                for (Need need : patient.getNeeds()) {
+                    if(!caregiverPatientsNeeds.contains(need)) {
+                        caregiverPatientsNeeds.add(need);
+                    }
+                }
+            }
+            
+            return needsToDTOs(caregiverPatientsNeeds); 
+        } catch (EntityDoesNotExistException e) {
+            throw e;
+        } catch (ConstraintViolationException e) {
+            throw new MyConstraintViolationException(Utils.getConstraintViolationMessages(e));            
+        } catch(EJBException e) {
+            throw new EJBException(e.getMessage());
+        }
+    }
+    
+    public void associateMaterial(String username, int materialId, Long needId)
+            throws EntityDoesNotExistException, MyConstraintViolationException {
+        try {
+            Caregiver caregiver = em.find(Caregiver.class, username);
+            if (caregiver == null) {
+                throw new EntityDoesNotExistException("There is no caregiver with that username.");
+            }
+            
+            Material material = em.find(Material.class, materialId);
+            if (material == null) {
+                throw new EntityDoesNotExistException("There is no material with that id.");
+            }
+            
+            Need need = em.find(Need.class, needId);
+            if (need == null) {
+                throw new EntityDoesNotExistException("There is no need with that id.");
+            }
+            
+            caregiver.addMaterial(material);
+            material.addCaregiver(caregiver);
+            
+            material.addNeed(need);
+            need.addMaterial(material);
+        } catch (EntityDoesNotExistException e) {
+            throw e;
+        } catch (ConstraintViolationException e) {
+            throw new MyConstraintViolationException(Utils.getConstraintViolationMessages(e));            
+        } catch(EJBException e) {
+            throw new EJBException(e.getMessage());
+        }
+    }
+    
     public List<CaregiverDTO> getAll() {
         try {
             List<Caregiver> caregivers = (List<Caregiver>) em.createNamedQuery("getAllCaregivers").getResultList();
@@ -162,7 +225,6 @@ public class CaregiverBean {
                 caregiver.getRate());
     }
     
-    
     List<CaregiverDTO> caregiversToDTOs(List<Caregiver> caregivers) {
         List<CaregiverDTO> dtos = new ArrayList<>();
         for (Caregiver c : caregivers) {
@@ -179,7 +241,6 @@ public class CaregiverBean {
                 (patient.getCaregiver() == null) ? null : patient.getCaregiver().getUsername());
     }
     
-    
     List<PatientDTO> patientsToDTOs(List<Patient> patients) {
         List<PatientDTO> dtos = new ArrayList<>();
         for (Patient p : patients) {
@@ -187,8 +248,18 @@ public class CaregiverBean {
         }
         return dtos;
     }
-
-    public void rate(int rate) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    
+    NeedDTO needToDTO(Need need) {
+        return new NeedDTO(
+                need.getId(),
+                need.getDescription());
+    }
+    
+    List<NeedDTO> needsToDTOs(List<Need> needs) {
+        List<NeedDTO> dtos = new ArrayList<>();
+        for (Need n : needs) {
+            dtos.add(needToDTO(n));
+        }
+        return dtos;
     }
 }

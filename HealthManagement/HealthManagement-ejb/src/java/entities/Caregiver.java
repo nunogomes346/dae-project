@@ -5,6 +5,9 @@ import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
@@ -16,19 +19,26 @@ import javax.persistence.OneToMany;
 })
 public class Caregiver extends User implements Serializable {
    
-
     @OneToMany(mappedBy = "caregiver")
     private List<Patient> patients;
    
+    @ManyToMany
+    @JoinTable(name = "CAREGIVERS_MATERIALS", 
+            joinColumns = @JoinColumn(name = "CAREGIVER_USERNAME", referencedColumnName = "USERNAME"),
+            inverseJoinColumns = @JoinColumn(name = "MATERIAL_ID", referencedColumnName = "ID"))
+    private List<Material> materials;
+    
     private String rate;
     
     public Caregiver() {  
-       this.patients = new LinkedList<>();
+       this.patients = new LinkedList<Patient>();
+       this.materials = new LinkedList<Material>();
     }
     
     public Caregiver(String username, String password, String name, String mail) {
         super(username, password, name, mail, GROUP.Caregiver);
-        this.patients = new LinkedList<>();
+        this.patients = new LinkedList<Patient>();
+        this.materials = new LinkedList<Material>();
         this.rate = "No rate";
     }
 
@@ -46,6 +56,22 @@ public class Caregiver extends User implements Serializable {
     
     public void removePatient(Patient p){
         this.patients.remove(p);
+    }
+
+    public List<Material> getMaterials() {
+        return materials;
+    }
+
+    public void setMaterials(List<Material> materials) {
+        this.materials = materials;
+    }
+    
+    public void addMaterial(Material material){
+        this.materials.add(material);
+    }
+    
+    public void removeMaterial(Material material){
+        this.materials.remove(material);
     }
 
     public String getRate() {

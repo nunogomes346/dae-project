@@ -28,13 +28,18 @@ public class Material implements Serializable {
     @ManyToMany(mappedBy = "materials")
     private List<Need> needs;
     
+    @ManyToMany(mappedBy = "materials")
+    private List<Caregiver> caregivers;
+    
     public Material(){
         this.needs = new LinkedList<Need>();
+        this.caregivers = new LinkedList<Caregiver>();
     }
     
     public Material(GROUP group){
         this.group = new MaterialGroup(group, this);
         this.needs = new LinkedList<Need>();
+        this.caregivers = new LinkedList<Caregiver>();
     }
 
     public int getId() {
@@ -59,5 +64,21 @@ public class Material implements Serializable {
     
     public void removeNeed(Need need) {
         this.needs.remove(need);
+    }
+
+    public List<Caregiver> getCaregivers() {
+        return caregivers;
+    }
+
+    public void setCaregivers(List<Caregiver> caregivers) {
+        this.caregivers = caregivers;
+    }
+    
+    public void addCaregiver(Caregiver caregiver) {
+        this.caregivers.add(caregiver);
+    }
+    
+    public void removeCaregiver(Caregiver caregiver) {
+        this.caregivers.remove(caregiver);
     }
 }
