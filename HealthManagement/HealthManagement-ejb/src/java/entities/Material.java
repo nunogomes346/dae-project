@@ -11,6 +11,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
@@ -32,10 +33,14 @@ public class Material implements Serializable {
     
     @ManyToMany(mappedBy = "materials")
     private List<Caregiver> caregivers;
+
+    @OneToMany(mappedBy = "material")
+    private List<RegisteredProcedure> registeredProcedures;
     
     public Material(){
         this.needs = new LinkedList<Need>();
         this.caregivers = new LinkedList<Caregiver>();
+        this.registeredProcedures = new LinkedList<RegisteredProcedure>();
     }
     
     public Material(String description, GROUP group){
@@ -43,6 +48,7 @@ public class Material implements Serializable {
         this.group = new MaterialGroup(group, this);
         this.needs = new LinkedList<Need>();
         this.caregivers = new LinkedList<Caregiver>();
+        this.registeredProcedures = new LinkedList<RegisteredProcedure>();
     }
 
     public int getId() {

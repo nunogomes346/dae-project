@@ -15,12 +15,15 @@ import javax.persistence.OneToMany;
 @Entity
 @NamedQueries({
     @NamedQuery(name = "getAllCaregivers",
-    query = "SELECT c FROM Caregiver c ORDER BY c.name")
+            query = "SELECT c FROM Caregiver c ORDER BY c.name")
 })
 public class Caregiver extends User implements Serializable {
    
     @OneToMany(mappedBy = "caregiver")
     private List<Patient> patients;
+
+    @OneToMany(mappedBy = "registeredProcedure")
+    private List<RegisteredProcedure> registeredProcedures;
    
     @ManyToMany
     @JoinTable(name = "CAREGIVERS_MATERIALS", 
@@ -33,12 +36,14 @@ public class Caregiver extends User implements Serializable {
     public Caregiver() {  
        this.patients = new LinkedList<Patient>();
        this.materials = new LinkedList<Material>();
+       this.registeredProcedures = new LinkedList<>();
     }
     
     public Caregiver(String username, String password, String name, String mail) {
         super(username, password, name, mail, GROUP.Caregiver);
         this.patients = new LinkedList<Patient>();
         this.materials = new LinkedList<Material>();
+        this.registeredProcedures = new LinkedList<>();
         this.rate = "No rate";
     }
 
@@ -49,12 +54,12 @@ public class Caregiver extends User implements Serializable {
     public void setPatients(List<Patient> patients) {
         this.patients = patients;
     }
-    
-    public void addPatient(Patient p){
+
+    public void addPatient(Patient p) {
         this.patients.add(p);
     }
-    
-    public void removePatient(Patient p){
+
+    public void removePatient(Patient p) {
         this.patients.remove(p);
     }
 
@@ -81,6 +86,20 @@ public class Caregiver extends User implements Serializable {
     public void setRate(String rate) {
         this.rate = rate;
     }
-    
-    
+
+    public List<RegisteredProcedure> getRegisteredProcedures() {
+        return registeredProcedures;
+    }
+
+    public void setRegisteredProcedures(List<RegisteredProcedure> registeredProcedures) {
+        this.registeredProcedures = registeredProcedures;
+    }
+
+    public void addRegisteredProcedures(RegisteredProcedure r) {
+        this.registeredProcedures.add(r);
+    }
+
+    public void removeRegisteredProcedure (RegisteredProcedure r) {
+        this.registeredProcedures.remove(r);
+    }
 }
