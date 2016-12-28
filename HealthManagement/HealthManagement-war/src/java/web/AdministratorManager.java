@@ -5,7 +5,7 @@ import dtos.HealthcareProDTO;
 import dtos.CaregiverDTO;
 import dtos.EmergencyContactDTO;
 import dtos.FaqDTO;
-import dtos.ProcedureDTO;
+import dtos.TutorialDTO;
 import dtos.TextDTO;
 import dtos.VideoDTO;
 import ejbs.AdministratorBean;
@@ -13,7 +13,7 @@ import ejbs.HealthcareProBean;
 import ejbs.CaregiverBean;
 import ejbs.EmergencyContactBean;
 import ejbs.FaqBean;
-import ejbs.ProcedureBean;
+import ejbs.TutorialBean;
 import ejbs.TextBean;
 import ejbs.VideoBean;
 import javax.inject.Named;
@@ -51,7 +51,7 @@ public class AdministratorManager implements Serializable {
     @EJB
     private FaqBean faqBean;
     @EJB
-    private ProcedureBean procedureBean;
+    private TutorialBean tutorialBean;
     @EJB
     private TextBean textBean;
     @EJB
@@ -68,8 +68,8 @@ public class AdministratorManager implements Serializable {
     private EmergencyContactDTO currentEmergencyContact;
     private FaqDTO newFaq;
     private FaqDTO currentFaq;
-    private ProcedureDTO newProcedure;
-    private ProcedureDTO currentProcedure;
+    private TutorialDTO newTutorial;
+    private TutorialDTO currentTutorial;
     private TextDTO newText;
     private TextDTO currentText;
     private VideoDTO newVideo;
@@ -80,7 +80,7 @@ public class AdministratorManager implements Serializable {
     private List<CaregiverDTO> filteredCaregivers;
     private List<EmergencyContactDTO> filteredEmergencyContacts;
     private List<FaqDTO> filteredFaqs;
-    private List<ProcedureDTO> filteredProcedures;
+    private List<TutorialDTO> filteredTutorials;
     private List<TextDTO> filteredTexts;
     private List<VideoDTO> filteredVideos;
     
@@ -93,7 +93,7 @@ public class AdministratorManager implements Serializable {
         newCaregiver = new CaregiverDTO();
         newEmergencyContact = new EmergencyContactDTO();
         newFaq = new FaqDTO();
-        newProcedure = new ProcedureDTO();
+        newTutorial = new TutorialDTO();
         newText = new TextDTO();
         newVideo = new VideoDTO();
     }
@@ -413,59 +413,59 @@ public class AdministratorManager implements Serializable {
     // ***************************************
     // ************ PROCEDURE ****************
     // ***************************************
-    public String createProcedure() {
+    public String createTutorial() {
         try {
 
-            procedureBean.create(newProcedure.getText());
+            tutorialBean.create(newTutorial.getText());
 
-            setFilteredProcedures(null);
+            setFilteredTutorials(null);
             
-            newProcedure.reset();
+            newTutorial.reset();
 
             return "admin_index?faces-redirect=true";
         } catch (Exception e) {
-            LOGGER.warning("Error: problem in method createProcedure");
+            LOGGER.warning("Error: problem in method createTutorial");
         }
 
-        return "admin_procedures_create?faces-redirect=true";
+        return "admin_tutorials_create?faces-redirect=true";
     }
 
-    public List<ProcedureDTO> getAllProcedures() {
+    public List<TutorialDTO> getAllTutorials() {
         try {
-            return procedureBean.getAll();
+            return tutorialBean.getAll();
         } catch (Exception e) {
-            LOGGER.warning("Error: problem in method getAllProcedures");
+            LOGGER.warning("Error: problem in method getAllTutorials");
         }
 
         return null;
     }
 
-    public String updateProcedure() {
+    public String updateTutorial() {
         try {
 
-            procedureBean.update(
-                    currentProcedure.getId(),
-                    currentProcedure.getText()
+            tutorialBean.update(
+                    currentTutorial.getId(),
+                    currentTutorial.getText()
             );
             
-            setFilteredProcedures(null);
+            setFilteredTutorials(null);
 
             return "admin_index?faces-redirect=true";
         } catch (Exception e) {
-            LOGGER.warning("Error: problem in method updateProcedure");
+            LOGGER.warning("Error: problem in method updateTutorial");
         }
 
-        return "admin_procedures_update?faces-redirect=true";
+        return "admin_tutorial_update?faces-redirect=true";
     }
 
-    public void removeProcedure(ActionEvent event) {
+    public void removeTutorial(ActionEvent event) {
         try {
-            UIParameter param = (UIParameter) event.getComponent().findComponent("deleteProcedureId");
+            UIParameter param = (UIParameter) event.getComponent().findComponent("deleteTutorialId");
             int id = Integer.parseInt(param.getValue().toString());
 
-            procedureBean.remove(id);
+            tutorialBean.remove(id);
         } catch (Exception e) {
-            LOGGER.warning("Error: problem in method removeProcedure");
+            LOGGER.warning("Error: problem in method removeTutorial");
         }
     }
     
@@ -672,20 +672,20 @@ public class AdministratorManager implements Serializable {
         this.currentFaq = currentFaq;
     }
 
-    public ProcedureDTO getNewProcedure() {
-        return newProcedure;
+    public TutorialDTO getNewTutorial() {
+        return newTutorial;
     }
 
-    public void setNewProcedure(ProcedureDTO newProcedure) {
-        this.newProcedure = newProcedure;
+    public void setNewTutorial(TutorialDTO newTutorial) {
+        this.newTutorial = newTutorial;
     }
 
-    public ProcedureDTO getCurrentProcedure() {
-        return currentProcedure;
+    public TutorialDTO getCurrentTutorial() {
+        return currentTutorial;
     }
 
-    public void setCurrentProcedure(ProcedureDTO currentProcedure) {
-        this.currentProcedure = currentProcedure;
+    public void setCurrentTutorial(TutorialDTO currentTutorial) {
+        this.currentTutorial = currentTutorial;
     }
 
     public TextDTO getNewText() {
@@ -760,12 +760,12 @@ public class AdministratorManager implements Serializable {
         this.filteredFaqs = filteredFaqs;
     }
 
-    public List<ProcedureDTO> getFilteredProcedures() {
-        return filteredProcedures;
+    public List<TutorialDTO> getFilteredTutorials() {
+        return filteredTutorials;
     }
 
-    public void setFilteredProcedures(List<ProcedureDTO> filteredProcedures) {
-        this.filteredProcedures = filteredProcedures;
+    public void setFilteredTutorials(List<TutorialDTO> filteredTutorials) {
+        this.filteredTutorials = filteredTutorials;
     }
 
     public List<TextDTO> getFilteredTexts() {

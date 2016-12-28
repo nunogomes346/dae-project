@@ -15,7 +15,7 @@ import javax.persistence.Table;
 public class MaterialGroup implements Serializable {
     
     public enum GROUP {
-        Faq, Text, Video, Procedure, EmergencyContact
+        Faq, Text, Video, Tutorial, EmergencyContact
     }
     
     @Id

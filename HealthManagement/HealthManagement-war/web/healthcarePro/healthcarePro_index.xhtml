@@ -218,16 +218,16 @@
         
         <br />
         
-        <h2>View All Procedures</h2>
+        <h2>View All Tutorials</h2>
         <h:form>
             <p:dataTable
-                id="proceduresTable"
-                var="procedure"
-                summary="Table of procedures"
-                value="#{healthcareProManager.allProcedures}"
-                widgetVar="proceduresTable"
-                emptyMessage="No procedures found with given criteria" 
-                filteredValue="#{healthcareProManager.filteredProcedures}"
+                id="tutorialsTable"
+                var="tutorial"
+                summary="Table of tutorials"
+                value="#{healthcareProManager.allTutorials}"
+                widgetVar="tutorialsTable"
+                emptyMessage="No tutorials found with given criteria" 
+                filteredValue="#{healthcareProManager.filteredTutorials}"
                 rows="10"
                 paginator="true"
                 paginatorPosition="bottom"
@@ -236,36 +236,36 @@
                 style="margin-bottom:40px">
                 
                 <f:facet name="header">
-                    <p:commandLink value="Create Procedure" 
-                                   action="healthcarePro_procedure_create?faces-redirect=true" style="float: left;"
-                                   update="proceduresTable" oncomplete="PF('proceduresTable').clearFilters()"/>
+                    <p:commandLink value="Create Tutorial" 
+                                   action="healthcarePro_tutorial_create?faces-redirect=true" style="float: left;"
+                                   update="tutorialsTable" oncomplete="PF('tutorialsTable').clearFilters()"/>
                     
                     <p:outputPanel style="text-align:right;">
                         <h:outputText value="Search all fields:" />
-                        <p:inputText id="globalFilter" onkeyup="PF('proceduresTable').filter()" style="width:150px" placeholder="Enter keyword"/>
+                        <p:inputText id="globalFilter" onkeyup="PF('tutorialsTable').filter()" style="width:150px" placeholder="Enter keyword"/>
                     </p:outputPanel>
                 </f:facet>
                 
-                <p:column filterBy="#{procedure.text}" headerText="Text" filterMatchMode="contains">
-                    <h:outputText value="#{procedure.text}" />
+                <p:column filterBy="#{tutorial.text}" headerText="Text" filterMatchMode="contains">
+                    <h:outputText value="#{tutorial.text}" />
                 </p:column>
                 
                 <p:column headerText="Actions">
                     <p:panelGrid columns="3" styleClass="noBorders">
-                        <p:commandButton value="Details" id="details" action="healthcarePro_procedure_details?faces-redirect=true"
-                                         oncomplete="PF('proceduresTable').clearFilters()">
-                            <f:setPropertyActionListener target="#{healthcareProManager.currentProcedure}" value="#{procedure}" />
+                        <p:commandButton value="Details" id="details" action="healthcarePro_tutorial_details?faces-redirect=true"
+                                         oncomplete="PF('tutorialsTable').clearFilters()">
+                            <f:setPropertyActionListener target="#{healthcareProManager.currentTutorial}" value="#{tutorial}" />
                         </p:commandButton>
 
-                        <p:commandButton value="Update" id="update" action="healthcarePro_procedure_update?faces-redirect=true"
-                                         oncomplete="PF('proceduresTable').clearFilters()">
-                            <f:setPropertyActionListener target="#{healthcareProManager.currentProcedure}" value="#{procedure}" />
+                        <p:commandButton value="Update" id="update" action="healthcarePro_tutorial_update?faces-redirect=true"
+                                         oncomplete="PF('tutorialsTable').clearFilters()">
+                            <f:setPropertyActionListener target="#{healthcareProManager.currentTutorial}" value="#{tutorial}" />
                         </p:commandButton>
 
                         <p:commandButton value="Remove" id="remove"
-                                         actionListener="#{healthcareProManager.removeProcedure}"
-                                         update="proceduresTable" oncomplete="PF('proceduresTable').clearFilters()">
-                            <f:param name="deleteProcedureId" id="deleteProcedureId" value="#{procedure.id}" />
+                                         actionListener="#{healthcareProManager.removeTutorial}"
+                                         update="tutorialsTable" oncomplete="PF('tutorialsTable').clearFilters()">
+                            <f:param name="deleteTutorialId" id="deleteTutorialId" value="#{tutorial.id}" />
                         </p:commandButton>
                     </p:panelGrid>
                 </p:column>

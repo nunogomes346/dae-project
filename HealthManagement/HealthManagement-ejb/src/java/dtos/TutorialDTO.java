@@ -4,15 +4,15 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
-@XmlRootElement(name = "Procedure")
+@XmlRootElement(name = "Tutorial")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ProcedureDTO extends MaterialDTO{
+public class TutorialDTO extends MaterialDTO{
     
     private String text;
 
-    public ProcedureDTO() { }
+    public TutorialDTO() { }
     
-    public ProcedureDTO(int id, String text) {
+    public TutorialDTO(int id, String text) {
         super(id);
         this.text = text;
     }

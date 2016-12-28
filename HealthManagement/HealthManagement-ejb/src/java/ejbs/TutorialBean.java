@@ -1,9 +1,7 @@
 package ejbs;
 
-import dtos.ProcedureDTO;
-import dtos.VideoDTO;
-import entities.Procedure;
-import entities.Video;
+import dtos.TutorialDTO;
+import entities.Tutorial;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.security.RolesAllowed;
@@ -17,7 +15,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 @Stateless
-public class ProcedureBean {
+public class TutorialBean {
 
     @PersistenceContext
     EntityManager em;
@@ -25,9 +23,9 @@ public class ProcedureBean {
     /* Mesmo parametros */
     public void create(String text) {
         try {
-            Procedure procedure = new Procedure(text);
+            Tutorial tutorial = new Tutorial(text);
 
-            em.persist(procedure);
+            em.persist(tutorial);
         } catch (EJBException e) {
             throw new EJBException(e.getMessage());
         }
@@ -35,24 +33,24 @@ public class ProcedureBean {
 
     public void update(int id, String text) {
         try {
-            Procedure procedure = em.find(Procedure.class, id);
-            if (procedure == null) {
+            Tutorial tutorial = em.find(Tutorial.class, id);
+            if (tutorial == null) {
                 return;
             }
 
-            procedure.setText(text);
+            tutorial.setText(text);
 
-            em.merge(procedure);
+            em.merge(tutorial);
         } catch (EJBException e) {
             throw new EJBException(e.getMessage());
         }
     }
 
-    public Procedure getProcedure(int id) {
+    public Tutorial getProcedure(int id) {
         try {
-            Procedure procedure = em.find(Procedure.class, id);
+            Tutorial tutorial = em.find(Tutorial.class, id);
 
-            return procedure;
+            return tutorial;
         } catch (EJBException e) {
             throw new EJBException(e.getMessage());
         }
@@ -60,20 +58,20 @@ public class ProcedureBean {
 
     public void remove(int id) {
         try {
-            Procedure procedure = em.find(Procedure.class, id);
+            Tutorial tutorial = em.find(Tutorial.class, id);
 
-            em.remove(procedure);
+            em.remove(tutorial);
         } catch (EJBException e) {
             throw new EJBException(e.getMessage());
         }
     }
 
     /* Criar um rest */
-    public List<ProcedureDTO> getAll() {
+    public List<TutorialDTO> getAll() {
         try {
-            List<Procedure> procedures = (List<Procedure>) em.createNamedQuery("getAllProcedures").getResultList();
+            List<Tutorial> tutorials = (List<Tutorial>) em.createNamedQuery("getAllTutorials").getResultList();
 
-            return proceduresToDTOs(procedures);
+            return tutorialsToDTOs(tutorials);
         } catch (EJBException e) {
             throw new EJBException(e.getMessage());
         }
@@ -83,28 +81,28 @@ public class ProcedureBean {
     @RolesAllowed({"Caregiver"})
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     @Path("all")
-    public List<ProcedureDTO> getAllREST() {
+    public List<TutorialDTO> getAllREST() {
         try {
-            List<Procedure> procedures = (List<Procedure>) em.createNamedQuery("getAllProcedures").getResultList();
+            List<Tutorial> tutorials = (List<Tutorial>) em.createNamedQuery("getAllTutorials").getResultList();
 
-            return proceduresToDTOs(procedures);
+            return tutorialsToDTOs(tutorials);
         } catch (EJBException e) {
             throw new EJBException(e.getMessage());
         }
     }
 
     //Build DTOs
-    ProcedureDTO procedureToDTO(Procedure procedure) {
-        return new ProcedureDTO(
-                procedure.getId(),
-                procedure.getText()
+    TutorialDTO tutorialToDTO(Tutorial tutorial) {
+        return new TutorialDTO(
+                tutorial.getId(),
+                tutorial.getText()
         );
     }
 
-    List<ProcedureDTO> proceduresToDTOs(List<Procedure> procedures) {
-        List<ProcedureDTO> dtos = new ArrayList<>();
-        for (Procedure p : procedures) {
-            dtos.add(procedureToDTO(p));
+    List<TutorialDTO> tutorialsToDTOs(List<Tutorial> tutorials) {
+        List<TutorialDTO> dtos = new ArrayList<>();
+        for (Tutorial t : tutorials) {
+            dtos.add(tutorialToDTO(t));
         }
         return dtos;
     }

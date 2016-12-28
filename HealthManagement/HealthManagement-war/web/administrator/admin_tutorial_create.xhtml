@@ -15,7 +15,7 @@
                     cols="40"
                     required="true"
                     requiredMessage="Error: Text cannot be empty."
-                    value="#{administratorManager.newProcedure.text}"/>
+                    value="#{administratorManager.newTutorial.text}"/>
                 <h:message for="text" errorStyle="color: red" />
 
                 <br></br>
@@ -24,7 +24,7 @@
                     id="submit"
                     value="Create"
                     binding="#{administratorManager.component}" 
-                    action="#{administratorManager.createProcedure}" />
+                    action="#{administratorManager.createTutorial}" />
                 <h:message for="submit" style="color: red"/>
             </h:panelGrid >                       
 

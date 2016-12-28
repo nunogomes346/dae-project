@@ -28,7 +28,7 @@ public class ConfigBean {
     @EJB
     FaqBean faqBean;
     @EJB
-    ProcedureBean procedureBean;
+    TutorialBean tutorialBean;
     @EJB
     TextBean textBean;
     @EJB
@@ -103,9 +103,9 @@ public class ConfigBean {
                 http://www2.eerp.usp.br/site/grupos/feridascronicas/index.php?option=com_content&view=article&id=10&Itemid=18
             */
             //procedureBean.create("Limpeza da Ferida","Limpeza: limpe as feridas inicialmente e a cada troca de curativo.");
-            procedureBean.create("Limpeza: limpe as feridas inicialmente e a cada troca de curativo.");
-            procedureBean.create("Utilize uma técnica não traumática usando uma força mecânica mínima quando estiver limpando a úlcera com gaze, compressas ou esponjas.");
-            procedureBean.create("Não faça culturas de swab para diagnosticar a infecção da ferida, pois todas as UPP são colonizadas. Culturas de swab detectam somente a colonização da superfície e podem não refletir verdadeiramente o microrganismo que está causando a infecção do tecido.");
+            tutorialBean.create("Limpeza: limpe as feridas inicialmente e a cada troca de curativo.");
+            tutorialBean.create("Utilize uma técnica não traumática usando uma força mecânica mínima quando estiver limpando a úlcera com gaze, compressas ou esponjas.");
+            tutorialBean.create("Não faça culturas de swab para diagnosticar a infecção da ferida, pois todas as UPP são colonizadas. Culturas de swab detectam somente a colonização da superfície e podem não refletir verdadeiramente o microrganismo que está causando a infecção do tecido.");
             
             textBean.create("Por vezes, uma obstrução resolve-se por si própria sem outro tratamento, sobretudo se for devida à presença de aderências. Para tratar de algumas perturbações como a torção dum segmento da parte baixa do cólon, pode introduzir-se um endoscópio através do ânus ou um clister com papa de bário, o que faz com que a referida porção do intestino se insufle e a obstrução seja resolvida pela pressão exercida. No entanto, o mais habitual é fazer uma intervenção cirúrgica quanto antes. Durante a mesma, o segmento bloqueado do intestino pode ser extirpado e as duas extremidades livres podem ser unidas de novo.");
             textBean.create("O médico examina o abdómen em busca de zonas dolorosas e deformações da parede ou massas. Os sons abdominais normais (ruídos intestinais), que se ouvem através dum fonendoscópio, podem estar aumentados e ser muito agudos, ou então não se ouvirem. Se a perfuração tiver provocado peritonite, o paciente sentirá dor com a pressão do abdómen, que aumenta quando o médico afasta subitamente a mão (sinal de descompressão positivo).");
