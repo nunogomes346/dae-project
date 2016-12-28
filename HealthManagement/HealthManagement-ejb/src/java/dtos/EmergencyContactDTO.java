@@ -13,8 +13,8 @@ public class EmergencyContactDTO extends MaterialDTO {
     
     public EmergencyContactDTO(){ }
     
-    public EmergencyContactDTO(int id, String name, String telephoneNumber) {
-        super(id);
+    public EmergencyContactDTO(int id, String description, String name, String telephoneNumber) {
+        super(id, description, "Emergency Contact");
         this.name = name;
         this.telephoneNumber = telephoneNumber;
     }
@@ -35,6 +35,7 @@ public class EmergencyContactDTO extends MaterialDTO {
         this.telephoneNumber = telephoneNumber;
     }
     
+    @Override
     public void reset() {
         super.reset();
         setName(null);

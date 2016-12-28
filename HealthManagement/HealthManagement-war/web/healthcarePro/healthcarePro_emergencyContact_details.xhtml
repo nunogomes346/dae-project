@@ -11,6 +11,9 @@
         <h2 name="title">Details for Emergency Contact</h2>
         
         <h:panelGrid columns="2">
+            <h:outputLabel for="description" value="Description: " />
+            <h:outputText id="description" value="#{healthcareProManager.currentEmergencyContact.description}"/>
+            
             <h:outputLabel for="name" value="Name: " />
             <h:outputText id="name" value="#{healthcareProManager.currentEmergencyContact.name}"/>
 

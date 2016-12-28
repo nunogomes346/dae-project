@@ -12,6 +12,11 @@
         
         <h:form>
             <h:panelGrid columns="3">
+                <h:outputLabel for="description" value="Description: " />
+                <h:inputText id="description" size="52" value="#{healthcareProManager.currentEmergencyContact.description}"
+                                required="true" requiredMessage="  Description is required"/>
+                <h:message errorStyle="color:red; display:inline" for="description" />
+                
                 <h:outputLabel for="name" value="Name: " />
                 <h:inputText id="name" size="52" value="#{healthcareProManager.currentEmergencyContact.name}"
                                 required="true" requiredMessage="  Name is required"/>

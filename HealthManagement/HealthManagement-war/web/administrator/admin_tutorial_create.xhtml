@@ -8,6 +8,15 @@
     <h:body>
         <h:form>                  
             <h:panelGrid columns="3">
+                <h:outputLabel for="Description" value="Description: " />
+                <h:inputText 
+                    id="description"
+                    size="20"
+                    required="true"
+                    requiredMessage="Error: Description cannot be empty."
+                    value="#{administratorManager.newTutorial.description}"/>
+                <h:message for="description" errorStyle="color: red" />
+                
                 <h:outputLabel for="text" value="Text: " />
                 <h:inputTextarea
                     id="text"
@@ -15,7 +24,7 @@
                     cols="40"
                     required="true"
                     requiredMessage="Error: Text cannot be empty."
-                    value="#{healthcareProManager.newProcedure.text}"/>
+                    value="#{administratorManager.newTutorial.text}"/>
                 <h:message for="text" errorStyle="color: red" />
 
                 <br></br>
@@ -23,8 +32,8 @@
                 <h:commandButton
                     id="submit"
                     value="Create"
-                    binding="#{healthcareProManager.component}" 
-                    action="#{healthcareProManager.createProcedure}" />
+                    binding="#{administratorManager.component}" 
+                    action="#{administratorManager.createTutorial}" />
                 <h:message for="submit" style="color: red"/>
             </h:panelGrid >                       
 

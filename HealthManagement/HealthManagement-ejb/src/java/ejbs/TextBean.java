@@ -16,9 +16,9 @@ public class TextBean {
     EntityManager em;
 
     /* Mesmo parametros */
-    public void create(String textContent) {
+    public void create(String description, String textContent) {
         try {
-            Text text = new Text(textContent);
+            Text text = new Text(description, textContent);
 
             em.persist(text);
         } catch (EJBException e) {
@@ -26,13 +26,14 @@ public class TextBean {
         }
     }
 
-    public void update(int id, String textContent) {
+    public void update(int id, String description, String textContent) {
         try {
             Text text = em.find(Text.class, id);
             if (text == null) {
                 return;
             }
 
+            text.setDescription(description);
             text.setText(textContent);
 
             em.merge(text);
@@ -75,6 +76,7 @@ public class TextBean {
     TextDTO textToDTO(Text text) {
         return new TextDTO(
                 text.getId(),
+                text.getDescription(),
                 text.getText()
         );
     }

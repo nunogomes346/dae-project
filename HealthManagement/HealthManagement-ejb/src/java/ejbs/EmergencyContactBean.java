@@ -16,27 +16,29 @@ public class EmergencyContactBean {
     EntityManager em;
 
     /* Mesmo parametros */
-    public void create(String name, String telephoneNumber) {
+    public void create(String description, String name, String telephoneNumber) {
         try {
-            EmergencyContact emergencyContact = new EmergencyContact(name, telephoneNumber);
+            EmergencyContact emergencyContact = new EmergencyContact(description, name, telephoneNumber);
 
             em.persist(emergencyContact);
-        } catch(EJBException e) {
+        } catch (EJBException e) {
             throw new EJBException(e.getMessage());
         }
     }
 
-    public void update(int id, String name, String telephoneNumber) {
+    public void update(int id, String description, String name, String telephoneNumber) {
         try {
             EmergencyContact emergencyContact = em.find(EmergencyContact.class, id);
             if (emergencyContact == null) {
                 return;
             }
+            
+            emergencyContact.setDescription(description);
             emergencyContact.setName(name);
             emergencyContact.setTelephoneNumber(telephoneNumber);
-            
+
             em.merge(emergencyContact);
-        } catch(EJBException e) {
+        } catch (EJBException e) {
             throw new EJBException(e.getMessage());
         }
     }
@@ -54,9 +56,9 @@ public class EmergencyContactBean {
     public void remove(int id) {
         try {
             EmergencyContact emergencyContact = em.find(EmergencyContact.class, id);
-            
+
             em.remove(emergencyContact);
-        } catch(EJBException e) {
+        } catch (EJBException e) {
             throw new EJBException(e.getMessage());
         }
     }
@@ -64,22 +66,23 @@ public class EmergencyContactBean {
     public List<EmergencyContactDTO> getAll() {
         try {
             List<EmergencyContact> emergencyContacts = (List<EmergencyContact>) em.createNamedQuery("getAllEmergencyContacts").getResultList();
-            
+
             return emergencyContactsToDTOs(emergencyContacts);
-        } catch(EJBException e) {
+        } catch (EJBException e) {
             throw new EJBException(e.getMessage());
         }
     }
-    
+
     //Build DTOs
     EmergencyContactDTO emergencyContactToDTO(EmergencyContact emergencyContact) {
         return new EmergencyContactDTO(
                 emergencyContact.getId(),
+                emergencyContact.getDescription(),
                 emergencyContact.getName(),
                 emergencyContact.getTelephoneNumber()
         );
     }
-    
+
     List<EmergencyContactDTO> emergencyContactsToDTOs(List<EmergencyContact> emergencyContacts) {
         List<EmergencyContactDTO> dtos = new ArrayList<>();
         for (EmergencyContact ec : emergencyContacts) {
@@ -87,7 +90,5 @@ public class EmergencyContactBean {
         }
         return dtos;
     }
-    
-
 
 }

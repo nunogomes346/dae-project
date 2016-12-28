@@ -1,23 +1,15 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package ejbs;
 
 import dtos.VideoDTO;
 import entities.Video;
 import java.util.ArrayList;
 import java.util.List;
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJBException;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-/**
- *
- * @author sphinx
- */
 @Stateless
 public class VideoBean {
 
@@ -25,9 +17,9 @@ public class VideoBean {
     EntityManager em;
 
     /* Mesmo parametros */
-    public void create(String url) {
+    public void create(String description, String url) {
         try {
-            Video video = new Video(url);
+            Video video = new Video(description, url);
 
             em.persist(video);
         } catch (EJBException e) {
@@ -36,13 +28,14 @@ public class VideoBean {
 
     }
 
-    public void update(int id, String url) {
+    public void update(int id, String description, String url) {
         try {
             Video video = em.find(Video.class, id);
             if (video == null) {
                 return;
             }
 
+            video.setDescription(description);
             video.setUrl(url);
 
             em.merge(video);
@@ -84,6 +77,7 @@ public class VideoBean {
     VideoDTO videoToDTO(Video video) {
         return new VideoDTO(
                 video.getId(),
+                video.getDescription(),
                 video.getUrl()
         );
     }

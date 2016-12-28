@@ -19,8 +19,8 @@ public class EmergencyContact extends Material implements Serializable {
     public EmergencyContact(){
     }
     
-    public EmergencyContact(String name, String telephoneNumber){
-        super(GROUP.EmergencyContact);
+    public EmergencyContact(String description, String name, String telephoneNumber){
+        super(description, GROUP.EmergencyContact);
         this.name = name;
         this.telephoneNumber = telephoneNumber;
     }
@@ -40,7 +40,4 @@ public class EmergencyContact extends Material implements Serializable {
     public void setTelephoneNumber(String telephoneNumber) {
         this.telephoneNumber = telephoneNumber;
     }
-    
-    
-    
 }

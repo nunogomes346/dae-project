@@ -11,19 +11,19 @@ import javax.persistence.NamedQuery;
 
 @Entity
 @NamedQueries({
-    @NamedQuery(name = "getAllProcedures",
-    query = "SELECT p FROM Procedure p ORDER BY p.id")
+    @NamedQuery(name = "getAllTutorials",
+    query = "SELECT t FROM Tutorial t ORDER BY t.id")
 })
-public class Procedure extends Material implements Serializable {
+public class Tutorial extends Material implements Serializable {
     
     @Lob @Basic(fetch=EAGER)
     private String text;
 
-    public Procedure(){
+    public Tutorial(){
     }
     
-    public Procedure(String text) {
-        super(GROUP.Procedure);
+    public Tutorial(String description, String text) {
+        super(description, GROUP.Tutorial);
         this.text = text;
     }
 

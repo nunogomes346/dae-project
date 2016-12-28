@@ -12,6 +12,11 @@
         
         <h:form>
             <h:panelGrid columns="3">
+                <h:outputLabel for="description" value="Description: " />
+                <h:inputText id="description" size="52" value="#{administratorManager.currentText.description}"
+                                required="true" requiredMessage="  Description is required"/>
+                <h:message errorStyle="color:red; display:inline" for="description" />
+                
                 <h:outputLabel for="text" value="Text: " />
                 <h:inputTextarea id="text" rows="10" cols="40"  value="#{administratorManager.currentText.text}"
                                 required="true" requiredMessage="  Text is required"/>

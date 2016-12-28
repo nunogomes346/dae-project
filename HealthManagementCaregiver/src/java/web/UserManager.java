@@ -67,6 +67,7 @@ public class UserManager implements Serializable {
             return "/faces/healthcarepro/healthcarepro_index?faces-redirect=true";
         }
         
+        /**/
         if(isUserInRole("Caregiver")){
             return "/faces/caregiver/caregiver_index?faces-redirect=true";
         }

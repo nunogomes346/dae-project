@@ -4,19 +4,22 @@ import static com.sun.xml.ws.security.addressing.impl.policy.Constants.logger;
 import dtos.CaregiverDTO;
 import dtos.EmergencyContactDTO;
 import dtos.FaqDTO;
+import dtos.MaterialDTO;
+import dtos.NeedDTO;
 import dtos.PatientDTO;
-import dtos.ProcedureDTO;
+import dtos.TutorialDTO;
 import dtos.TextDTO;
 import dtos.VideoDTO;
 import ejbs.CaregiverBean;
 import ejbs.EmergencyContactBean;
 import ejbs.FaqBean;
 import ejbs.PatientBean;
-import ejbs.ProcedureBean;
+import ejbs.TutorialBean;
 import ejbs.TextBean;
 import ejbs.VideoBean;
 import exceptions.EntityDoesNotExistException;
 import java.io.Serializable;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Logger;
 import javax.ejb.EJB;
@@ -44,7 +47,7 @@ public class HealthcareProManager implements Serializable{
     @EJB
     private FaqBean faqBean;
     @EJB
-    private ProcedureBean procedureBean;
+    private TutorialBean tutorialBean;
     @EJB
     private TextBean textBean;
     @EJB
@@ -57,19 +60,18 @@ public class HealthcareProManager implements Serializable{
     private EmergencyContactDTO currentEmergencyContact;
     private FaqDTO newFaq;
     private FaqDTO currentFaq;
-    private ProcedureDTO newProcedure;
-    private ProcedureDTO currentProcedure;
+    private TutorialDTO newTutorial;
+    private TutorialDTO currentTutorial;
     private TextDTO newText;
     private TextDTO currentText;
     private VideoDTO newVideo;
     private VideoDTO currentVideo;
     
     private List<CaregiverDTO> filteredCaregivers;
-    private List<EmergencyContactDTO> filteredEmergencyContacts;
-    private List<FaqDTO> filteredFaqs;
-    private List<ProcedureDTO> filteredProcedures;
-    private List<TextDTO> filteredTexts;
-    private List<VideoDTO> filteredVideos;
+    private List<MaterialDTO> filteredMaterials;
+    
+    private Long needId;
+    private int materialId;
     
     private UIComponent component;
     private static final Logger LOGGER = Logger.getLogger("web.HealthcareProManager");
@@ -78,7 +80,7 @@ public class HealthcareProManager implements Serializable{
         newCaregiver = new CaregiverDTO();
         newEmergencyContact = new EmergencyContactDTO();
         newFaq = new FaqDTO();
-        newProcedure = new ProcedureDTO();
+        newTutorial = new TutorialDTO();
         newText = new TextDTO();
         newVideo = new VideoDTO();
     }
@@ -145,6 +147,31 @@ public class HealthcareProManager implements Serializable{
         }
     }
     
+    public List<NeedDTO> getCaregiverPatientsNeeds() {
+        try {
+            return caregiverBean.getCaregiverPatientsNeeds(currentCaregiver.getUsername());
+        } catch (EntityDoesNotExistException e) {
+            FacesExceptionHandler.handleException(e, e.getMessage(), logger);
+        } catch (Exception e) {
+            FacesExceptionHandler.handleException(e, "Unexpected error! Try again latter!", logger);
+        }
+        return null;
+    }
+    
+    public String rateCaregiver(){
+        try {
+            caregiverBean.rate(
+                    currentCaregiver.getUsername(),
+                    currentCaregiver.getRate());
+            
+            setFilteredCaregivers(null);
+
+            return "healthcarePro_index?faces-redirect=true";
+        } catch (Exception e) {
+            return "healthcarePro_caregiver_update?faces-redirect=true"; 
+        }
+    }   
+    
     // ***************************************
     // ************** PATIENT ****************
     // ***************************************
@@ -194,16 +221,107 @@ public class HealthcareProManager implements Serializable{
         return null;
     }
     
+    public void associateMaterial() {
+        try {
+            caregiverBean.associateMaterial(currentCaregiver.getUsername(), materialId, needId);
+        } catch (EntityDoesNotExistException e) {
+            FacesExceptionHandler.handleException(e, e.getMessage(), logger);
+        } catch (Exception e) {
+            FacesExceptionHandler.handleException(e, "Unexpected error! Try again latter!", logger);
+        }
+    }
+    
+    // ***************************************
+    // ************ MATERIALS ****************
+    // ***************************************
+    public List<MaterialDTO> getAllMaterials() {
+        try {
+            List<MaterialDTO> materials = new LinkedList<MaterialDTO>();
+            
+            materials.addAll(emergencyContactBean.getAll());
+            materials.addAll(faqBean.getAll());
+            materials.addAll(textBean.getAll());
+            materials.addAll(tutorialBean.getAll());
+            materials.addAll(videoBean.getAll());
+            
+            return materials;
+        } catch (Exception e) {
+            LOGGER.warning("Error: problem in method getAllMaterials");
+        }
+
+        return null;
+    }
+    
+    public String detailsView(MaterialDTO material) {
+        switch(material.getType()) {
+            case "Emergency Contact": 
+                setCurrentEmergencyContact((EmergencyContactDTO) material);
+                return "healthcarePro_emergencyContact_details?faces-redirect=true";
+            case "FAQ": 
+                setCurrentFaq((FaqDTO) material);
+                return "healthcarePro_faq_details?faces-redirect=true";
+            case "Text": 
+                setCurrentText((TextDTO) material);
+                return "healthcarePro_text_details?faces-redirect=true";
+            case "Tutorial": 
+                setCurrentTutorial((TutorialDTO) material);
+                return "healthcarePro_tutorial_details?faces-redirect=true";
+            case "Video": 
+                setCurrentVideo((VideoDTO) material);
+                return "healthcarePro_video_details?faces-redirect=true";
+        }
+        
+        return null;
+    }
+    
+    public String updateView(MaterialDTO material) {
+        switch(material.getType()) {
+            case "Emergency Contact": 
+                setCurrentEmergencyContact((EmergencyContactDTO) material);
+                return "healthcarePro_emergencyContact_update?faces-redirect=true";
+            case "FAQ": 
+                setCurrentFaq((FaqDTO) material);
+                return "healthcarePro_faq_update?faces-redirect=true";
+            case "Text": 
+                setCurrentText((TextDTO) material);
+                return "healthcarePro_text_update?faces-redirect=true";
+            case "Tutorial": 
+                setCurrentTutorial((TutorialDTO) material);
+                return "healthcarePro_tutorial_update?faces-redirect=true";
+            case "Video": 
+                setCurrentVideo((VideoDTO) material);
+                return "healthcarePro_video_update?faces-redirect=true";
+        }
+        
+        return null;
+    }
+    
+    public void removeMaterial(MaterialDTO material) {
+        switch(material.getType()) {
+            case "Emergency Contact": 
+                removeEmergencyContact(material.getId());
+            case "FAQ": 
+                removeFaq(material.getId());
+            case "Text": 
+                removeText(material.getId());
+            case "Tutorial": 
+                removeTutorial(material.getId());
+            case "Video": 
+                removeVideo(material.getId());
+        }
+    }
+    
     // ***********************************************
     // ************ EMERGENCY CONTACT ****************
     // ***********************************************
     public String createEmergencyContact() {
         try {
             emergencyContactBean.create(
+                    newEmergencyContact.getDescription(),
                     newEmergencyContact.getName(),
                     newEmergencyContact.getTelephoneNumber());
 
-            setFilteredEmergencyContacts(null);
+            setFilteredMaterials(null);
             
             newEmergencyContact.reset();
 
@@ -230,11 +348,12 @@ public class HealthcareProManager implements Serializable{
 
             emergencyContactBean.update(
                     currentEmergencyContact.getId(),
+                    currentEmergencyContact.getDescription(),
                     currentEmergencyContact.getName(),
                     currentEmergencyContact.getTelephoneNumber()
             );
             
-            setFilteredEmergencyContacts(null);
+            setFilteredMaterials(null);
 
             return "healthcarePro_index?faces-redirect=true";
         } catch (Exception e) {
@@ -244,12 +363,9 @@ public class HealthcareProManager implements Serializable{
         return "healthcarePro_emergencyContact_update?faces-redirect=true";
     }
 
-    public void removeEmergencyContact(ActionEvent event) {
+    public void removeEmergencyContact(int materialId) {
         try {
-            UIParameter param = (UIParameter) event.getComponent().findComponent("deleteEmergencyContactId");
-            int id = Integer.parseInt(param.getValue().toString());
-
-            emergencyContactBean.remove(id);
+            emergencyContactBean.remove(materialId);
         } catch (Exception e) {
             LOGGER.warning("Error: problem in method removeEmergencyContact");
         }
@@ -261,11 +377,12 @@ public class HealthcareProManager implements Serializable{
     public String createFaq() {
         try {
             faqBean.create(
-                    newFaq.getAnswer(),
+                    newFaq.getDescription(),
+                    newFaq.getQuestion(),
                     newFaq.getAnswer()
             );
             
-            setFilteredFaqs(null);
+            setFilteredMaterials(null);
 
             newFaq.reset();
 
@@ -291,10 +408,11 @@ public class HealthcareProManager implements Serializable{
         try {
             faqBean.update(
                     currentFaq.getId(),
+                    currentFaq.getDescription(),
                     currentFaq.getQuestion(),
                     currentFaq.getAnswer());
             
-            setFilteredFaqs(null);
+            setFilteredMaterials(null);
 
             return "healthcarePro_index?faces-redirect=true";
         } catch (Exception e) {
@@ -304,73 +422,68 @@ public class HealthcareProManager implements Serializable{
         return "healthcarePro_faq_update?faces-redirect=true";
     }
 
-    public void removeFaq(ActionEvent event) {
+    public void removeFaq(int materialId) {
         try {
-            UIParameter param = (UIParameter) event.getComponent().findComponent("deleteFaqId");
-            int id = Integer.parseInt(param.getValue().toString());
-
-            faqBean.remove(id);
+            faqBean.remove(materialId);
         } catch (Exception e) {
             LOGGER.warning("Error: problem in method removeFaq");
         }
     }
 
-    // ***************************************
-    // ************ PROCEDURE ****************
-    // ***************************************
-    public String createProcedure() {
+    // **************************************
+    // ************ TUTORIAL ****************
+    // **************************************
+    public String createTutorial() {
         try {
 
-            procedureBean.create(newProcedure.getText());
+            tutorialBean.create(newTutorial.getDescription(), newTutorial.getText());
 
-            setFilteredProcedures(null);
+            setFilteredMaterials(null);
             
-            newProcedure.reset();
+            newTutorial.reset();
 
             return "healthcarePro_index?faces-redirect=true";
         } catch (Exception e) {
-            LOGGER.warning("Error: problem in method createProcedure");
+            LOGGER.warning("Error: problem in method createTutorial");
         }
 
-        return "healthcarePro_procedures_create?faces-redirect=true";
+        return "healthcarePro_tutorials_create?faces-redirect=true";
     }
 
-    public List<ProcedureDTO> getAllProcedures() {
+    public List<TutorialDTO> getAllTutorials() {
         try {
-            return procedureBean.getAll();
+            return tutorialBean.getAll();
         } catch (Exception e) {
-            LOGGER.warning("Error: problem in method getAllProcedures");
+            LOGGER.warning("Error: problem in method getAllTutorials");
         }
 
         return null;
     }
 
-    public String updateProcedure() {
+    public String updateTutorial() {
         try {
 
-            procedureBean.update(
-                    currentProcedure.getId(),
-                    currentProcedure.getText()
+            tutorialBean.update(
+                    currentTutorial.getId(),
+                    currentTutorial.getDescription(),
+                    currentTutorial.getText()
             );
             
-            setFilteredProcedures(null);
+            setFilteredMaterials(null);
 
             return "healthcarePro_index?faces-redirect=true";
         } catch (Exception e) {
-            LOGGER.warning("Error: problem in method updateProcedure");
+            LOGGER.warning("Error: problem in method updateTutorial");
         }
 
-        return "healthcarePro_procedures_update?faces-redirect=true";
+        return "healthcarePro_tutorial_update?faces-redirect=true";
     }
 
-    public void removeProcedure(ActionEvent event) {
+    public void removeTutorial(int materialId) {
         try {
-            UIParameter param = (UIParameter) event.getComponent().findComponent("deleteProcedureId");
-            int id = Integer.parseInt(param.getValue().toString());
-
-            procedureBean.remove(id);
+            tutorialBean.remove(materialId);
         } catch (Exception e) {
-            LOGGER.warning("Error: problem in method removeProcedure");
+            LOGGER.warning("Error: problem in method removeTutorial");
         }
     }
     
@@ -381,10 +494,11 @@ public class HealthcareProManager implements Serializable{
         try {
             
             textBean.create(
+                    newText.getDescription(),
                     newText.getText()
             );
             
-            setFilteredTexts(null);
+            setFilteredMaterials(null);
 
             newText.reset();
 
@@ -410,10 +524,11 @@ public class HealthcareProManager implements Serializable{
         try {
             textBean.update(
                     currentText.getId(),
+                    currentText.getDescription(),
                     currentText.getText()
             );
             
-            setFilteredTexts(null);
+            setFilteredMaterials(null);
             
             return "healthcarePro_index?faces-redirect=true";
         } catch (Exception e) {
@@ -423,12 +538,9 @@ public class HealthcareProManager implements Serializable{
         return "healthcarePro_text_update?faces-redirect=true";
     }
 
-    public void removeText(ActionEvent event) {
+    public void removeText(int materialId) {
         try {
-            UIParameter param = (UIParameter) event.getComponent().findComponent("deleteTextId");
-            int id = Integer.parseInt(param.getValue().toString());
-
-            textBean.remove(id);
+            textBean.remove(materialId);
         } catch (Exception e) {
             LOGGER.warning("Error: problem in method removeText");
         }
@@ -441,10 +553,11 @@ public class HealthcareProManager implements Serializable{
         try {
      
             videoBean.create(
+                    newVideo.getDescription(),
                     newVideo.getUrl()
             );
 
-            setFilteredVideos(null);
+            setFilteredMaterials(null);
             
             newVideo.reset();
 
@@ -470,10 +583,11 @@ public class HealthcareProManager implements Serializable{
         try {
             videoBean.update(
                     currentVideo.getId(), 
+                    currentVideo.getDescription(),
                     currentVideo.getUrl()
             );
             
-            setFilteredVideos(null);
+            setFilteredMaterials(null);
 
             return "healthcarePro_index?faces-redirect=true";
         } catch (Exception e) {
@@ -483,12 +597,9 @@ public class HealthcareProManager implements Serializable{
         return "healthcarePro_video_update?faces-redirect=true";
     }
 
-    public void removeVideo(ActionEvent event) {
+    public void removeVideo(int materialId) {
         try {
-            UIParameter param = (UIParameter) event.getComponent().findComponent("deleteVideoId");
-            int id = Integer.parseInt(param.getValue().toString());
-
-            videoBean.remove(id);
+            videoBean.remove(materialId);
         } catch (Exception e) {
             LOGGER.warning("Error: problem in method removeVideo");
         }
@@ -545,20 +656,20 @@ public class HealthcareProManager implements Serializable{
         this.currentFaq = currentFaq;
     }
 
-    public ProcedureDTO getNewProcedure() {
-        return newProcedure;
+    public TutorialDTO getNewTutorial() {
+        return newTutorial;
     }
 
-    public void setNewProcedure(ProcedureDTO newProcedure) {
-        this.newProcedure = newProcedure;
+    public void setNewTutorial(TutorialDTO newTutorial) {
+        this.newTutorial = newTutorial;
     }
 
-    public ProcedureDTO getCurrentProcedure() {
-        return currentProcedure;
+    public TutorialDTO getCurrentTutorial() {
+        return currentTutorial;
     }
 
-    public void setCurrentProcedure(ProcedureDTO currentProcedure) {
-        this.currentProcedure = currentProcedure;
+    public void setCurrentTutorial(TutorialDTO currentTutorial) {
+        this.currentTutorial = currentTutorial;
     }
 
     public TextDTO getNewText() {
@@ -600,45 +711,13 @@ public class HealthcareProManager implements Serializable{
     public void setFilteredCaregivers(List<CaregiverDTO> filteredCaregivers) {
         this.filteredCaregivers = filteredCaregivers;
     }
-    
-    public List<EmergencyContactDTO> getFilteredEmergencyContacts() {
-        return filteredEmergencyContacts;
+
+    public List<MaterialDTO> getFilteredMaterials() {
+        return filteredMaterials;
     }
 
-    public void setFilteredEmergencyContacts(List<EmergencyContactDTO> filteredEmergencyContacts) {
-        this.filteredEmergencyContacts = filteredEmergencyContacts;
-    }
-
-    public List<FaqDTO> getFilteredFaqs() {
-        return filteredFaqs;
-    }
-
-    public void setFilteredFaqs(List<FaqDTO> filteredFaqs) {
-        this.filteredFaqs = filteredFaqs;
-    }
-
-    public List<ProcedureDTO> getFilteredProcedures() {
-        return filteredProcedures;
-    }
-
-    public void setFilteredProcedures(List<ProcedureDTO> filteredProcedures) {
-        this.filteredProcedures = filteredProcedures;
-    }
-
-    public List<TextDTO> getFilteredTexts() {
-        return filteredTexts;
-    }
-
-    public void setFilteredTexts(List<TextDTO> filteredTexts) {
-        this.filteredTexts = filteredTexts;
-    }
-
-    public List<VideoDTO> getFilteredVideos() {
-        return filteredVideos;
-    }
-
-    public void setFilteredVideos(List<VideoDTO> filteredVideos) {
-        this.filteredVideos = filteredVideos;
+    public void setFilteredMaterials(List<MaterialDTO> filteredMaterials) {
+        this.filteredMaterials = filteredMaterials;
     }
     
     public UIComponent getComponent() {
@@ -648,5 +727,20 @@ public class HealthcareProManager implements Serializable{
     public void setComponent(UIComponent component) {
         this.component = component;
     }
-    
+
+    public Long getNeedId() {
+        return needId;
+    }
+
+    public void setNeedId(Long needId) {
+        this.needId = needId;
+    }
+
+    public int getMaterialId() {
+        return materialId;
+    }
+
+    public void setMaterialId(int materialId) {
+        this.materialId = materialId;
+    }
 }

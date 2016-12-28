@@ -25,8 +25,8 @@ public class FAQ extends Material implements Serializable {
     public FAQ(){
     }
     
-    public FAQ(String question, String answer){
-        super(GROUP.Faq);
+    public FAQ(String description, String question, String answer){
+        super(description, GROUP.Faq);
         this.question = question;
         this.answer = answer;
     }

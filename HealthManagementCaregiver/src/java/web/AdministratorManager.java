@@ -148,4 +148,8 @@ public class AdministratorManager implements Serializable {
     public void setComponent(UIComponent component) {
         this.component = component;
     }
+    
+    /*
+    Consumir Rest
+    */
 }
