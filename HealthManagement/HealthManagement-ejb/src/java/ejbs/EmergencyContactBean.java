@@ -1,20 +1,13 @@
 package ejbs;
 
 import dtos.EmergencyContactDTO;
-import dtos.VideoDTO;
 import entities.EmergencyContact;
-import entities.Video;
 import java.util.ArrayList;
 import java.util.List;
-import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJBException;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
 
 @Stateless
 public class EmergencyContactBean {
@@ -23,9 +16,9 @@ public class EmergencyContactBean {
     EntityManager em;
 
     /* Mesmo parametros */
-    public void create(String name, String telephoneNumber) {
+    public void create(String description, String name, String telephoneNumber) {
         try {
-            EmergencyContact emergencyContact = new EmergencyContact(name, telephoneNumber);
+            EmergencyContact emergencyContact = new EmergencyContact(description, name, telephoneNumber);
 
             em.persist(emergencyContact);
         } catch (EJBException e) {
@@ -33,12 +26,14 @@ public class EmergencyContactBean {
         }
     }
 
-    public void update(int id, String name, String telephoneNumber) {
+    public void update(int id, String description, String name, String telephoneNumber) {
         try {
             EmergencyContact emergencyContact = em.find(EmergencyContact.class, id);
             if (emergencyContact == null) {
                 return;
             }
+            
+            emergencyContact.setDescription(description);
             emergencyContact.setName(name);
             emergencyContact.setTelephoneNumber(telephoneNumber);
 
@@ -78,24 +73,11 @@ public class EmergencyContactBean {
         }
     }
 
-    @GET
-    @RolesAllowed({"Caregiver"})
-    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    @Path("all")
-    public List<EmergencyContactDTO> getAllREST() {
-        try {
-            List<EmergencyContact> emergencyContacts = (List<EmergencyContact>) em.createNamedQuery("getAllEmergencyContacts").getResultList();
-
-            return emergencyContactsToDTOs(emergencyContacts);
-        } catch (EJBException e) {
-            throw new EJBException(e.getMessage());
-        }
-    }
-
     //Build DTOs
     EmergencyContactDTO emergencyContactToDTO(EmergencyContact emergencyContact) {
         return new EmergencyContactDTO(
                 emergencyContact.getId(),
+                emergencyContact.getDescription(),
                 emergencyContact.getName(),
                 emergencyContact.getTelephoneNumber()
         );

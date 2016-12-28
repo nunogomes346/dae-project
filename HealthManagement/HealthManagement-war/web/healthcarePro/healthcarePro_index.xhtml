@@ -101,18 +101,16 @@
         
         <br />
         
-        <h1>Materials</h1>
-        
-        <h2>View All Emergency Contacts</h2>
+        <h2>View All Materials</h2>
         <h:form>
             <p:dataTable
-                id="emergencyContactsTable"
-                var="emergencyContact"
-                summary="Table of emergency contacts"
-                value="#{healthcareProManager.allEmergencyContacts}"
-                widgetVar="emergencyContactsTable"
-                emptyMessage="No emergency contacts found with given criteria" 
-                filteredValue="#{healthcareProManager.filteredEmergencyContacts}"
+                id="materialsTable"
+                var="material"
+                summary="Table of materials"
+                value="#{healthcareProManager.allMaterials}"
+                widgetVar="materialsTable"
+                emptyMessage="No materials found with given criteria" 
+                filteredValue="#{healthcareProManager.filteredMaterials}"
                 rows="10"
                 paginator="true"
                 paginatorPosition="bottom"
@@ -121,273 +119,56 @@
                 style="margin-bottom:40px">
                 
                 <f:facet name="header">
-                    <p:commandLink value="Create Emergency Contact" 
-                                   action="healthcarePro_emergencyContact_create?faces-redirect=true" style="float: left;"
-                                   update="emergencyContactsTable" oncomplete="PF('emergencyContactsTable').clearFilters()"/>
-                    
                     <p:outputPanel style="text-align:right;">
                         <h:outputText value="Search all fields:" />
-                        <p:inputText id="globalFilter" onkeyup="PF('emergencyContactsTable').filter()" style="width:150px" placeholder="Enter keyword"/>
+                        <p:inputText id="globalFilter" onkeyup="PF('materialsTable').filter()" style="width:150px" placeholder="Enter keyword"/>
                     </p:outputPanel>
                 </f:facet>
                 
-                <p:column filterBy="#{emergencyContact.name}" headerText="Name" filterMatchMode="contains">
-                    <h:outputText value="#{emergencyContact.name}" />
+                <p:column filterBy="#{material.description}" headerText="Description" filterMatchMode="contains">
+                    <h:outputText value="#{material.description}" />
                 </p:column>
                 
-                <p:column filterBy="#{emergencyContact.telephoneNumber}" headerText="Telephone Number" filterMatchMode="contains">
-                    <h:outputText value="#{emergencyContact.telephoneNumber}" />
+                <p:column filterBy="#{material.type}" headerText="Type" filterMatchMode="contains">
+                    <h:outputText value="#{material.type}" />
                 </p:column>
                 
                 <p:column headerText="Actions">
                     <p:panelGrid columns="3" styleClass="noBorders">
-                        <p:commandButton value="Details" id="details" action="healthcarePro_emergencyContact_details?faces-redirect=true"
-                                         oncomplete="PF('emergencyContactsTable').clearFilters()">
-                            <f:setPropertyActionListener target="#{healthcareProManager.currentEmergencyContact}" value="#{emergencyContact}" />
+                        <p:commandButton value="Details" id="details" action="#{healthcareProManager.detailsView(material)}"
+                                         oncomplete="PF('materialsTable').clearFilters()">
                         </p:commandButton>
 
-                        <p:commandButton value="Update" id="update" action="healthcarePro_emergencyContact_update?faces-redirect=true"
-                                         oncomplete="PF('emergencyContactsTable').clearFilters()">
-                            <f:setPropertyActionListener target="#{healthcareProManager.currentEmergencyContact}" value="#{emergencyContact}" />
+                        <p:commandButton value="Update" id="update" action="#{healthcareProManager.updateView(material)}"
+                                         oncomplete="PF('materialsTable').clearFilters()">
                         </p:commandButton>
 
                         <p:commandButton value="Remove" id="remove"
-                                         actionListener="#{healthcareProManager.removeEmergencyContact}"
-                                       update="emergencyContactsTable" oncomplete="PF('emergencyContactsTable').clearFilters()">
-                            <f:param name="deleteEmergencyContactId" id="deleteEmergencyContactId" value="#{emergencyContact.id}" />
+                                         action="#{healthcareProManager.removeMaterial(material)}"
+                                       update="materialsTable" oncomplete="PF('materialsTable').clearFilters()">
                         </p:commandButton>
                     </p:panelGrid>
                 </p:column>
             </p:dataTable>
         </h:form>
         
-        <br />
-        
-        <h2>View All FAQ</h2>
-        <h:form>
-            <p:dataTable
-                id="faqsTable"
-                var="faq"
-                summary="Table of faq"
-                value="#{healthcareProManager.allFaqs}"
-                widgetVar="faqsTable"
-                emptyMessage="No faqs found with given criteria" 
-                filteredValue="#{healthcareProManager.filteredFaqs}"
-                rows="10"
-                paginator="true"
-                paginatorPosition="bottom"
-                paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-                rowsPerPageTemplate="5,10,15"
-                style="margin-bottom:40px">
-                
-                <f:facet name="header">
-                    <p:commandLink value="Create FAQ" 
-                                   action="healthcarePro_faq_create?faces-redirect=true" style="float: left;"
-                                   update="faqsTable" oncomplete="PF('faqsTable').clearFilters()"/>
-                    
-                    <p:outputPanel style="text-align:right;">
-                        <h:outputText value="Search all fields:" />
-                        <p:inputText id="globalFilter" onkeyup="PF('faqsTable').filter()" style="width:150px" placeholder="Enter keyword"/>
-                    </p:outputPanel>
-                </f:facet>
-                
-                <p:column filterBy="#{faq.question}" headerText="Question" filterMatchMode="contains">
-                    <h:outputText value="#{faq.question}" />
-                </p:column>
-                
-                <p:column filterBy="#{faq.answer}" headerText="Answer" filterMatchMode="contains">
-                    <h:outputText value="#{faq.answer}" />
-                </p:column>
-                
-                <p:column headerText="Actions">
-                    <p:panelGrid columns="3" styleClass="noBorders">
-                        <p:commandButton value="Details" id="details" action="healthcarePro_faq_details?faces-redirect=true"
-                                         oncomplete="PF('faqsTable').clearFilters()">
-                            <f:setPropertyActionListener target="#{healthcareProManager.currentFaq}" value="#{faq}" />
-                        </p:commandButton>
-
-                        <p:commandButton value="Update" id="update" action="healthcarePro_faq_update?faces-redirect=true"
-                                         oncomplete="PF('faqsTable').clearFilters()">
-                            <f:setPropertyActionListener target="#{healthcareProManager.currentFaq}" value="#{faq}" />
-                        </p:commandButton>
-
-                        <p:commandButton value="Remove" id="remove"
-                                         actionListener="#{healthcareProManager.removeFaq}"
-                                         update="faqsTable" oncomplete="PF('faqsTable').clearFilters()">
-                            <f:param name="deleteFaqId" id="deleteFaqId" value="#{faq.id}" />
-                        </p:commandButton>
-                    </p:panelGrid>
-                </p:column>
-            </p:dataTable>
-        </h:form>
-        
-        <br />
-        
-        <h2>View All Tutorials</h2>
-        <h:form>
-            <p:dataTable
-                id="tutorialsTable"
-                var="tutorial"
-                summary="Table of tutorials"
-                value="#{healthcareProManager.allTutorials}"
-                widgetVar="tutorialsTable"
-                emptyMessage="No tutorials found with given criteria" 
-                filteredValue="#{healthcareProManager.filteredTutorials}"
-                rows="10"
-                paginator="true"
-                paginatorPosition="bottom"
-                paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-                rowsPerPageTemplate="5,10,15"
-                style="margin-bottom:40px">
-                
-                <f:facet name="header">
-                    <p:commandLink value="Create Tutorial" 
-                                   action="healthcarePro_tutorial_create?faces-redirect=true" style="float: left;"
-                                   update="tutorialsTable" oncomplete="PF('tutorialsTable').clearFilters()"/>
-                    
-                    <p:outputPanel style="text-align:right;">
-                        <h:outputText value="Search all fields:" />
-                        <p:inputText id="globalFilter" onkeyup="PF('tutorialsTable').filter()" style="width:150px" placeholder="Enter keyword"/>
-                    </p:outputPanel>
-                </f:facet>
-                
-                <p:column filterBy="#{tutorial.text}" headerText="Text" filterMatchMode="contains">
-                    <h:outputText value="#{tutorial.text}" />
-                </p:column>
-                
-                <p:column headerText="Actions">
-                    <p:panelGrid columns="3" styleClass="noBorders">
-                        <p:commandButton value="Details" id="details" action="healthcarePro_tutorial_details?faces-redirect=true"
-                                         oncomplete="PF('tutorialsTable').clearFilters()">
-                            <f:setPropertyActionListener target="#{healthcareProManager.currentTutorial}" value="#{tutorial}" />
-                        </p:commandButton>
-
-                        <p:commandButton value="Update" id="update" action="healthcarePro_tutorial_update?faces-redirect=true"
-                                         oncomplete="PF('tutorialsTable').clearFilters()">
-                            <f:setPropertyActionListener target="#{healthcareProManager.currentTutorial}" value="#{tutorial}" />
-                        </p:commandButton>
-
-                        <p:commandButton value="Remove" id="remove"
-                                         actionListener="#{healthcareProManager.removeTutorial}"
-                                         update="tutorialsTable" oncomplete="PF('tutorialsTable').clearFilters()">
-                            <f:param name="deleteTutorialId" id="deleteTutorialId" value="#{tutorial.id}" />
-                        </p:commandButton>
-                    </p:panelGrid>
-                </p:column>
-            </p:dataTable>
-        </h:form>
-        
-        <br />
-        
-        <h2>View All Texts</h2>
-        <h:form>
-            <p:dataTable
-                id="textsTable"
-                var="text"
-                summary="Table of texts"
-                value="#{healthcareProManager.allTexts}"
-                widgetVar="textsTable"
-                emptyMessage="No texts found with given criteria" 
-                filteredValue="#{healthcareProManager.filteredTexts}"
-                rows="10"
-                paginator="true"
-                paginatorPosition="bottom"
-                paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-                rowsPerPageTemplate="5,10,15"
-                style="margin-bottom:40px">
-                
-                <f:facet name="header">
-                    <p:commandLink value="Create Text" 
-                                   action="healthcarePro_text_create?faces-redirect=true" style="float: left;"
-                                   update="textsTable" oncomplete="PF('textsTable').clearFilters()"/>
-                    
-                    <p:outputPanel style="text-align:right;">
-                        <h:outputText value="Search all fields:" />
-                        <p:inputText id="globalFilter" onkeyup="PF('textsTable').filter()" style="width:150px" placeholder="Enter keyword"/>
-                    </p:outputPanel>
-                </f:facet>
-                
-                <p:column filterBy="#{text.text}" headerText="Text" filterMatchMode="contains">
-                    <h:outputText value="#{text.text}" />
-                </p:column>
-                
-                <p:column headerText="Actions">
-                    <p:panelGrid columns="3" styleClass="noBorders">
-                        <p:commandButton value="Details" id="details" action="healthcarePro_text_details?faces-redirect=true"
-                                         oncomplete="PF('textsTable').clearFilters()">
-                            <f:setPropertyActionListener target="#{healthcareProManager.currentText}" value="#{text}" />
-                        </p:commandButton>
-
-                        <p:commandButton value="Update" id="update" action="healthcarePro_text_update?faces-redirect=true"
-                                         oncomplete="PF('textsTable').clearFilters()">
-                            <f:setPropertyActionListener target="#{healthcareProManager.currentText}" value="#{text}" />
-                        </p:commandButton>
-
-                        <p:commandButton value="Remove" id="remove"
-                                         actionListener="#{healthcareProManager.removeText}"
-                                         update="textsTable" oncomplete="PF('textsTable').clearFilters()">
-                            <f:param name="deleteTextId" id="deleteTextId" value="#{text.id}" />
-                        </p:commandButton>
-                    </p:panelGrid>
-                </p:column>
-            </p:dataTable>
-        </h:form>
-        
-        <br />
-        
-        <h2>View All Videos</h2>
-        <h:form>
-            <p:dataTable
-                id="videosTable"
-                var="video"
-                summary="Table of videos"
-                value="#{healthcareProManager.allVideos}"
-                widgetVar="videosTable"
-                emptyMessage="No videos found with given criteria" 
-                filteredValue="#{healthcareProManager.filteredVideos}"
-                rows="10"
-                paginator="true"
-                paginatorPosition="bottom"
-                paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-                rowsPerPageTemplate="5,10,15"
-                style="margin-bottom:40px">
-                
-                <f:facet name="header">
-                    <p:commandLink value="Create Video" 
-                                   action="healthcarePro_video_create?faces-redirect=true" style="float: left;"
-                                   update="videosTable" oncomplete="PF('videosTable').clearFilters()"/>
-                    
-                    <p:outputPanel style="text-align:right;">
-                        <h:outputText value="Search all fields:" />
-                        <p:inputText id="globalFilter" onkeyup="PF('videosTable').filter()" style="width:150px" placeholder="Enter keyword"/>
-                    </p:outputPanel>
-                </f:facet>
-                
-                <p:column filterBy="#{video.url}" headerText="URL" filterMatchMode="contains">
-                    <h:outputText value="#{video.url}" />
-                </p:column>
-                
-                <p:column headerText="Actions">
-                    <p:panelGrid columns="3" styleClass="noBorders">
-                        <p:commandButton value="Details" id="details" action="healthcarePro_video_details?faces-redirect=true"
-                                         oncomplete="PF('videosTable').clearFilters()">
-                            <f:setPropertyActionListener target="#{healthcareProManager.currentVideo}" value="#{video}" />
-                        </p:commandButton>
-
-                        <p:commandButton value="Update" id="update" action="healthcarePro_video_update?faces-redirect=true"
-                                         oncomplete="PF('videosTable').clearFilters()">
-                            <f:setPropertyActionListener target="#{healthcareProManager.currentVideo}" value="#{video}" />
-                        </p:commandButton>
-
-                        <p:commandButton value="Remove" id="remove"
-                                         actionListener="#{healthcareProManager.removeVideo}"
-                                         update="videosTable" oncomplete="PF('videosTable').clearFilters()">
-                            <f:param name="deleteVideoId" id="deleteVideoId" value="#{video.id}" />
-                        </p:commandButton>
-                    </p:panelGrid>
-                </p:column>
-            </p:dataTable>
-        </h:form>
+        <h:panelGrid columns="5">
+            <p:commandButton value="Create Emergency Contact"
+                                       action="healthcarePro_emergencyContact_create?faces-redirect=true"
+                                       oncomplete="PF('materialsTable').clearFilters()"/>
+            <p:commandButton value="Create FAQ"
+                                       action="healthcarePro_faq_create?faces-redirect=true"
+                                       oncomplete="PF('materialsTable').clearFilters()"/>
+            <p:commandButton value="Create Text"
+                                       action="healthcarePro_text_create?faces-redirect=true"
+                                       oncomplete="PF('materialsTable').clearFilters()"/>
+            <p:commandButton value="Create Tutorial"
+                                       action="healthcarePro_tutorial_create?faces-redirect=true"
+                                       oncomplete="PF('materialsTable').clearFilters()"/>
+            <p:commandButton value="Create Video"
+                                       action="healthcarePro_video_create?faces-redirect=true"
+                                       oncomplete="PF('materialsTable').clearFilters()"/>
+        </h:panelGrid>
         
         <br />
         

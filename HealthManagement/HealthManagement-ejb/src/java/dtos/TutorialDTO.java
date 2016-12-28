@@ -12,8 +12,8 @@ public class TutorialDTO extends MaterialDTO{
 
     public TutorialDTO() { }
     
-    public TutorialDTO(int id, String text) {
-        super(id);
+    public TutorialDTO(int id, String description, String text) {
+        super(id, description, "Tutorial");
         this.text = text;
     }
 
@@ -25,6 +25,7 @@ public class TutorialDTO extends MaterialDTO{
         this.text = text;
     }
 
+    @Override
     public void reset() {
         super.reset();
         setText(null);

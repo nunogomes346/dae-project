@@ -11,6 +11,9 @@
         <h2 name="title">Details for FAQ</h2>
         
         <h:panelGrid columns="2">
+            <h:outputLabel for="description" value="Description: " />
+            <h:outputText id="description" value="#{healthcareProManager.currentFaq.description}"/>
+            
             <h:outputLabel for="question" value="Question: " />
             <h:outputText id="question" value="#{healthcareProManager.currentFaq.question}"/>
 

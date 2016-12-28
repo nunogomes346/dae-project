@@ -25,6 +25,8 @@ public class Material implements Serializable {
     @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "material")
     protected MaterialGroup group;
     
+    private String description;
+    
     @ManyToMany(mappedBy = "materials")
     private List<Need> needs;
     
@@ -36,7 +38,8 @@ public class Material implements Serializable {
         this.caregivers = new LinkedList<Caregiver>();
     }
     
-    public Material(GROUP group){
+    public Material(String description, GROUP group){
+        this.description = description;
         this.group = new MaterialGroup(group, this);
         this.needs = new LinkedList<Need>();
         this.caregivers = new LinkedList<Caregiver>();
@@ -48,6 +51,14 @@ public class Material implements Serializable {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
     
     public List<Need> getNeeds() {

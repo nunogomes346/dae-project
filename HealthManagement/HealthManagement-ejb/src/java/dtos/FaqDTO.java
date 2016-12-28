@@ -13,17 +13,9 @@ public class FaqDTO extends MaterialDTO {
     
     public FaqDTO() { }
     
-    public FaqDTO(int id, String question, String answer){
-        super(id);
+    public FaqDTO(int id,String description, String question, String answer){
+        super(id, description, "FAQ");
         this.question = question;
-        this.answer = answer;
-    }
-
-    public String getAnswer() {
-        return answer;
-    }
-
-    public void setAnswer(String answer) {
         this.answer = answer;
     }
 
@@ -34,7 +26,16 @@ public class FaqDTO extends MaterialDTO {
     public void setQuestion(String question) {
         this.question = question;
     }
+    
+    public String getAnswer() {
+        return answer;
+    }
 
+    public void setAnswer(String answer) {
+        this.answer = answer;
+    }
+
+    @Override
     public void reset() {
         super.reset();
         setAnswer(null);

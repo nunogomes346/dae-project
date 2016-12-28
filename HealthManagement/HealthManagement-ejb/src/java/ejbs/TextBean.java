@@ -1,20 +1,13 @@
 package ejbs;
 
 import dtos.TextDTO;
-import dtos.VideoDTO;
 import entities.Text;
-import entities.Video;
 import java.util.ArrayList;
 import java.util.List;
-import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJBException;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
 
 @Stateless
 public class TextBean {
@@ -23,9 +16,9 @@ public class TextBean {
     EntityManager em;
 
     /* Mesmo parametros */
-    public void create(String textContent) {
+    public void create(String description, String textContent) {
         try {
-            Text text = new Text(textContent);
+            Text text = new Text(description, textContent);
 
             em.persist(text);
         } catch (EJBException e) {
@@ -33,13 +26,14 @@ public class TextBean {
         }
     }
 
-    public void update(int id, String textContent) {
+    public void update(int id, String description, String textContent) {
         try {
             Text text = em.find(Text.class, id);
             if (text == null) {
                 return;
             }
 
+            text.setDescription(description);
             text.setText(textContent);
 
             em.merge(text);
@@ -77,25 +71,12 @@ public class TextBean {
             throw new EJBException(e.getMessage());
         }
     }
-    
-    @GET
-    @RolesAllowed({"Caregiver"})
-    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    @Path("all")
-    public List<TextDTO> getAllREST() {
-        try {
-            List<Text> texts = (List<Text>) em.createNamedQuery("getAllTexts").getResultList();
-            
-            return textsToDTOs(texts);
-        } catch(EJBException e) {
-            throw new EJBException(e.getMessage());
-        }
-    }
 
     //Build DTOs
     TextDTO textToDTO(Text text) {
         return new TextDTO(
                 text.getId(),
+                text.getDescription(),
                 text.getText()
         );
     }

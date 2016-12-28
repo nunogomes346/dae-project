@@ -11,6 +11,9 @@
         <h2 name="title">Details for Video</h2>
         
         <h:panelGrid columns="2">
+            <h:outputLabel for="description" value="Description: " />
+            <h:outputText id="description" value="#{healthcareProManager.currentVideo.description}"/>
+            
             <h:outputLabel for="url" value="URL: " />
             <h:outputText id="url" value="#{healthcareProManager.currentVideo.url}"/>
         </h:panelGrid>

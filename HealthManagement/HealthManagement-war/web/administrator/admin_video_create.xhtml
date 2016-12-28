@@ -8,6 +8,15 @@
     <h:body>
         <h:form>                  
             <h:panelGrid columns="3">
+                <h:outputLabel for="Description" value="Description: " />
+                <h:inputText 
+                    id="description"
+                    size="20"
+                    required="true"
+                    requiredMessage="Error: Description cannot be empty."
+                    value="#{administratorManager.newVideo.description}"/>
+                <h:message for="description" errorStyle="color: red" />
+                
                 <h:outputLabel for="url" value="URL: " />
                 <h:inputText
                     id="url"

@@ -22,8 +22,8 @@ public class Tutorial extends Material implements Serializable {
     public Tutorial(){
     }
     
-    public Tutorial(String text) {
-        super(GROUP.Tutorial);
+    public Tutorial(String description, String text) {
+        super(description, GROUP.Tutorial);
         this.text = text;
     }
 

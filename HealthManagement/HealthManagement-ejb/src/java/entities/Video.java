@@ -18,8 +18,8 @@ public class Video extends Material implements Serializable {
     public Video(){
     }
     
-    public Video(String url){
-        super(GROUP.Video);
+    public Video(String description, String url){
+        super(description, GROUP.Video);
         this.url = url;
     }
 

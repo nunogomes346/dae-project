@@ -5,6 +5,7 @@ import dtos.HealthcareProDTO;
 import dtos.CaregiverDTO;
 import dtos.EmergencyContactDTO;
 import dtos.FaqDTO;
+import dtos.MaterialDTO;
 import dtos.TutorialDTO;
 import dtos.TextDTO;
 import dtos.VideoDTO;
@@ -19,6 +20,7 @@ import ejbs.VideoBean;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Logger;
 import javax.ejb.EJB;
@@ -78,11 +80,7 @@ public class AdministratorManager implements Serializable {
     private List<AdministratorDTO> filteredAdmins;
     private List<HealthcareProDTO> filteredHealthcarePros;
     private List<CaregiverDTO> filteredCaregivers;
-    private List<EmergencyContactDTO> filteredEmergencyContacts;
-    private List<FaqDTO> filteredFaqs;
-    private List<TutorialDTO> filteredTutorials;
-    private List<TextDTO> filteredTexts;
-    private List<VideoDTO> filteredVideos;
+    private List<MaterialDTO> filteredMaterials;
     
     private UIComponent component;
     private static final Logger LOGGER = Logger.getLogger("web.AdministratorManager");
@@ -288,6 +286,86 @@ public class AdministratorManager implements Serializable {
     public boolean disableRemoveButton(String username) {
         return (username.compareTo(userManager.getUsername()) == 0);
     }
+    
+    // ***************************************
+    // ************ MATERIALS ****************
+    // ***************************************
+    public List<MaterialDTO> getAllMaterials() {
+        try {
+            List<MaterialDTO> materials = new LinkedList<MaterialDTO>();
+            
+            materials.addAll(emergencyContactBean.getAll());
+            materials.addAll(faqBean.getAll());
+            materials.addAll(textBean.getAll());
+            materials.addAll(tutorialBean.getAll());
+            materials.addAll(videoBean.getAll());
+            
+            return materials;
+        } catch (Exception e) {
+            LOGGER.warning("Error: problem in method getAllMaterials");
+        }
+
+        return null;
+    }
+    
+    public String detailsView(MaterialDTO material) {
+        switch(material.getType()) {
+            case "Emergency Contact": 
+                setCurrentEmergencyContact((EmergencyContactDTO) material);
+                return "admin_emergencyContact_details?faces-redirect=true";
+            case "FAQ": 
+                setCurrentFaq((FaqDTO) material);
+                return "admin_faq_details?faces-redirect=true";
+            case "Text": 
+                setCurrentText((TextDTO) material);
+                return "admin_text_details?faces-redirect=true";
+            case "Tutorial": 
+                setCurrentTutorial((TutorialDTO) material);
+                return "admin_tutorial_details?faces-redirect=true";
+            case "Video": 
+                setCurrentVideo((VideoDTO) material);
+                return "admin_video_details?faces-redirect=true";
+        }
+        
+        return null;
+    }
+    
+    public String updateView(MaterialDTO material) {
+        switch(material.getType()) {
+            case "Emergency Contact": 
+                setCurrentEmergencyContact((EmergencyContactDTO) material);
+                return "admin_emergencyContact_update?faces-redirect=true";
+            case "FAQ": 
+                setCurrentFaq((FaqDTO) material);
+                return "admin_faq_update?faces-redirect=true";
+            case "Text": 
+                setCurrentText((TextDTO) material);
+                return "admin_text_update?faces-redirect=true";
+            case "Tutorial": 
+                setCurrentTutorial((TutorialDTO) material);
+                return "admin_tutorial_update?faces-redirect=true";
+            case "Video": 
+                setCurrentVideo((VideoDTO) material);
+                return "admin_video_update?faces-redirect=true";
+        }
+        
+        return null;
+    }
+    
+    public void removeMaterial(MaterialDTO material) {
+        switch(material.getType()) {
+            case "Emergency Contact": 
+                removeEmergencyContact(material.getId());
+            case "FAQ": 
+                removeFaq(material.getId());
+            case "Text": 
+                removeText(material.getId());
+            case "Tutorial": 
+                removeTutorial(material.getId());
+            case "Video": 
+                removeVideo(material.getId());
+        }
+    }
 	
     // ***********************************************
     // ************ EMERGENCY CONTACT ****************
@@ -295,10 +373,11 @@ public class AdministratorManager implements Serializable {
     public String createEmergencyContact() {
         try {
             emergencyContactBean.create(
+                    newEmergencyContact.getDescription(),
                     newEmergencyContact.getName(),
                     newEmergencyContact.getTelephoneNumber());
 
-            setFilteredEmergencyContacts(null);
+            setFilteredMaterials(null);
             
             newEmergencyContact.reset();
 
@@ -325,11 +404,12 @@ public class AdministratorManager implements Serializable {
 
             emergencyContactBean.update(
                     currentEmergencyContact.getId(),
+                    currentEmergencyContact.getDescription(),
                     currentEmergencyContact.getName(),
                     currentEmergencyContact.getTelephoneNumber()
             );
             
-            setFilteredEmergencyContacts(null);
+            setFilteredMaterials(null);
 
             return "admin_index?faces-redirect=true";
         } catch (Exception e) {
@@ -339,12 +419,9 @@ public class AdministratorManager implements Serializable {
         return "admin_emergencyContact_update?faces-redirect=true";
     }
 
-    public void removeEmergencyContact(ActionEvent event) {
+    public void removeEmergencyContact(int emergencyContactId) {
         try {
-            UIParameter param = (UIParameter) event.getComponent().findComponent("deleteEmergencyContactId");
-            int id = Integer.parseInt(param.getValue().toString());
-
-            emergencyContactBean.remove(id);
+            emergencyContactBean.remove(emergencyContactId);
         } catch (Exception e) {
             LOGGER.warning("Error: problem in method removeEmergencyContact");
         }
@@ -356,11 +433,12 @@ public class AdministratorManager implements Serializable {
     public String createFaq() {
         try {
             faqBean.create(
-                    newFaq.getAnswer(),
+                    newFaq.getDescription(),
+                    newFaq.getQuestion(),
                     newFaq.getAnswer()
             );
             
-            setFilteredFaqs(null);
+            setFilteredMaterials(null);
 
             newFaq.reset();
 
@@ -386,10 +464,11 @@ public class AdministratorManager implements Serializable {
         try {
             faqBean.update(
                     currentFaq.getId(),
+                    currentFaq.getDescription(),
                     currentFaq.getQuestion(),
                     currentFaq.getAnswer());
             
-            setFilteredFaqs(null);
+            setFilteredMaterials(null);
 
             return "admin_index?faces-redirect=true";
         } catch (Exception e) {
@@ -399,12 +478,9 @@ public class AdministratorManager implements Serializable {
         return "admin_faq_update?faces-redirect=true";
     }
 
-    public void removeFaq(ActionEvent event) {
+    public void removeFaq(int faqId) {
         try {
-            UIParameter param = (UIParameter) event.getComponent().findComponent("deleteFaqId");
-            int id = Integer.parseInt(param.getValue().toString());
-
-            faqBean.remove(id);
+            faqBean.remove(faqId);
         } catch (Exception e) {
             LOGGER.warning("Error: problem in method removeFaq");
         }
@@ -416,9 +492,9 @@ public class AdministratorManager implements Serializable {
     public String createTutorial() {
         try {
 
-            tutorialBean.create(newTutorial.getText());
+            tutorialBean.create(newTutorial.getDescription(), newTutorial.getText());
 
-            setFilteredTutorials(null);
+            setFilteredMaterials(null);
             
             newTutorial.reset();
 
@@ -445,10 +521,11 @@ public class AdministratorManager implements Serializable {
 
             tutorialBean.update(
                     currentTutorial.getId(),
+                    currentTutorial.getDescription(),
                     currentTutorial.getText()
             );
             
-            setFilteredTutorials(null);
+            setFilteredMaterials(null);
 
             return "admin_index?faces-redirect=true";
         } catch (Exception e) {
@@ -458,12 +535,9 @@ public class AdministratorManager implements Serializable {
         return "admin_tutorial_update?faces-redirect=true";
     }
 
-    public void removeTutorial(ActionEvent event) {
+    public void removeTutorial(int tutorialId) {
         try {
-            UIParameter param = (UIParameter) event.getComponent().findComponent("deleteTutorialId");
-            int id = Integer.parseInt(param.getValue().toString());
-
-            tutorialBean.remove(id);
+            tutorialBean.remove(tutorialId);
         } catch (Exception e) {
             LOGGER.warning("Error: problem in method removeTutorial");
         }
@@ -476,10 +550,11 @@ public class AdministratorManager implements Serializable {
         try {
             
             textBean.create(
+                    newText.getDescription(),
                     newText.getText()
             );
             
-            setFilteredTexts(null);
+            setFilteredMaterials(null);
 
             newText.reset();
 
@@ -505,10 +580,11 @@ public class AdministratorManager implements Serializable {
         try {
             textBean.update(
                     currentText.getId(),
+                    currentText.getDescription(),
                     currentText.getText()
             );
             
-            setFilteredTexts(null);
+            setFilteredMaterials(null);
             
             return "admin_index?faces-redirect=true";
         } catch (Exception e) {
@@ -518,12 +594,9 @@ public class AdministratorManager implements Serializable {
         return "admin_text_update?faces-redirect=true";
     }
 
-    public void removeText(ActionEvent event) {
+    public void removeText(int textId) {
         try {
-            UIParameter param = (UIParameter) event.getComponent().findComponent("deleteTextId");
-            int id = Integer.parseInt(param.getValue().toString());
-
-            textBean.remove(id);
+            textBean.remove(textId);
         } catch (Exception e) {
             LOGGER.warning("Error: problem in method removeText");
         }
@@ -536,10 +609,11 @@ public class AdministratorManager implements Serializable {
         try {
      
             videoBean.create(
+                    newVideo.getDescription(),
                     newVideo.getUrl()
             );
 
-            setFilteredVideos(null);
+            setFilteredMaterials(null);
             
             newVideo.reset();
 
@@ -565,10 +639,11 @@ public class AdministratorManager implements Serializable {
         try {
             videoBean.update(
                     currentVideo.getId(), 
+                    currentVideo.getDescription(),
                     currentVideo.getUrl()
             );
             
-            setFilteredVideos(null);
+            setFilteredMaterials(null);
 
             return "admin_index?faces-redirect=true";
         } catch (Exception e) {
@@ -578,12 +653,9 @@ public class AdministratorManager implements Serializable {
         return "admin_video_update?faces-redirect=true";
     }
 
-    public void removeVideo(ActionEvent event) {
+    public void removeVideo(int videoId) {
         try {
-            UIParameter param = (UIParameter) event.getComponent().findComponent("deleteVideoId");
-            int id = Integer.parseInt(param.getValue().toString());
-
-            videoBean.remove(id);
+            videoBean.remove(videoId);
         } catch (Exception e) {
             LOGGER.warning("Error: problem in method removeVideo");
         }
@@ -744,46 +816,14 @@ public class AdministratorManager implements Serializable {
         this.filteredCaregivers = filteredCaregivers;
     }
 
-    public List<EmergencyContactDTO> getFilteredEmergencyContacts() {
-        return filteredEmergencyContacts;
+    public List<MaterialDTO> getFilteredMaterials() {
+        return filteredMaterials;
     }
 
-    public void setFilteredEmergencyContacts(List<EmergencyContactDTO> filteredEmergencyContacts) {
-        this.filteredEmergencyContacts = filteredEmergencyContacts;
+    public void setFilteredMaterials(List<MaterialDTO> filteredMaterials) {
+        this.filteredMaterials = filteredMaterials;
     }
-
-    public List<FaqDTO> getFilteredFaqs() {
-        return filteredFaqs;
-    }
-
-    public void setFilteredFaqs(List<FaqDTO> filteredFaqs) {
-        this.filteredFaqs = filteredFaqs;
-    }
-
-    public List<TutorialDTO> getFilteredTutorials() {
-        return filteredTutorials;
-    }
-
-    public void setFilteredTutorials(List<TutorialDTO> filteredTutorials) {
-        this.filteredTutorials = filteredTutorials;
-    }
-
-    public List<TextDTO> getFilteredTexts() {
-        return filteredTexts;
-    }
-
-    public void setFilteredTexts(List<TextDTO> filteredTexts) {
-        this.filteredTexts = filteredTexts;
-    }
-
-    public List<VideoDTO> getFilteredVideos() {
-        return filteredVideos;
-    }
-
-    public void setFilteredVideos(List<VideoDTO> filteredVideos) {
-        this.filteredVideos = filteredVideos;
-    }
-
+    
     public UIComponent getComponent() {
         return component;
     }

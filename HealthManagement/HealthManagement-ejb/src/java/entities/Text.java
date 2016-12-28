@@ -22,8 +22,8 @@ public class Text extends Material implements Serializable {
     public Text(){
     }
     
-    public Text(String text){
-        super(GROUP.Text);
+    public Text(String description, String text){
+        super(description, GROUP.Text);
         this.text = text;
     }
 
