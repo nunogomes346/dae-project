@@ -39,7 +39,7 @@ public class Patient implements Serializable {
     @ManyToMany(mappedBy = "patients")
     private List<Need> needs;
 
-    @OneToMany(mappedBy = "registeredProcedure")
+    @OneToMany(mappedBy = "patient")
     private List<RegisteredProcedure> registeredProcedures;
 
     public Patient() {

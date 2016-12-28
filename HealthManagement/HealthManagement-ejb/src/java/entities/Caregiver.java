@@ -22,7 +22,7 @@ public class Caregiver extends User implements Serializable {
     @OneToMany(mappedBy = "caregiver")
     private List<Patient> patients;
 
-    @OneToMany(mappedBy = "registeredProcedure")
+    @OneToMany(mappedBy = "caregiver")
     private List<RegisteredProcedure> registeredProcedures;
    
     @ManyToMany
