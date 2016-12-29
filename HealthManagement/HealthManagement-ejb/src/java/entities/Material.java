@@ -98,4 +98,13 @@ public class Material implements Serializable {
     public void removeCaregiver(Caregiver caregiver) {
         this.caregivers.remove(caregiver);
     }
+
+    public MaterialGroup getGroup() {
+        return group;
+    }
+
+    public void setGroup(MaterialGroup group) {
+        this.group = group;
+    }
+    
 }

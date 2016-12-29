@@ -1,7 +1,9 @@
 package ejbs;
 
+import dtos.NeedDTO;
 import dtos.PatientDTO;
 import entities.Caregiver;
+import entities.Need;
 import entities.Patient;
 import exceptions.CaregiverAssociatedException;
 import exceptions.CaregiverDiassociatedException;
@@ -10,6 +12,7 @@ import exceptions.MyConstraintViolationException;
 import exceptions.Utils;
 import java.util.ArrayList;
 import java.util.List;
+import javax.ejb.EJB;
 import javax.ejb.EJBException;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -17,14 +20,19 @@ import javax.persistence.PersistenceContext;
 import javax.validation.ConstraintViolationException;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 @Stateless
+@Path("/patients")
 public class PatientBean {
     
     @PersistenceContext
     EntityManager em;
+    
+    @EJB
+    private NeedBean needBean;
     
     public void create(String name, String mail) 
             throws MyConstraintViolationException{
@@ -190,6 +198,29 @@ public class PatientBean {
         }
     }    
     
+    @GET
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Path("{id}/needs")
+    public List<NeedDTO> getPatientsNeedsREST (@PathParam("id") Long id)  throws EntityDoesNotExistException {
+        try{
+            
+            Patient patient = em.find(Patient.class, id);
+            if(patient == null){
+                throw new EntityDoesNotExistException("There is no Patient with that id.");
+            }
+            
+            List<Need> needs = (List<Need>) patient.getNeeds();
+            
+            return needBean.needsToDTOs(needs);
+            
+        }catch (EntityDoesNotExistException e) {
+            throw e;             
+        } catch (Exception e) {
+            throw new EJBException(e.getMessage());
+        }
+    }
+    
+    
     //Build DTOs
     PatientDTO patientToDTO(Patient patient) {
         return new PatientDTO(
@@ -207,4 +238,6 @@ public class PatientBean {
         }
         return dtos;
     }
+    
+
 }

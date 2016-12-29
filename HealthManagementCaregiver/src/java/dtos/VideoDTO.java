@@ -12,8 +12,8 @@ public class VideoDTO extends MaterialDTO {
 
     public VideoDTO() { }
     
-    public VideoDTO(int id, String url){
-        super(id);
+    public VideoDTO(int id, String description, String url){
+        super(id, description, "Video");
         this.url = url;
     }
 
@@ -25,6 +25,7 @@ public class VideoDTO extends MaterialDTO {
         this.url = url;
     }
 
+    @Override
     public void reset() {
         super.reset();
         setUrl(null);

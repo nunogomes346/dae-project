@@ -37,9 +37,11 @@
                     <h:outputText value="Actions" />
                 </f:facet>
                 <h:form>
-                    <h:commandLink value="Materials" actionListener="#{caregiverManager.patientMaterials}">
-                        <f:param name="patientId" id="patientId" value="#{patient.id}" />
-                    </h:commandLink>
+   
+                    <h:commandButton value="Needs" id="needs" action="caregiver_patient_needs?faces-redirect=true">
+                       <f:setPropertyActionListener target="#{caregiverManager.currentPatient}" value="#{patient}" />
+                    </h:commandButton>
+      
                 </h:form>
             </h:column>
 

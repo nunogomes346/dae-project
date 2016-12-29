@@ -74,7 +74,7 @@ public class VideoBean {
         }
     }
 
-    VideoDTO videoToDTO(Video video) {
+    public VideoDTO videoToDTO(Video video) {
         return new VideoDTO(
                 video.getId(),
                 video.getDescription(),
@@ -82,7 +82,7 @@ public class VideoBean {
         );
     }
 
-    List<VideoDTO> videosToDTOs(List<Video> videos) {
+    public List<VideoDTO> videosToDTOs(List<Video> videos) {
         List<VideoDTO> dtos = new ArrayList<>();
         for (Video v : videos) {
             dtos.add(videoToDTO(v));
