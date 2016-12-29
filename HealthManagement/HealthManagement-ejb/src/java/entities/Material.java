@@ -35,12 +35,12 @@ public class Material implements Serializable {
     private List<Caregiver> caregivers;
 
     @OneToMany(mappedBy = "material")
-    private List<RegisteredProcedure> registeredProcedures;
+    private List<Proceeding> proceedings;
     
     public Material(){
         this.needs = new LinkedList<Need>();
         this.caregivers = new LinkedList<Caregiver>();
-        this.registeredProcedures = new LinkedList<RegisteredProcedure>();
+        this.proceedings = new LinkedList<Proceeding>();
     }
     
     public Material(String description, GROUP group){
@@ -48,7 +48,7 @@ public class Material implements Serializable {
         this.group = new MaterialGroup(group, this);
         this.needs = new LinkedList<Need>();
         this.caregivers = new LinkedList<Caregiver>();
-        this.registeredProcedures = new LinkedList<RegisteredProcedure>();
+        this.proceedings = new LinkedList<Proceeding>();
     }
 
     public int getId() {
@@ -101,5 +101,21 @@ public class Material implements Serializable {
     
     public void removeCaregiver(Caregiver caregiver) {
         this.caregivers.remove(caregiver);
+    }
+    
+    public List<Proceeding> getProceedings() {
+        return proceedings;
+    }
+
+    public void setProceedings(List<Proceeding> proceedings) {
+        this.proceedings = proceedings;
+    }
+    
+    public void addProceeding(Proceeding proceeding){
+        this.proceedings.add(proceeding);
+    }
+    
+    public void removeProceeding(Proceeding proceeding){
+        this.proceedings.remove(proceeding);
     }
 }

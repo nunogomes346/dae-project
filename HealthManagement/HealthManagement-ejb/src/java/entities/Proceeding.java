@@ -12,45 +12,44 @@ import javax.persistence.NamedQuery;
 
 @Entity
 @NamedQueries({
-    @NamedQuery(name = "getAllRegisteredProcedures",
-            query = "SELECT n FROM RegisteredProcedure n ORDER BY n.id ")
-})
-public class RegisteredProcedure implements Serializable {
+    @NamedQuery(name = "getAllProceeding",
+            query = "SELECT p FROM Proceeding p ORDER BY p.id ")
+    }
+)
+public class Proceeding implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private int id; // it was long before being int
-
+    private Long id;
+    
     @ManyToOne
     @JoinColumn(name = "MATERIAL_ID")
     private Material material;
     
-    // patient
     @ManyToOne
     @JoinColumn(name = "PATIENT_ID")
     private Patient patient;
     
-    // caregiver
     @ManyToOne
     @JoinColumn(name = "CAREGIVER_ID")
     private Caregiver caregiver;
     
-    private String date;
+    private String proceedingDate;
+
+    public Proceeding() { }
     
-    public RegisteredProcedure() {}
-    
-    public RegisteredProcedure(Material material, Patient patient, Caregiver caregiver, String date){
+    public Proceeding(Material material, Patient patient, Caregiver caregiver, String proceedingDate) {
         this.material = material;
         this.patient = patient;
         this.caregiver = caregiver;
-        this.date = date;
+        this.proceedingDate = proceedingDate;
     }
-
-    public int getId() {
+    
+    public Long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -78,14 +77,12 @@ public class RegisteredProcedure implements Serializable {
         this.caregiver = caregiver;
     }
 
-    public String getDate() {
-        return date;
+    public String getProceedingDate() {
+        return proceedingDate;
     }
 
-    public void setDate(String date) {
-        this.date = date;
+    public void setProceedingDate(String proceedingDate) {
+        this.proceedingDate = proceedingDate;
     }
-    
-    
-    
+
 }

@@ -1,8 +1,10 @@
 package ejbs;
 
 import dtos.PatientDTO;
+import dtos.ProceedingDTO;
 import entities.Caregiver;
 import entities.Patient;
+import entities.Proceeding;
 import exceptions.CaregiverAssociatedException;
 import exceptions.CaregiverDiassociatedException;
 import exceptions.EntityDoesNotExistException;
@@ -10,17 +12,27 @@ import exceptions.MyConstraintViolationException;
 import exceptions.Utils;
 import java.util.ArrayList;
 import java.util.List;
+import javax.ejb.EJB;
 import javax.ejb.EJBException;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.validation.ConstraintViolationException;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
 
 @Stateless
+@Path("/patients")
 public class PatientBean {
     
     @PersistenceContext
     EntityManager em;
+    
+    @EJB
+    private ProceedingsBean proceedingsBean;
     
     public void create(String name, String mail) 
             throws MyConstraintViolationException{
@@ -179,6 +191,26 @@ public class PatientBean {
             }
             
             return diassociatedPatients;
+        } catch (EntityDoesNotExistException e) {
+            throw e;             
+        } catch (Exception e) {
+            throw new EJBException(e.getMessage());
+        }
+    }
+
+    @GET
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Path("{patientId}/proceedings")
+    public List<ProceedingDTO> getPatientsProceedingsREST(@PathParam("patientId") Long patientId) throws EntityDoesNotExistException{
+        try {
+            Patient patient = em.find(Patient.class, patientId);
+            if(patient == null){
+                throw new EntityDoesNotExistException("There is no patient with that id.");
+            }
+            
+            List<Proceeding> proceedings = (List<Proceeding>) patient.getProceedings();
+            
+            return proceedingsBean.proceedingsToDTOs(proceedings);
         } catch (EntityDoesNotExistException e) {
             throw e;             
         } catch (Exception e) {

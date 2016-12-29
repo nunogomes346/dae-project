@@ -383,8 +383,6 @@ public class CaregiverBean {
         }
     }
     
-    
-    
     @GET
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     @Path("{username}/patients")

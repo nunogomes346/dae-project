@@ -23,7 +23,7 @@ public class Caregiver extends User implements Serializable {
     private List<Patient> patients;
 
     @OneToMany(mappedBy = "caregiver")
-    private List<RegisteredProcedure> registeredProcedures;
+    private List<Proceeding> proceedings;
    
     @ManyToMany
     @JoinTable(name = "CAREGIVERS_MATERIALS", 
@@ -36,14 +36,14 @@ public class Caregiver extends User implements Serializable {
     public Caregiver() {  
        this.patients = new LinkedList<Patient>();
        this.materials = new LinkedList<Material>();
-       this.registeredProcedures = new LinkedList<>();
+       this.proceedings = new LinkedList<Proceeding>();
     }
     
     public Caregiver(String username, String password, String name, String mail) {
         super(username, password, name, mail, GROUP.Caregiver);
         this.patients = new LinkedList<Patient>();
         this.materials = new LinkedList<Material>();
-        this.registeredProcedures = new LinkedList<>();
+        this.proceedings = new LinkedList<Proceeding>();
         this.rate = "No rate";
     }
 
@@ -87,19 +87,19 @@ public class Caregiver extends User implements Serializable {
         this.rate = rate;
     }
 
-    public List<RegisteredProcedure> getRegisteredProcedures() {
-        return registeredProcedures;
+    public List<Proceeding> getProceedings() {
+        return proceedings;
     }
 
-    public void setRegisteredProcedures(List<RegisteredProcedure> registeredProcedures) {
-        this.registeredProcedures = registeredProcedures;
+    public void setProceedings(List<Proceeding> proceedings) {
+        this.proceedings = proceedings;
     }
-
-    public void addRegisteredProcedures(RegisteredProcedure r) {
-        this.registeredProcedures.add(r);
+    
+    public void addProceeding(Proceeding proceeding){
+        this.proceedings.add(proceeding);
     }
-
-    public void removeRegisteredProcedure (RegisteredProcedure r) {
-        this.registeredProcedures.remove(r);
+    
+    public void removeProceeding(Proceeding proceeding){
+        this.proceedings.remove(proceeding);
     }
 }

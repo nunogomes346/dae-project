@@ -2,6 +2,7 @@ package web;
 
 import dtos.CaregiverDTO;
 import dtos.PatientDTO;
+import dtos.ProceedingDTO;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
@@ -15,7 +16,6 @@ import javax.faces.event.ActionEvent;
 import javax.inject.Inject;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
 import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
@@ -28,7 +28,6 @@ public class CaregiverManager implements Serializable {
     @Inject
     private UserManager userManager;
     
- 
     private PatientDTO currentPatient;
     private CaregiverDTO newCaregiver;
     private CaregiverDTO currentCaregiver;
@@ -54,27 +53,7 @@ public class CaregiverManager implements Serializable {
     // ***************************************
     // ************ CAREGIVER ************
     // *************************************** 
-    
-    /*
-    public String createAdministratorREST() { 
-        try {
-            client.target(baseUri)
-                    .path("/administrators/create")
-                    .request(MediaType.APPLICATION_XML).post(Entity.xml(newAdministrator));
-            
-            newAdministrator.reset();
-            
-            return "admin_index?faces-redirect=true";
-        } catch (Exception e) {
-            FacesExceptionHandler.handleException(e, "Unexpected error! Try again latter!", LOGGER);
-        }
-        return null;
-    }
-    */
-    
     public List<PatientDTO> getCaregiversPatientsREST() {
-        
-        
         List<PatientDTO> returnedPatients = null;
         try {
             returnedPatients = client.target(baseUri)
@@ -88,46 +67,35 @@ public class CaregiverManager implements Serializable {
         return returnedPatients;
     }
     
-    public void patientMaterials(){
-        
-    }
-    
-    /*
-    public String updateAdministratorREST() {   
+    public List<ProceedingDTO> getPatientsProceedingsREST() {
+        List<ProceedingDTO> returnedProceeding = null;
         try {
-            client.target(baseUri)
-                    .path("/administrators/update")
-                    .request(MediaType.APPLICATION_XML).put(Entity.xml(currentAdministrator));
-            
-            if(currentAdministrator.getUsername().compareTo(userManager.getUsername()) == 0) {
-                return userManager.logout();
-            }
-            
-            return "admin_index?faces-redirect=true";
-           
-        } catch (Exception e) {
+            returnedProceeding = client.target(baseUri)
+                .path("/patients/{patientId}/proceedings")
+                .resolveTemplate("patientId", currentPatient.getId())
+                .request(MediaType.APPLICATION_XML)
+                .get(new GenericType<List<ProceedingDTO>>() {});
+        } catch (Exception e){
             FacesExceptionHandler.handleException(e, "Unexpected error! Try again latter!", LOGGER);
         }
-        return "admin_administrator_update";
+        return returnedProceeding;
     }
-    */
     
-    /*
-    public void removeAdministratorREST(ActionEvent event) {
+    public void removeProceedingREST(ActionEvent event) {
         try {
-            UIParameter param = (UIParameter) event.getComponent().findComponent("deleteAdministratorId");
-            String id = param.getValue().toString();
+            UIParameter param = (UIParameter) event.getComponent().findComponent("deleteProceedingId");
+            Long proceedingId = Long.parseLong(param.getValue().toString());
             
             client.target(baseUri)
-                    .path("/administrators/delete/{username}")
-                    .resolveTemplate("username", id)
+                    .path("/proceedings/{proceedingId}")
+                    .resolveTemplate("proceedingId", proceedingId)
                     .request().delete();
 
         } catch (Exception e) {
             FacesExceptionHandler.handleException(e, "Unexpected error! Try again latter!", LOGGER);
         }
     }
-    */
+
     
     // **********************************
     // ************ GETS&SETS *******
@@ -164,8 +132,6 @@ public class CaregiverManager implements Serializable {
         this.currentCaregiver = currentCaregiver;
     }
     
-    
-
     public UIComponent getComponent() {
         return component;
     }
@@ -173,8 +139,4 @@ public class CaregiverManager implements Serializable {
     public void setComponent(UIComponent component) {
         this.component = component;
     }
-    
-    /*
-    Consumir Rest
-    */
 }
