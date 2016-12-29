@@ -183,13 +183,13 @@ public class NeedBean {
     }
     
     //Build DTOs
-    NeedDTO needToDTO(Need need) {
+    public NeedDTO needToDTO(Need need) {
         return new NeedDTO(
                 need.getId(),
                 need.getDescription());
     }
     
-    List<NeedDTO> needsToDTOs(List<Need> needs) {
+    public List<NeedDTO> needsToDTOs(List<Need> needs) {
         List<NeedDTO> dtos = new ArrayList<>();
         for (Need n : needs) {
             dtos.add(needToDTO(n));

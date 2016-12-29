@@ -74,7 +74,7 @@ public class FaqBean {
     }
 
     //Build DTOs
-    FaqDTO faqToDTO(FAQ faq) {
+    public FaqDTO faqToDTO(FAQ faq) {
         return new FaqDTO(
                 faq.getId(),
                 faq.getDescription(),
@@ -83,7 +83,7 @@ public class FaqBean {
         );
     }
 
-    List<FaqDTO> faqsToDTOs(List<FAQ> faqs) {
+    public List<FaqDTO> faqsToDTOs(List<FAQ> faqs) {
         List<FaqDTO> dtos = new ArrayList<>();
         for (FAQ f : faqs) {
             dtos.add(faqToDTO(f));

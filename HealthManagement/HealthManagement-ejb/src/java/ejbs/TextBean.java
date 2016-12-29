@@ -73,7 +73,7 @@ public class TextBean {
     }
 
     //Build DTOs
-    TextDTO textToDTO(Text text) {
+    public TextDTO textToDTO(Text text) {
         return new TextDTO(
                 text.getId(),
                 text.getDescription(),
@@ -81,7 +81,7 @@ public class TextBean {
         );
     }
 
-    List<TextDTO> textsToDTOs(List<Text> texts) {
+    public List<TextDTO> textsToDTOs(List<Text> texts) {
         List<TextDTO> dtos = new ArrayList<>();
         for (Text t : texts) {
             dtos.add(textToDTO(t));

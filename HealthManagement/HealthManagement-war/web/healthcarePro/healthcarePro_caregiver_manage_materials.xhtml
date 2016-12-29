@@ -20,9 +20,59 @@
 
             <h:column>
                 <f:facet name="header">
-                    <h:outputText value="Name" />
+                    <h:outputText value="Description" />
                 </f:facet>
                 <h:outputText value="#{need.description}" />
+            </h:column>
+            
+            <h:column>
+                <f:facet name="header">
+                    <h:outputText value="Actions" />
+                </f:facet>
+                <h:form>
+                    <h:commandButton value="Details" id="details" action="healthcarePro_caregiver_patientsNeeds_details?faces-redirect=true">
+                            <f:setPropertyActionListener target="#{healthcareProManager.currentNeed}" value="#{need}" />
+                    </h:commandButton>
+                </h:form>
+            </h:column>
+        </h:dataTable>
+        
+        <br />
+        
+        <h:dataTable
+            var="material"
+            summary="Caregiver Materials"
+            value="#{healthcareProManager.caregiverMaterials}"
+            rules="all"
+            cellpadding="5">
+
+            <f:facet name="header">
+                <h:outputText value="Caregiver materials" />
+            </f:facet>
+
+            <h:column>
+                <f:facet name="header">
+                    <h:outputText value="Description" />
+                </f:facet>
+                <h:outputText value="#{material.description}" />
+            </h:column>
+            
+            <h:column>
+                <f:facet name="header">
+                    <h:outputText value="Type" />
+                </f:facet>
+                <h:outputText value="#{material.type}" />
+            </h:column>
+            
+            <h:column>
+                <f:facet name="header">
+                    <h:outputText value="Actions" />
+                </f:facet>
+                <h:form>
+                    <h:commandLink value="Diassociate" actionListener="#{healthcareProManager.diassociateMaterialFromCaregiver}">
+                        <f:param name="materialId" id="materialId" value="#{material.id}" />
+                    </h:commandLink>
+                </h:form>
             </h:column>
         </h:dataTable>
         

@@ -66,6 +66,10 @@ public class Material implements Serializable {
     public void setDescription(String description) {
         this.description = description;
     }
+
+    public MaterialGroup getGroup() {
+        return group;
+    }
     
     public List<Need> getNeeds() {
         return needs;

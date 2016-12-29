@@ -74,7 +74,7 @@ public class TutorialBean {
     }
     
     //Build DTOs
-    TutorialDTO tutorialToDTO(Tutorial tutorial) {
+    public TutorialDTO tutorialToDTO(Tutorial tutorial) {
         return new TutorialDTO(
                 tutorial.getId(),
                 tutorial.getDescription(),
@@ -82,7 +82,7 @@ public class TutorialBean {
         );
     }
 
-    List<TutorialDTO> tutorialsToDTOs(List<Tutorial> tutorials) {
+    public List<TutorialDTO> tutorialsToDTOs(List<Tutorial> tutorials) {
         List<TutorialDTO> dtos = new ArrayList<>();
         for (Tutorial t : tutorials) {
             dtos.add(tutorialToDTO(t));

@@ -1,18 +1,31 @@
 package ejbs;
 
 import dtos.CaregiverDTO;
+import dtos.EmergencyContactDTO;
+import dtos.FaqDTO;
+import dtos.MaterialDTO;
 import dtos.NeedDTO;
 import dtos.PatientDTO;
+import dtos.TextDTO;
+import dtos.TutorialDTO;
+import dtos.VideoDTO;
 import entities.Caregiver;
+import entities.EmergencyContact;
+import entities.FAQ;
 import entities.Material;
 import entities.Need;
 import entities.Patient;
+import entities.Text;
+import entities.Tutorial;
+import entities.Video;
 import exceptions.EntityAlreadyExistsException;
 import exceptions.EntityDoesNotExistException;
 import exceptions.MyConstraintViolationException;
 import exceptions.Utils;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+import javax.ejb.EJB;
 import javax.ejb.EJBException;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -30,6 +43,23 @@ public class CaregiverBean {
     
     @PersistenceContext
     EntityManager em;
+    
+    @EJB
+    private PatientBean patientBean;
+    
+    @EJB
+    private NeedBean needBean;
+    
+    @EJB
+    private EmergencyContactBean emergencyContactBean;
+    @EJB
+    private FaqBean faqBean;
+    @EJB
+    private TutorialBean tutorialBean;
+    @EJB
+    private TextBean textBean;
+    @EJB
+    private VideoBean videoBean;
     
     public void create(String username, String password, String name, String mail) 
             throws EntityAlreadyExistsException, MyConstraintViolationException{
@@ -131,7 +161,120 @@ public class CaregiverBean {
                 }
             }
             
-            return needsToDTOs(caregiverPatientsNeeds); 
+            return needBean.needsToDTOs(caregiverPatientsNeeds); 
+        } catch (EntityDoesNotExistException e) {
+            throw e;
+        } catch (ConstraintViolationException e) {
+            throw new MyConstraintViolationException(Utils.getConstraintViolationMessages(e));            
+        } catch(EJBException e) {
+            throw new EJBException(e.getMessage());
+        }
+    }
+    
+    public List<MaterialDTO> getCaregiverMaterials(String username) 
+            throws EntityDoesNotExistException, MyConstraintViolationException {
+        try {
+            Caregiver caregiver = em.find(Caregiver.class, username);
+            if (caregiver == null) {
+                throw new EntityDoesNotExistException("There is no caregiver with that username.");
+            }
+            
+            List<EmergencyContactDTO> emergencyContacts = new LinkedList<EmergencyContactDTO>();
+            List<FaqDTO> faqs = new LinkedList<FaqDTO>();
+            List<TextDTO> texts = new LinkedList<TextDTO>();
+            List<TutorialDTO> tutorials = new LinkedList<TutorialDTO>();
+            List<VideoDTO> videos = new LinkedList<VideoDTO>();
+            
+            for (Material material : caregiver.getMaterials()) {
+                switch (material.getGroup().getGroupName()) {
+                    case EmergencyContact:
+                        emergencyContacts.add(emergencyContactBean.emergencyContactToDTO((EmergencyContact) material));
+                        break;
+                    case Faq:
+                        faqs.add(faqBean.faqToDTO((FAQ) material));
+                        break;
+                    case Text:
+                        texts.add(textBean.textToDTO((Text) material));
+                        break;
+                    case Tutorial:
+                        tutorials.add(tutorialBean.tutorialToDTO((Tutorial) material));
+                        break;
+                    case Video:
+                        videos.add(videoBean.videoToDTO((Video) material));
+                        break;
+                }
+            }
+            
+            List<MaterialDTO> materials = new LinkedList<MaterialDTO>();
+            materials.addAll(emergencyContacts);
+            materials.addAll(faqs);
+            materials.addAll(texts);
+            materials.addAll(tutorials);
+            materials.addAll(videos);
+            
+            return materials;
+        } catch (EntityDoesNotExistException e) {
+            throw e;
+        } catch (ConstraintViolationException e) {
+            throw new MyConstraintViolationException(Utils.getConstraintViolationMessages(e));            
+        } catch(EJBException e) {
+            throw new EJBException(e.getMessage());
+        }
+    }
+    
+    public List<MaterialDTO> getCaregiverPatientsNeedsMaterial(String username, Long needId) 
+            throws EntityDoesNotExistException, MyConstraintViolationException {
+        try {
+            Caregiver caregiver = em.find(Caregiver.class, username);
+            if (caregiver == null) {
+                throw new EntityDoesNotExistException("There is no caregiver with that username.");
+            }
+            
+            Need need = em.find(Need.class, needId);
+            if (need == null) {
+                throw new EntityDoesNotExistException("There is no need with that id.");
+            }
+            
+            List<EmergencyContactDTO> emergencyContacts = new LinkedList<EmergencyContactDTO>();
+            List<FaqDTO> faqs = new LinkedList<FaqDTO>();
+            List<TextDTO> texts = new LinkedList<TextDTO>();
+            List<TutorialDTO> tutorials = new LinkedList<TutorialDTO>();
+            List<VideoDTO> videos = new LinkedList<VideoDTO>();
+            
+            for (Material material : caregiver.getMaterials()) {
+                for(Material needMaterial : need.getMaterials()) {
+                    if(material == needMaterial) {
+                        switch (material.getGroup().getGroupName()) {
+                            case EmergencyContact:
+                                emergencyContacts.add(emergencyContactBean.emergencyContactToDTO((EmergencyContact) material));
+                                break;
+                            case Faq:
+                                faqs.add(faqBean.faqToDTO((FAQ) material));
+                                break;
+                            case Text:
+                                texts.add(textBean.textToDTO((Text) material));
+                                break;
+                            case Tutorial:
+                                tutorials.add(tutorialBean.tutorialToDTO((Tutorial) material));
+                                break;
+                            case Video:
+                                videos.add(videoBean.videoToDTO((Video) material));
+                                break;
+                        }
+                        
+                        break;
+                    }
+                }
+            }
+            
+            List<MaterialDTO> materials = new LinkedList<MaterialDTO>();
+            materials.addAll(emergencyContacts);
+            materials.addAll(faqs);
+            materials.addAll(texts);
+            materials.addAll(tutorials);
+            materials.addAll(videos);
+            
+            return materials;
         } catch (EntityDoesNotExistException e) {
             throw e;
         } catch (ConstraintViolationException e) {
@@ -144,6 +287,8 @@ public class CaregiverBean {
     public void associateMaterial(String username, int materialId, Long needId)
             throws EntityDoesNotExistException, MyConstraintViolationException {
         try {
+            boolean canInsert = true;
+            
             Caregiver caregiver = em.find(Caregiver.class, username);
             if (caregiver == null) {
                 throw new EntityDoesNotExistException("There is no caregiver with that username.");
@@ -159,11 +304,56 @@ public class CaregiverBean {
                 throw new EntityDoesNotExistException("There is no need with that id.");
             }
             
-            caregiver.addMaterial(material);
-            material.addCaregiver(caregiver);
+            for (Material caregiverMaterial : caregiver.getMaterials()) {
+                if(caregiverMaterial == material) {
+                    canInsert = false;
+                    break;
+                }
+                canInsert = true;
+            }
             
-            material.addNeed(need);
-            need.addMaterial(material);
+            if(canInsert) {
+                caregiver.addMaterial(material);
+                material.addCaregiver(caregiver);
+            }
+            
+            for (Material needMaterial : need.getMaterials()) {
+                if(needMaterial == material) {
+                    canInsert = false;
+                    break;
+                }
+                canInsert = true;
+            }
+            
+            if(canInsert) {
+                material.addNeed(need);
+                need.addMaterial(material);
+            }
+        } catch (EntityDoesNotExistException e) {
+            throw e;
+        } catch (ConstraintViolationException e) {
+            throw new MyConstraintViolationException(Utils.getConstraintViolationMessages(e));            
+        } catch(EJBException e) {
+            throw new EJBException(e.getMessage());
+        }
+    }
+    
+    public void diassociateMaterialFromCaregiver(String username, int materialId) 
+            throws EntityDoesNotExistException, MyConstraintViolationException {
+        try {
+            Caregiver caregiver = em.find(Caregiver.class, username);
+            if (caregiver == null) {
+                throw new EntityDoesNotExistException("There is no caregiver with that username.");
+            }   
+            
+            Material material = em.find(Material.class, materialId);
+            if (caregiver == null) {
+                throw new EntityDoesNotExistException("There is no material with that id.");
+            }  
+            
+            material.removeCaregiver(caregiver);
+            caregiver.removeMaterial(material);
+
         } catch (EntityDoesNotExistException e) {
             throw e;
         } catch (ConstraintViolationException e) {
@@ -207,7 +397,7 @@ public class CaregiverBean {
             
             List<Patient> patients = (List<Patient>) caregiver.getPatients();
             
-            return patientsToDTOs(patients);
+            return patientBean.patientsToDTOs(patients);
         } catch (EntityDoesNotExistException e) {
             throw e;             
         } catch (Exception e) {
@@ -229,36 +419,6 @@ public class CaregiverBean {
         List<CaregiverDTO> dtos = new ArrayList<>();
         for (Caregiver c : caregivers) {
             dtos.add(caregiverToDTO(c));
-        }
-        return dtos;
-    }
-    
-    PatientDTO patientToDTO(Patient patient) {
-        return new PatientDTO(
-                patient.getId(),
-                patient.getName(),
-                patient.getMail(),
-                (patient.getCaregiver() == null) ? null : patient.getCaregiver().getUsername());
-    }
-    
-    List<PatientDTO> patientsToDTOs(List<Patient> patients) {
-        List<PatientDTO> dtos = new ArrayList<>();
-        for (Patient p : patients) {
-            dtos.add(patientToDTO(p));
-        }
-        return dtos;
-    }
-    
-    NeedDTO needToDTO(Need need) {
-        return new NeedDTO(
-                need.getId(),
-                need.getDescription());
-    }
-    
-    List<NeedDTO> needsToDTOs(List<Need> needs) {
-        List<NeedDTO> dtos = new ArrayList<>();
-        for (Need n : needs) {
-            dtos.add(needToDTO(n));
         }
         return dtos;
     }

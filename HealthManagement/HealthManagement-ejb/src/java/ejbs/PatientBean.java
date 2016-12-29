@@ -15,10 +15,6 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.validation.ConstraintViolationException;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
 
 @Stateless
 public class PatientBean {
@@ -191,7 +187,7 @@ public class PatientBean {
     }    
     
     //Build DTOs
-    PatientDTO patientToDTO(Patient patient) {
+    public PatientDTO patientToDTO(Patient patient) {
         return new PatientDTO(
                 patient.getId(),
                 patient.getName(),
@@ -200,7 +196,7 @@ public class PatientBean {
     }
     
     
-    List<PatientDTO> patientsToDTOs(List<Patient> patients) {
+    public List<PatientDTO> patientsToDTOs(List<Patient> patients) {
         List<PatientDTO> dtos = new ArrayList<>();
         for (Patient p : patients) {
             dtos.add(patientToDTO(p));

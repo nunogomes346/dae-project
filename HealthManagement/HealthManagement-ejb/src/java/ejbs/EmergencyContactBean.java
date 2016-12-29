@@ -74,7 +74,7 @@ public class EmergencyContactBean {
     }
 
     //Build DTOs
-    EmergencyContactDTO emergencyContactToDTO(EmergencyContact emergencyContact) {
+    public EmergencyContactDTO emergencyContactToDTO(EmergencyContact emergencyContact) {
         return new EmergencyContactDTO(
                 emergencyContact.getId(),
                 emergencyContact.getDescription(),
@@ -83,7 +83,7 @@ public class EmergencyContactBean {
         );
     }
 
-    List<EmergencyContactDTO> emergencyContactsToDTOs(List<EmergencyContact> emergencyContacts) {
+    public List<EmergencyContactDTO> emergencyContactsToDTOs(List<EmergencyContact> emergencyContacts) {
         List<EmergencyContactDTO> dtos = new ArrayList<>();
         for (EmergencyContact ec : emergencyContacts) {
             dtos.add(emergencyContactToDTO(ec));
