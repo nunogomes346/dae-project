@@ -29,6 +29,7 @@ public class AdministratorManager implements Serializable {
     
     private AdministratorDTO newAdministrator;
     private AdministratorDTO currentAdministrator;
+    
     private HttpAuthenticationFeature feature;
     
     private Client client;

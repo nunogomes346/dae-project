@@ -1,6 +1,8 @@
 package ejbs;
 
+import dtos.CareProcedureDTO;
 import dtos.PatientDTO;
+import entities.CareProcedure;
 import entities.Caregiver;
 import entities.Patient;
 import exceptions.CaregiverAssociatedException;
@@ -10,6 +12,7 @@ import exceptions.MyConstraintViolationException;
 import exceptions.Utils;
 import java.util.ArrayList;
 import java.util.List;
+import javax.ejb.EJB;
 import javax.ejb.EJBException;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -17,17 +20,22 @@ import javax.persistence.PersistenceContext;
 import javax.validation.ConstraintViolationException;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 @Stateless
+@Path("/patients")
 public class PatientBean {
-    
+
     @PersistenceContext
     EntityManager em;
     
-    public void create(String name, String mail) 
-            throws MyConstraintViolationException{
+    @EJB
+    private CareProcedureBean careProcedureBean;
+
+    public void create(String name, String mail)
+            throws MyConstraintViolationException {
         try {
             Patient patient = new Patient(name, mail);
 
@@ -38,15 +46,15 @@ public class PatientBean {
             throw new EJBException(e.getMessage());
         }
     }
-    
-    public void remove(int id)  throws EntityDoesNotExistException {
+
+    public void remove(int id) throws EntityDoesNotExistException {
         try {
             Patient patient = em.find(Patient.class, id);
-            
+
             if (patient == null) {
                 throw new EntityDoesNotExistException("There is no patient with that name.");
             }
-            
+
             em.remove(patient);
         } catch (EntityDoesNotExistException e) {
             throw e;
@@ -54,61 +62,61 @@ public class PatientBean {
             throw new EJBException(e.getMessage());
         }
     }
-    
+
     public void update(int id, String name, String mail)
-             throws EntityDoesNotExistException, MyConstraintViolationException {
+            throws EntityDoesNotExistException, MyConstraintViolationException {
         try {
             Patient patient = em.find(Patient.class, id);
             if (patient == null) {
-                 throw new EntityDoesNotExistException("There is no patient with that name.");
+                throw new EntityDoesNotExistException("There is no patient with that name.");
             }
-            
+
             patient.setName(name);
             patient.setMail(mail);
-            
+
             em.merge(patient);
         } catch (EntityDoesNotExistException e) {
             throw e;
         } catch (ConstraintViolationException e) {
-            throw new MyConstraintViolationException(Utils.getConstraintViolationMessages(e));            
+            throw new MyConstraintViolationException(Utils.getConstraintViolationMessages(e));
         } catch (Exception e) {
             throw new EJBException(e.getMessage());
         }
     }
-    
+
     public List<PatientDTO> getAll() {
         try {
             List<Patient> patients = (List<Patient>) em.createNamedQuery("getAllPatients").getResultList();
-            
-            return patientsToDTOs(patients); 
-        } catch(EJBException e) {
+
+            return patientsToDTOs(patients);
+        } catch (EJBException e) {
             throw new EJBException(e.getMessage());
         }
     }
-    
+
     public PatientDTO getPatient(int id) {
         try {
             Patient patient = em.find(Patient.class, id);
-            
-            return patientToDTO(patient);  
-        } catch(EJBException e) {
+
+            return patientToDTO(patient);
+        } catch (EJBException e) {
             throw new EJBException(e.getMessage());
         }
     }
-    
-    public void associatePatientToCaregiver(Long patientId, String username) 
+
+    public void associatePatientToCaregiver(Long patientId, String username)
             throws EntityDoesNotExistException, CaregiverAssociatedException {
         try {
             Patient patient = em.find(Patient.class, patientId);
             if (patient == null) {
                 throw new EntityDoesNotExistException("There is no patient with that code.");
             }
-            
+
             Caregiver caregiver = em.find(Caregiver.class, username);
             if (caregiver == null) {
                 throw new EntityDoesNotExistException("There is no caregiver with that username.");
             }
-            
+
             if (patient.getCaregiver() != null) {
                 throw new CaregiverAssociatedException("Patient already associated with another caregiver.");
             }
@@ -122,15 +130,15 @@ public class PatientBean {
             throw new EJBException(e.getMessage());
         }
     }
-    
-    public void diassociatePatientFromCaregiver(Long patientId, String username) 
+
+    public void diassociatePatientFromCaregiver(Long patientId, String username)
             throws EntityDoesNotExistException, CaregiverDiassociatedException {
         try {
             Patient patient = em.find(Patient.class, patientId);
             if (patient == null) {
                 throw new EntityDoesNotExistException("There is no patient with that code.");
             }
-            
+
             Caregiver caregiver = em.find(Caregiver.class, username);
             if (caregiver == null) {
                 throw new EntityDoesNotExistException("There is no caregiver with that username.");
@@ -138,57 +146,79 @@ public class PatientBean {
 
             if (patient.getCaregiver() == null) {
                 throw new CaregiverDiassociatedException("Patient already diassociated from a caregiver.");
-            }         
-            
+            }
+
             patient.setCaregiver(null);
             caregiver.removePatient(patient);
 
         } catch (EntityDoesNotExistException | CaregiverDiassociatedException e) {
-            throw e;             
-        } catch (Exception e) {
-            throw new EJBException(e.getMessage());
-        }
-    }
-    
-    public List<PatientDTO> getCaregiverPatients(String username) throws EntityDoesNotExistException{
-        try {
-            Caregiver caregiver = em.find(Caregiver.class, username);
-            if(caregiver == null){
-                throw new EntityDoesNotExistException("There is no caregiver with that username.");
-            }            
-            
-            List<Patient> patients = (List<Patient>) caregiver.getPatients();
-            
-            return patientsToDTOs(patients);
-        } catch (EntityDoesNotExistException e) {
-            throw e;             
+            throw e;
         } catch (Exception e) {
             throw new EJBException(e.getMessage());
         }
     }
 
-    public List<PatientDTO> getCaregiverNotPatients(String username, List<PatientDTO> allPatients) throws EntityDoesNotExistException{
+    public List<PatientDTO> getCaregiverPatients(String username) throws EntityDoesNotExistException {
+        try {
+            Caregiver caregiver = em.find(Caregiver.class, username);
+            if (caregiver == null) {
+                throw new EntityDoesNotExistException("There is no caregiver with that username.");
+            }
+
+            List<Patient> patients = (List<Patient>) caregiver.getPatients();
+
+            return patientsToDTOs(patients);
+        } catch (EntityDoesNotExistException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new EJBException(e.getMessage());
+        }
+    }
+
+    public List<PatientDTO> getCaregiverNotPatients(String username, List<PatientDTO> allPatients) throws EntityDoesNotExistException {
         try {
             List<PatientDTO> diassociatedPatients = new ArrayList<PatientDTO>();
-            
+
             Caregiver caregiver = em.find(Caregiver.class, username);
-            if(caregiver == null){
+            if (caregiver == null) {
                 throw new EntityDoesNotExistException("There is no caregiver with that username.");
-            }        
-            
+            }
+
             for (PatientDTO patient : allPatients) {
                 if (patient.getCaregiverUsername() == null) {
                     diassociatedPatients.add(patient);
                 }
             }
-            
+
             return diassociatedPatients;
         } catch (EntityDoesNotExistException e) {
-            throw e;             
+            throw e;
         } catch (Exception e) {
             throw new EJBException(e.getMessage());
         }
-    }    
+    }
+
+    @GET
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Path("{id}/careProcedures")
+    public List<CareProcedureDTO> getCareProceduresFromPatientsREST(@PathParam("id") Long id) throws EntityDoesNotExistException {
+        try {
+            Patient patient = em.find(Patient.class, id);
+            if (patient == null) {
+                throw new EntityDoesNotExistException("There is no patient with that username.");
+            }
+            
+            List<CareProcedure> careProcedures = (List<CareProcedure>) patient.getCareProcedures();
+            
+            for (CareProcedure careProcedure : careProcedures) {
+                System.out.println(">> " + careProcedure.getDateProcedure());
+            }
+            
+            return careProcedureBean.careProceduresToDTOs(careProcedures);
+        } catch (EJBException e) {
+            throw new EJBException(e.getMessage());
+        }
+    }
     
     //Build DTOs
     PatientDTO patientToDTO(Patient patient) {
@@ -198,8 +228,7 @@ public class PatientBean {
                 patient.getMail(),
                 (patient.getCaregiver() == null) ? null : patient.getCaregiver().getUsername());
     }
-    
-    
+
     List<PatientDTO> patientsToDTOs(List<Patient> patients) {
         List<PatientDTO> dtos = new ArrayList<>();
         for (Patient p : patients) {

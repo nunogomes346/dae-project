@@ -23,7 +23,7 @@ public class Caregiver extends User implements Serializable {
     private List<Patient> patients;
 
     @OneToMany(mappedBy = "caregiver")
-    private List<RegisteredProcedure> registeredProcedures;
+    private List<CareProcedure> registeredProcedures;
    
     @ManyToMany
     @JoinTable(name = "CAREGIVERS_MATERIALS", 
@@ -87,19 +87,19 @@ public class Caregiver extends User implements Serializable {
         this.rate = rate;
     }
 
-    public List<RegisteredProcedure> getRegisteredProcedures() {
+    public List<CareProcedure> getRegisteredProcedures() {
         return registeredProcedures;
     }
 
-    public void setRegisteredProcedures(List<RegisteredProcedure> registeredProcedures) {
+    public void setRegisteredProcedures(List<CareProcedure> registeredProcedures) {
         this.registeredProcedures = registeredProcedures;
     }
 
-    public void addRegisteredProcedures(RegisteredProcedure r) {
+    public void addRegisteredProcedures(CareProcedure r) {
         this.registeredProcedures.add(r);
     }
 
-    public void removeRegisteredProcedure (RegisteredProcedure r) {
+    public void removeRegisteredProcedure (CareProcedure r) {
         this.registeredProcedures.remove(r);
     }
 }

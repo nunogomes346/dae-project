@@ -21,7 +21,8 @@ public class Material implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private int id; // it was long before being int
+    private int id; // TEM DEPOIS DE SER REFATORIZADO PARA LONG
+    // MUDAR DEPOIS O TIPO PARA LONG NA PROCURA DO MATERIAL NO CAREPROCEDURE BEAN
     
     @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "material")
     protected MaterialGroup group;
@@ -35,12 +36,12 @@ public class Material implements Serializable {
     private List<Caregiver> caregivers;
 
     @OneToMany(mappedBy = "material")
-    private List<RegisteredProcedure> registeredProcedures;
+    private List<CareProcedure> careProcedures;
     
     public Material(){
         this.needs = new LinkedList<Need>();
         this.caregivers = new LinkedList<Caregiver>();
-        this.registeredProcedures = new LinkedList<RegisteredProcedure>();
+        this.careProcedures = new LinkedList<CareProcedure>();
     }
     
     public Material(String description, GROUP group){
@@ -48,7 +49,7 @@ public class Material implements Serializable {
         this.group = new MaterialGroup(group, this);
         this.needs = new LinkedList<Need>();
         this.caregivers = new LinkedList<Caregiver>();
-        this.registeredProcedures = new LinkedList<RegisteredProcedure>();
+        this.careProcedures = new LinkedList<CareProcedure>();
     }
 
     public int getId() {

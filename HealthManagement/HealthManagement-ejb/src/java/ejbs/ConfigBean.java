@@ -22,6 +22,9 @@ public class ConfigBean {
     
     @EJB
     NeedBean needBean;
+    
+    @EJB
+    CareProcedureBean careProcedureBean;
 
     @EJB
     EmergencyContactBean emergencyBean;
@@ -44,12 +47,12 @@ public class ConfigBean {
             healthcareProBean.create("teddy", "propw", "Bruno Fonseca", "teddy@gmail.com");
 
             caregiverBean.create("piteu", "carepw", "Bruno Anastácio", "piteu@gmail.com");
-            caregiverBean.create("piteu2", "carepw", "Bruno Anastácio2", "piteu@gmail.com");
+            caregiverBean.create("pixa", "carepw", "Ze Bruno Pixa", "piteu_petisca@gmail.com");
             caregiverBean.create("piteu3", "carepw", "Bruno Anastácio3", "piteu@gmail.com");
             
             // IDs -> 1 - 6
             patientBean.create("João Sousa", "sousa@gmail.com");
-            patientBean.create("João Sousa1", "sousa@gmail.com");
+            patientBean.create("Toy Dos Coroados", "tony.boy@gmail.com");
             patientBean.create("João Sousa2", "sousa@gmail.com");
             patientBean.create("João Sousa3", "sousa@gmail.com");
             patientBean.create("João Sousa4", "sousa@gmail.com");
@@ -67,6 +70,10 @@ public class ConfigBean {
             needBean.associateNeedToPatient(Long.parseLong("8"), Long.parseLong("2"));
             needBean.associateNeedToPatient(Long.parseLong("7"), Long.parseLong("2"));
             needBean.associateNeedToPatient(Long.parseLong("9"), Long.parseLong("1"));
+            
+            // por mais cassos de uso
+            patientBean.associatePatientToCaregiver(Long.parseLong("1"), "piteu");
+            patientBean.associatePatientToCaregiver(Long.parseLong("2"), "pixa");
             
             // MATERIALS: IDs -> 12 - 24
             emergencyBean.create("112", "Numero de Emergencia Nacional", "112");
@@ -103,10 +110,11 @@ public class ConfigBean {
                 http://www2.eerp.usp.br/site/grupos/feridascronicas/index.php?option=com_content&view=article&id=10&Itemid=18
             */
             //procedureBean.create("Limpeza da Ferida","Limpeza: limpe as feridas inicialmente e a cada troca de curativo.");
+            //20
             tutorialBean.create("tutorial de limpeza de feridas", "Limpeza: limpe as feridas inicialmente e a cada troca de curativo.");
             tutorialBean.create("tutorial sobre ulceras", "Utilize uma técnica não traumática usando uma força mecânica mínima quando estiver limpando a úlcera com gaze, compressas ou esponjas.");
             tutorialBean.create("tutorial de cultura de swab", "Não faça culturas de swab para diagnosticar a infecção da ferida, pois todas as UPP são colonizadas. Culturas de swab detectam somente a colonização da superfície e podem não refletir verdadeiramente o microrganismo que está causando a infecção do tecido.");
-            
+            //23
             textBean.create("texto sobre obstruçoes", "Por vezes, uma obstrução resolve-se por si própria sem outro tratamento, sobretudo se for devida à presença de aderências. Para tratar de algumas perturbações como a torção dum segmento da parte baixa do cólon, pode introduzir-se um endoscópio através do ânus ou um clister com papa de bário, o que faz com que a referida porção do intestino se insufle e a obstrução seja resolvida pela pressão exercida. No entanto, o mais habitual é fazer uma intervenção cirúrgica quanto antes. Durante a mesma, o segmento bloqueado do intestino pode ser extirpado e as duas extremidades livres podem ser unidas de novo.");
             textBean.create("texto sobre zonas dolorosas", "O médico examina o abdómen em busca de zonas dolorosas e deformações da parede ou massas. Os sons abdominais normais (ruídos intestinais), que se ouvem através dum fonendoscópio, podem estar aumentados e ser muito agudos, ou então não se ouvirem. Se a perfuração tiver provocado peritonite, o paciente sentirá dor com a pressão do abdómen, que aumenta quando o médico afasta subitamente a mão (sinal de descompressão positivo).");
             
@@ -123,6 +131,22 @@ public class ConfigBean {
             needBean.associateMaterialToNeed(19, Long.parseLong("8"));
             needBean.associateMaterialToNeed(20, Long.parseLong("7"));
             needBean.associateMaterialToNeed(24, Long.parseLong("7"));
+            
+            // Procedimentos de Cuidado
+            careProcedureBean.create(20, Long.parseLong("1"), "piteu", "12-10-2016");
+            
+            careProcedureBean.create(22, Long.parseLong("1"), "piteu", "23-10-2016");
+            careProcedureBean.create(22, Long.parseLong("2"), "pixa", "23-10-2016");
+            
+            careProcedureBean.create(23, Long.parseLong("1"), "piteu", "15-11-2016");
+            
+            careProcedureBean.create(20, Long.parseLong("1"), "piteu", "17-11-2016");
+            careProcedureBean.create(20, Long.parseLong("2"), "pixa", "17-10-2016");
+            
+            careProcedureBean.create(22, Long.parseLong("1"), "piteu", "08-12-2016");
+            careProcedureBean.create(23, Long.parseLong("2"), "pixa", "08-11-2016");
+            
+            // , 2
             
         } catch (EntityAlreadyExistsException | MyConstraintViolationException e) {
             System.err.println("Error: " + e.getMessage());

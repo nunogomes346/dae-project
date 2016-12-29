@@ -40,11 +40,11 @@ public class Patient implements Serializable {
     private List<Need> needs;
 
     @OneToMany(mappedBy = "patient")
-    private List<RegisteredProcedure> registeredProcedures;
+    private List<CareProcedure> careProcedures;
 
     public Patient() {
         this.needs = new LinkedList<Need>();
-        this.registeredProcedures = new LinkedList<RegisteredProcedure>();
+        this.careProcedures = new LinkedList<CareProcedure>();
     }
 
     public Patient(String name, String mail) {
@@ -52,7 +52,7 @@ public class Patient implements Serializable {
         this.mail = mail;
         this.caregiver = null;
         this.needs = new LinkedList<Need>();
-        this.registeredProcedures = new LinkedList<RegisteredProcedure>();
+        this.careProcedures = new LinkedList<CareProcedure>();
     }
 
     public Long getId() {
@@ -103,19 +103,19 @@ public class Patient implements Serializable {
         this.needs.remove(need);
     }
 
-    public List<RegisteredProcedure> getRegisteredProcedures() {
-        return registeredProcedures;
+    public List<CareProcedure> getCareProcedures() {
+        return careProcedures;
     }
 
-    public void setRegisteredProcedures(List<RegisteredProcedure> registeredProcedures) {
-        this.registeredProcedures = registeredProcedures;
+    public void setCareProcedures(List<CareProcedure> careProcedures) {
+        this.careProcedures = careProcedures;
     }
 
-    public void addRegisteredProcedures(RegisteredProcedure r) {
-        this.registeredProcedures.add(r);
+    public void addCareProcedures(CareProcedure r) {
+        this.careProcedures.add(r);
     }
 
-    public void removeRegisteredProcedure(RegisteredProcedure r) {
-        this.registeredProcedures.remove(r);
+    public void removeCareProcedure(CareProcedure c) {
+        this.careProcedures.remove(c);
     }
 }
