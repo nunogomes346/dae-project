@@ -14,11 +14,22 @@
             rules="all"
             cellpadding="5">
 
-            <h:column>
-                <f:facet name="header">
+            <f:facet name="header">
                     <h:outputText value="Tutorial" />
                 </f:facet>
+            
+            <h:column>
+                <f:facet name="header">
+                    <h:outputText value="Description" />
+                </f:facet>
                 <h:outputText value="#{tutorial.description}" />
+            </h:column>
+            
+            <h:column>
+                <f:facet name="header">
+                    <h:outputText value="Text" />
+                </f:facet>
+                <h:outputText value="#{tutorial.text}" />
             </h:column>
         </h:dataTable>
     </h:body>

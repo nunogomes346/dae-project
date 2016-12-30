@@ -14,11 +14,29 @@
             rules="all"
             cellpadding="5">
 
-            <h:column>
-                <f:facet name="header">
+            <f:facet name="header">
                     <h:outputText value="FAQ" />
                 </f:facet>
+            
+            <h:column>
+                <f:facet name="header">
+                    <h:outputText value="Description" />
+                </f:facet>
                 <h:outputText value="#{faq.description}" />
+            </h:column>
+            
+            <h:column>
+                <f:facet name="header">
+                    <h:outputText value="Question" />
+                </f:facet>
+                <h:outputText value="#{faq.question}" />
+            </h:column>
+            
+            <h:column>
+                <f:facet name="header">
+                    <h:outputText value="Answer" />
+                </f:facet>
+                <h:outputText value="#{faq.answer}" />
             </h:column>
         </h:dataTable>
     </h:body>
