@@ -8,24 +8,13 @@ import exceptions.MyConstraintViolationException;
 import exceptions.Utils;
 import java.util.ArrayList;
 import java.util.List;
-import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJBException;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.validation.ConstraintViolationException;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
 
 @Stateless
-@Path("/administrators")
 public class AdministratorBean {
 
     @PersistenceContext
@@ -45,22 +34,6 @@ public class AdministratorBean {
             throw e;
         } catch (ConstraintViolationException e) {
             throw new MyConstraintViolationException(Utils.getConstraintViolationMessages(e));
-        } catch (Exception e) {
-            throw new EJBException(e.getMessage());
-        }
-    }
-    
-    public void remove(String username) throws EntityDoesNotExistException {
-        try {
-            Administrator administrator = em.find(Administrator.class, username);
-            
-            if (administrator == null) {
-                throw new EntityDoesNotExistException("There is no administrator with that username.");
-            }
-            
-            em.remove(administrator);
-        } catch (EntityDoesNotExistException e) {
-            throw e;
         } catch (Exception e) {
             throw new EJBException(e.getMessage());
         }
@@ -98,62 +71,31 @@ public class AdministratorBean {
         }
     }
     
-    public AdministratorDTO getAdministrator(String username) {
+    public AdministratorDTO getAdministrator(String username) throws EntityDoesNotExistException {
         try {
             Administrator administrator = em.find(Administrator.class, username);
+            if (administrator == null) {
+                throw new EntityDoesNotExistException("There is no administrator with that username.");
+            }
             
             return administratorToDTO(administrator);  
+        } catch (EntityDoesNotExistException e) {
+            throw e;
         } catch(EJBException e) {
             throw new EJBException(e.getMessage());
         }
     }
     
-    //Service
-    @POST
-    @RolesAllowed({"Administrator"})
-    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    @Path("create")
-    public void createREST(AdministratorDTO a) {
+    public void remove(String username) throws EntityDoesNotExistException {
         try {
-            create(a.getUsername(), a.getPassword(), a.getName(), a.getMail());
-        } catch (Exception e) {
-            throw new EJBException(e.getMessage());
-        }
-    }
-    
-    @PUT
-    @RolesAllowed({"Administrator"})
-    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    @Path("update")
-    public void updateREST(AdministratorDTO a) {
-        try {
-            update(a.getUsername(), a.getPassword(), a.getName(), a.getMail()); 
-        } catch (Exception e) {
-            throw new EJBException(e.getMessage());
-        }
-    }
-    
-    @GET
-    @RolesAllowed({"Administrator"})
-    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    @Path("all")
-    public List<AdministratorDTO> getAllREST() {
-        try {
-            List<Administrator> administrators = (List<Administrator>) em.createNamedQuery("getAllAdministrators").getResultList();
+            Administrator administrator = em.find(Administrator.class, username);
+            if (administrator == null) {
+                throw new EntityDoesNotExistException("There is no administrator with that username.");
+            }
             
-            return administratorsToDTOs(administrators); 
-        } catch(EJBException e) {
-            throw new EJBException(e.getMessage());
-        }
-    }
-    
-    @DELETE
-    @RolesAllowed({"Administrator"})
-    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    @Path("delete/{username}")
-    public void removeREST(@PathParam("username") String username) {
-        try {
-            remove(username);
+            em.remove(administrator);
+        } catch (EntityDoesNotExistException e) {
+            throw e;
         } catch (Exception e) {
             throw new EJBException(e.getMessage());
         }
