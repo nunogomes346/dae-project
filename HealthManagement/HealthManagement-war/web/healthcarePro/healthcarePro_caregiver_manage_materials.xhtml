@@ -99,10 +99,10 @@
                     id="material"
                     value="#{healthcareProManager.materialId}" >
                     <f:selectItems
-                        value="#{healthcareProManager.allEmergencyContacts}"
-                        var="emergencyContact"
-                        itemValue="#{emergencyContact.id}"
-                        itemLabel="#{emergencyContact.name}" />
+                        value="#{healthcareProManager.allMaterials}"
+                        var="material"
+                        itemValue="#{material.id}"
+                        itemLabel="#{material.description}" />
                 </h:selectOneMenu>
                 
                 <br /> <br />
