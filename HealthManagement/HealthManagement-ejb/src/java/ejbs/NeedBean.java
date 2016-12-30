@@ -1,6 +1,8 @@
 package ejbs;
 
+import dtos.FaqDTO;
 import dtos.NeedDTO;
+import entities.FAQ;
 import entities.Material;
 import entities.Need;
 import entities.Patient;
@@ -43,6 +45,21 @@ public class NeedBean {
         }
     }
     
+    public NeedDTO getNeed(Long id) throws EntityDoesNotExistException {
+        try {
+            Need need = em.find(Need.class, id);
+            if (need == null) {
+                throw new EntityDoesNotExistException("There is no Need with that id.");
+            }
+            
+            return needToDTO(need);
+        } catch (EntityDoesNotExistException e) {
+            throw e;
+        } catch (EJBException e) {
+            throw new EJBException(e.getMessage());
+        }
+    }
+    
     public void update(Long id, String description) 
             throws EntityDoesNotExistException, MyConstraintViolationException {
         try {
@@ -74,13 +91,9 @@ public class NeedBean {
                 patient.removeNeed(need);
             }
             
-            need.setPatients(null);
-            
             for (Material material : need.getMaterials()) {
                 material.removeNeed(need);
             }
-            
-            need.setMaterials(null);
             
             em.remove(need);
         } catch (EntityDoesNotExistException e) {

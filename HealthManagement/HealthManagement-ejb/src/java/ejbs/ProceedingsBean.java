@@ -57,6 +57,56 @@ public class ProceedingsBean {
         }
     }
     
+    public void update(Long proceedingID, Long materialID)
+            throws EntityDoesNotExistException, MyConstraintViolationException {
+        try {
+            Proceeding proceeding = em.find(Proceeding.class, proceedingID);
+            if (proceeding == null) {
+                throw new EntityDoesNotExistException("There is no proceeding with that id.");
+            }
+            
+            Material material = em.find(Material.class, materialID);
+            if (material == null) {
+                throw new EntityDoesNotExistException("There is no material with that id.");
+            }
+            
+            proceeding.setMaterial(material);
+            
+            em.persist(proceeding);
+        } catch (EntityDoesNotExistException e) {
+            throw e;
+        } catch (ConstraintViolationException e) {
+            throw new MyConstraintViolationException(Utils.getConstraintViolationMessages(e));            
+        } catch (Exception e) {
+            throw new EJBException(e.getMessage());
+        }
+    }
+    
+    public List<ProceedingDTO> getAll() {
+        try {
+            List<Proceeding> proceedings = (List<Proceeding>) em.createNamedQuery("getAllProceeding").getResultList();
+            
+            return proceedingsToDTOs(proceedings); 
+        } catch(EJBException e) {
+            throw new EJBException(e.getMessage());
+        }
+    }
+    
+    public ProceedingDTO getProceeding(Long id) throws EntityDoesNotExistException {
+        try {
+            Proceeding proceeding = em.find(Proceeding.class, id);
+            if (proceeding == null) {
+                throw new EntityDoesNotExistException("There is no prooceding with that id.");
+            }
+            
+            return proceedingToDTO(proceeding);
+        } catch (EntityDoesNotExistException e) {
+            throw e;
+        } catch (EJBException e) {
+            throw new EJBException(e.getMessage());
+        }
+    }
+    
     public void remove(Long id) throws EntityDoesNotExistException {
         try {
             Proceeding proceeding = em.find(Proceeding.class, id);
@@ -72,15 +122,6 @@ public class ProceedingsBean {
         } catch (EntityDoesNotExistException e) {
             throw e;
         } catch (Exception e) {
-            throw new EJBException(e.getMessage());
-        }
-    }
-    
-    public ProceedingDTO getProceeding(Long id) {
-        try {
-            Proceeding proceeding = em.find(Proceeding.class, id);
-            return proceedingToDTO(proceeding);
-        } catch (EJBException e) {
             throw new EJBException(e.getMessage());
         }
     }

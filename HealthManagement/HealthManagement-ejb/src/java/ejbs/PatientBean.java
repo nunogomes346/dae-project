@@ -3,6 +3,7 @@ package ejbs;
 import dtos.PatientDTO;
 import dtos.ProceedingDTO;
 import entities.Caregiver;
+import entities.Need;
 import entities.Patient;
 import entities.Proceeding;
 import exceptions.CaregiverAssociatedException;
@@ -36,7 +37,7 @@ public class PatientBean {
     
     public void create(String name, String mail) 
             throws MyConstraintViolationException{
-        try {
+        try {            
             Patient patient = new Patient(name, mail);
 
             em.persist(patient);
@@ -47,28 +48,12 @@ public class PatientBean {
         }
     }
     
-    public void remove(int id)  throws EntityDoesNotExistException {
-        try {
-            Patient patient = em.find(Patient.class, id);
-            
-            if (patient == null) {
-                throw new EntityDoesNotExistException("There is no patient with that name.");
-            }
-            
-            em.remove(patient);
-        } catch (EntityDoesNotExistException e) {
-            throw e;
-        } catch (Exception e) {
-            throw new EJBException(e.getMessage());
-        }
-    }
-    
-    public void update(int id, String name, String mail)
+    public void update(Long id, String name, String mail)
              throws EntityDoesNotExistException, MyConstraintViolationException {
         try {
             Patient patient = em.find(Patient.class, id);
             if (patient == null) {
-                 throw new EntityDoesNotExistException("There is no patient with that name.");
+                 throw new EntityDoesNotExistException("There is no patient with that id.");
             }
             
             patient.setName(name);
@@ -94,12 +79,42 @@ public class PatientBean {
         }
     }
     
-    public PatientDTO getPatient(int id) {
+    public PatientDTO getPatient(Long id) throws EntityDoesNotExistException {
         try {
             Patient patient = em.find(Patient.class, id);
+            if (patient == null) {
+                throw new EntityDoesNotExistException("There is no patient with that id.");
+            }
             
             return patientToDTO(patient);  
+        } catch (EntityDoesNotExistException e) {
+            throw e;
         } catch(EJBException e) {
+            throw new EJBException(e.getMessage());
+        }
+    }
+    
+    public void remove(Long id) throws EntityDoesNotExistException {
+        try {
+            Patient patient = em.find(Patient.class, id);
+            if (patient == null) {
+                throw new EntityDoesNotExistException("There is no patient with that id.");
+            }
+            
+            patient.getCaregiver().removePatient(patient);
+            
+            for (Need need : patient.getNeeds()) {
+                need.removePatient(patient);
+            }
+            
+            for (Proceeding proceeding : patient.getProceedings()) {
+                proceeding.setPatient(null);
+            }
+            
+            em.remove(patient);
+        } catch (EntityDoesNotExistException e) {
+            throw e;
+        } catch (Exception e) {
             throw new EJBException(e.getMessage());
         }
     }

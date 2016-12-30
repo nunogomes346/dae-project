@@ -15,6 +15,7 @@ import entities.FAQ;
 import entities.Material;
 import entities.Need;
 import entities.Patient;
+import entities.Proceeding;
 import entities.Text;
 import entities.Tutorial;
 import entities.Video;
@@ -62,7 +63,7 @@ public class CaregiverBean {
     private VideoBean videoBean;
     
     public void create(String username, String password, String name, String mail) 
-            throws EntityAlreadyExistsException, MyConstraintViolationException{
+            throws EntityAlreadyExistsException, MyConstraintViolationException {
         try {
             if (em.find(Caregiver.class, username) != null) {
                 throw new EntityAlreadyExistsException("A Caregiver with that username already exists.");
@@ -80,22 +81,27 @@ public class CaregiverBean {
         }
     }
     
-    public void remove(String username) throws EntityDoesNotExistException {
+    public List<CaregiverDTO> getAll() {
+        try {
+            List<Caregiver> caregivers = (List<Caregiver>) em.createNamedQuery("getAllCaregivers").getResultList();
+            
+            return caregiversToDTOs(caregivers); 
+        } catch(EJBException e) {
+            throw new EJBException(e.getMessage());
+        }
+    }
+    
+    public CaregiverDTO getCaregiver(String username) throws EntityAlreadyExistsException {
         try {
             Caregiver caregiver = em.find(Caregiver.class, username);
-            
-            if (caregiver == null) {
-                throw new EntityDoesNotExistException("There is no caregiver with that username.");
+            if (em.find(Caregiver.class, username) != null) {
+                throw new EntityAlreadyExistsException("A Caregiver with that username already exists.");
             }
             
-            for (Patient patient : caregiver.getPatients()) {
-                patient.setCaregiver(null);
-            }
-            
-            em.remove(caregiver);
-        } catch (EntityDoesNotExistException e) {
+            return caregiverToDTO(caregiver);  
+        } catch (EntityAlreadyExistsException e) {
             throw e;
-        } catch (Exception e) {
+        } catch(EJBException e) {
             throw new EJBException(e.getMessage());
         }
     }
@@ -112,12 +118,38 @@ public class CaregiverBean {
             caregiver.setName(name);
             caregiver.setMail(mail);
             
-            
             em.merge(caregiver);
         } catch (EntityDoesNotExistException e) {
             throw e;
         } catch (ConstraintViolationException e) {
             throw new MyConstraintViolationException(Utils.getConstraintViolationMessages(e));            
+        } catch (Exception e) {
+            throw new EJBException(e.getMessage());
+        }
+    }
+    
+    public void remove(String username) throws EntityDoesNotExistException {
+        try {
+            Caregiver caregiver = em.find(Caregiver.class, username);
+            if (caregiver == null) {
+                throw new EntityDoesNotExistException("There is no caregiver with that username.");
+            }
+            
+            for (Patient patient : caregiver.getPatients()) {
+                patient.setCaregiver(null);
+            }
+            
+            for (Material material : caregiver.getMaterials()) {
+                material.removeCaregiver(caregiver);
+            }
+            
+            for (Proceeding proceeding : caregiver.getProceedings()) {
+                proceeding.setCaregiver(null);
+            }
+            
+            em.remove(caregiver);
+        } catch (EntityDoesNotExistException e) {
+            throw e;
         } catch (Exception e) {
             throw new EJBException(e.getMessage());
         }
@@ -358,26 +390,6 @@ public class CaregiverBean {
             throw e;
         } catch (ConstraintViolationException e) {
             throw new MyConstraintViolationException(Utils.getConstraintViolationMessages(e));            
-        } catch(EJBException e) {
-            throw new EJBException(e.getMessage());
-        }
-    }
-    
-    public List<CaregiverDTO> getAll() {
-        try {
-            List<Caregiver> caregivers = (List<Caregiver>) em.createNamedQuery("getAllCaregivers").getResultList();
-            
-            return caregiversToDTOs(caregivers); 
-        } catch(EJBException e) {
-            throw new EJBException(e.getMessage());
-        }
-    }
-    
-    public CaregiverDTO getCaregiver(String username) {
-        try {
-            Caregiver caregiver = em.find(Caregiver.class, username);
-            
-            return caregiverToDTO(caregiver);  
         } catch(EJBException e) {
             throw new EJBException(e.getMessage());
         }

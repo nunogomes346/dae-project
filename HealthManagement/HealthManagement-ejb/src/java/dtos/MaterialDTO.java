@@ -1,7 +1,7 @@
 package dtos;
 import java.io.Serializable;
 
-public abstract class MaterialDTO implements Serializable{
+public class MaterialDTO implements Serializable{
     
     private int id;
     private String description;

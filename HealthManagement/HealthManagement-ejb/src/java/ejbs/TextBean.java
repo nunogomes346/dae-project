@@ -1,13 +1,20 @@
 package ejbs;
 
 import dtos.TextDTO;
+import entities.Caregiver;
+import entities.Need;
+import entities.Proceeding;
 import entities.Text;
+import exceptions.EntityDoesNotExistException;
+import exceptions.MyConstraintViolationException;
+import exceptions.Utils;
 import java.util.ArrayList;
 import java.util.List;
 import javax.ejb.EJBException;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.validation.ConstraintViolationException;
 
 @Stateless
 public class TextBean {
@@ -15,58 +22,87 @@ public class TextBean {
     @PersistenceContext
     EntityManager em;
 
-    /* Mesmo parametros */
-    public void create(String description, String textContent) {
+    public void create(String description, String textContent)
+            throws MyConstraintViolationException {
         try {
             Text text = new Text(description, textContent);
 
             em.persist(text);
+        } catch (ConstraintViolationException e) {
+            throw new MyConstraintViolationException(Utils.getConstraintViolationMessages(e));    
         } catch (EJBException e) {
             throw new EJBException(e.getMessage());
         }
     }
 
-    public void update(int id, String description, String textContent) {
+    public void update(int id, String description, String textContent) 
+            throws EntityDoesNotExistException, MyConstraintViolationException {
         try {
             Text text = em.find(Text.class, id);
             if (text == null) {
-                return;
+                throw new EntityDoesNotExistException("There is no Text with that id.");
             }
 
             text.setDescription(description);
             text.setText(textContent);
 
             em.merge(text);
+        } catch (EntityDoesNotExistException e) {
+            throw e;
+        } catch (ConstraintViolationException e) {
+            throw new MyConstraintViolationException(Utils.getConstraintViolationMessages(e));
         } catch (EJBException e) {
             throw new EJBException(e.getMessage());
         }
     }
-
-    public Text getText(int id) {
-        try {
-            Text text = em.find(Text.class, id);
-
-            return text;
-        } catch (EJBException e) {
-            throw new EJBException(e.getMessage());
-        }
-    }
-
-    public void remove(int id) {
-        try {
-            Text text = em.find(Text.class, id);
-
-            em.remove(text);
-        } catch (EJBException e) {
-            throw new EJBException(e.getMessage());
-        }
-    }
-
+    
     public List<TextDTO> getAll() {
         try {
             List<Text> texts = (List<Text>) em.createNamedQuery("getAllTexts").getResultList();
 
             return textsToDTOs(texts);
+        } catch (EJBException e) {
+            throw new EJBException(e.getMessage());
+        }
+    }
+
+    public TextDTO getText(int id) throws EntityDoesNotExistException {
+        try {
+            Text text = em.find(Text.class, id);
+            if (text == null) {
+                throw new EntityDoesNotExistException("There is no Text with that id.");
+            }
+            
+            return textToDTO(text);
+        } catch (EntityDoesNotExistException e) {
+            throw e;
+        } catch (EJBException e) {
+            throw new EJBException(e.getMessage());
+        }
+    }
+
+    public void remove(int id) throws EntityDoesNotExistException {
+        try {
+            Text text = em.find(Text.class, id);
+            if (text == null) {
+                throw new EntityDoesNotExistException("There is no Text with that id.");
+            }
+            
+            for (Caregiver caregiver : text.getCaregivers()) {
+                caregiver.removeMaterial(text);
+            }
+            
+            for (Need need : text.getNeeds()) {
+                need.removeMaterial(text);
+            }
+            
+            for (Proceeding proceeding : text.getProceedings()) {
+                proceeding.setMaterial(null);
+            }
+            
+            em.remove(text);
+        } catch (EntityDoesNotExistException e) {
+            throw e;
         } catch (EJBException e) {
             throw new EJBException(e.getMessage());
         }

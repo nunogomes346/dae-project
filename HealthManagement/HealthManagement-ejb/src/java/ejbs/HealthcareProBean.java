@@ -9,24 +9,13 @@ import exceptions.MyConstraintViolationException;
 import exceptions.Utils;
 import java.util.ArrayList;
 import java.util.List;
-import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJBException;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.validation.ConstraintViolationException;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
 
 @Stateless
-@Path("/healthcarepros")
 public class HealthcareProBean {
 
     @PersistenceContext
@@ -45,22 +34,6 @@ public class HealthcareProBean {
             throw e;
         } catch (ConstraintViolationException e) {
             throw new MyConstraintViolationException(Utils.getConstraintViolationMessages(e));
-        } catch (Exception e) {
-            throw new EJBException(e.getMessage());
-        }
-    }
-    
-    public void remove(String username) throws EntityDoesNotExistException {
-        try {
-            HealthcarePro healthcarePro = em.find(HealthcarePro.class, username);
-            
-            if (healthcarePro == null) {
-                throw new EntityDoesNotExistException("There is no healthcarePro with that username.");
-            }
-            
-            em.remove(healthcarePro);
-        } catch (EntityDoesNotExistException e) {
-            throw e;
         } catch (Exception e) {
             throw new EJBException(e.getMessage());
         }
@@ -98,62 +71,31 @@ public class HealthcareProBean {
         }
     }
     
-    public HealthcareProDTO getHealthcarePro(String username) {
+    public HealthcareProDTO getHealthcarePro(String username) throws EntityDoesNotExistException {
         try {
             HealthcarePro healthcarePro = em.find(HealthcarePro.class, username);
+            if (healthcarePro == null) {
+                throw new EntityDoesNotExistException("There is no healthcarePro with that username.");
+            }
             
             return healthcareproToDTO(healthcarePro);  
+        } catch (EntityDoesNotExistException e) {
+            throw e;
         } catch(EJBException e) {
             throw new EJBException(e.getMessage());
         }
     }
     
-    //Service
-    @POST
-    @RolesAllowed({"Administrator"})
-    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    @Path("create")
-    public void createREST(HealthcareProDTO h) {
+    public void remove(String username) throws EntityDoesNotExistException {
         try {
-            create(h.getUsername(), h.getPassword(), h.getName(), h.getMail());
-        } catch (Exception e) {
-            throw new EJBException(e.getMessage());
-        }
-    }
-    
-    @PUT
-    @RolesAllowed({"Administrator"})
-    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    @Path("update")
-    public void updateREST(HealthcareProDTO h) {
-        try {
-            update(h.getUsername(), h.getPassword(), h.getName(), h.getMail()); 
-        } catch (Exception e) {
-            throw new EJBException(e.getMessage());
-        }
-    }
-    
-    @GET
-    @RolesAllowed({"Administrator"})
-    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    @Path("all")
-    public List<HealthcareProDTO> getAllREST() {
-        try {
-            List<HealthcarePro> healthcarePros = (List<HealthcarePro>) em.createNamedQuery("getAllHealthcarePros").getResultList();
+            HealthcarePro healthcarePro = em.find(HealthcarePro.class, username);
+            if (healthcarePro == null) {
+                throw new EntityDoesNotExistException("There is no healthcarePro with that username.");
+            }
             
-            return HealthcareprosToDTOs(healthcarePros);   
-        } catch(EJBException e) {
-            throw new EJBException(e.getMessage());
-        }
-    }
-    
-    @DELETE
-    @RolesAllowed({"Administrator"})
-    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    @Path("delete/{username}")
-    public void removeREST(@PathParam("username") String username) {
-        try {
-            remove(username);
+            em.remove(healthcarePro);
+        } catch (EntityDoesNotExistException e) {
+            throw e;
         } catch (Exception e) {
             throw new EJBException(e.getMessage());
         }
@@ -167,7 +109,6 @@ public class HealthcareProBean {
                 healthcarePro.getName(),
                 healthcarePro.getMail());
     }
-    
     
     List<HealthcareProDTO> HealthcareprosToDTOs(List<HealthcarePro> healthcarePros) {
         List<HealthcareProDTO> dtos = new ArrayList<>();
