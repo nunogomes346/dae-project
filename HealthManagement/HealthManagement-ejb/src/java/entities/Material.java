@@ -21,7 +21,7 @@ public class Material implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private int id; // it was long before being int
+    private int id;
     
     @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "material")
     protected MaterialGroup group;

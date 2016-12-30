@@ -1,5 +1,6 @@
 package ejbs;
 
+import dtos.NeedDTO;
 import dtos.PatientDTO;
 import dtos.ProceedingDTO;
 import entities.Caregiver;
@@ -34,6 +35,9 @@ public class PatientBean {
     
     @EJB
     private ProceedingsBean proceedingsBean;
+
+    @EJB
+    private NeedBean needBean;
     
     public void create(String name, String mail) 
             throws MyConstraintViolationException{
@@ -232,6 +236,28 @@ public class PatientBean {
             throw new EJBException(e.getMessage());
         }
     }    
+    
+    @GET
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Path("{id}/needs")
+    public List<NeedDTO> getPatientsNeedsREST (@PathParam("id") Long id)  throws EntityDoesNotExistException {
+        try{
+            
+            Patient patient = em.find(Patient.class, id);
+            if(patient == null){
+                throw new EntityDoesNotExistException("There is no Patient with that id.");
+            }
+            
+            List<Need> needs = (List<Need>) patient.getNeeds();
+            
+            return needBean.needsToDTOs(needs);
+            
+        }catch (EntityDoesNotExistException e) {
+            throw e;             
+        } catch (Exception e) {
+            throw new EJBException(e.getMessage());
+        }
+    }
     
     //Build DTOs
     public PatientDTO patientToDTO(Patient patient) {

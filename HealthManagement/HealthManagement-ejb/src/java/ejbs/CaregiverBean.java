@@ -175,6 +175,8 @@ public class CaregiverBean {
         }
     }
     
+    
+   
     public List<NeedDTO> getCaregiverPatientsNeeds(String username)
             throws EntityDoesNotExistException, MyConstraintViolationException {
         try {

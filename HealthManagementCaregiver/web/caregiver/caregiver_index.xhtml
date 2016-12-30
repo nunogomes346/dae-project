@@ -34,9 +34,13 @@
             
             <h:column>
                 <f:facet name="header">
-                    <h:outputText value="Procedures" />
+                    <h:outputText value="Actions" />
                 </f:facet>
                 <h:form>
+                    <h:commandButton value="Needs" id="needs" action="caregiver_patient_needs?faces-redirect=true">
+                       <f:setPropertyActionListener target="#{caregiverManager.currentPatient}" value="#{patient}" />
+                    </h:commandButton>
+
                     <h:commandLink value="See Procedures" id="listProcedures"
                                    action="caregiver_patient_procedures_list?faces-redirect=true">
                         <f:setPropertyActionListener target="#{caregiverManager.currentPatient}" value="#{patient}" />

@@ -1,0 +1,37 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>
+        <title>Facelet Title</title>
+    </h:head>
+    <h:body>
+        <h:dataTable
+            var="tutorial"
+            summary="Patient Materials"
+            value="#{caregiverManager.tutorialREST}"
+            rules="all"
+            cellpadding="5">
+
+            <f:facet name="header">
+                    <h:outputText value="Tutorial" />
+                </f:facet>
+            
+            <h:column>
+                <f:facet name="header">
+                    <h:outputText value="Description" />
+                </f:facet>
+                <h:outputText value="#{tutorial.description}" />
+            </h:column>
+            
+            <h:column>
+                <f:facet name="header">
+                    <h:outputText value="Text" />
+                </f:facet>
+                <h:outputText value="#{tutorial.text}" />
+            </h:column>
+        </h:dataTable>
+    </h:body>
+</html>
+
