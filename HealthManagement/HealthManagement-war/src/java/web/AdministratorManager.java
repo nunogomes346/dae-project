@@ -167,7 +167,9 @@ public class AdministratorManager implements Serializable {
                     newHealthcarePro.getUsername(),
                     newHealthcarePro.getPassword(),
                     newHealthcarePro.getName(),
-                    newHealthcarePro.getMail());
+                    newHealthcarePro.getMail(),
+                    newHealthcarePro.getFacility(),
+                    newHealthcarePro.getJob());
 
             setFilteredHealthcarePros(null);
             
@@ -198,7 +200,9 @@ public class AdministratorManager implements Serializable {
                     currentHealthcarePro.getUsername(),
                     currentHealthcarePro.getPassword(),
                     currentHealthcarePro.getName(),
-                    currentHealthcarePro.getMail());
+                    currentHealthcarePro.getMail(),
+                    currentHealthcarePro.getFacility(),
+                    currentHealthcarePro.getJob());
             
             setFilteredHealthcarePros(null);
 

@@ -57,8 +57,12 @@
                 <f:facet name="header">
                     <h:outputText value="Actions" />
                 </f:facet>
-                <h:panelGrid columns="2">
+                <h:panelGrid columns="3">
                     <h:form>
+                        <h:commandButton value="Details" id="details" action="caregiver_patient_proceeding_details?faces-redirect=true">
+                            <f:setPropertyActionListener target="#{caregiverManager.currentProceeding}" value="#{proceeding}" />
+                        </h:commandButton>
+                        
                         <h:commandButton value="Update" id="update" action="caregiver_patient_proceeding_update?faces-redirect=true">
                             <f:setPropertyActionListener target="#{caregiverManager.currentProceeding}" value="#{proceeding}" />
                         </h:commandButton>

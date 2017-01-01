@@ -39,15 +39,18 @@ public class Proceeding implements Serializable {
     private Caregiver caregiver;
     
     private String proceedingDate;
+    
+    private String note;
 
     public Proceeding() { }
     
-    public Proceeding(Material material, Patient patient, Need need, Caregiver caregiver, String proceedingDate) {
+    public Proceeding(Material material, Patient patient, Need need, Caregiver caregiver, String proceedingDate, String note) {
         this.material = material;
         this.patient = patient;
         this.need = need;
         this.caregiver = caregiver;
         this.proceedingDate = proceedingDate;
+        this.note = note;
     }
     
     public Long getId() {
@@ -96,6 +99,14 @@ public class Proceeding implements Serializable {
 
     public void setProceedingDate(String proceedingDate) {
         this.proceedingDate = proceedingDate;
+    }
+
+    public String getNote() {
+        return note;
+    }
+
+    public void setNote(String note) {
+        this.note = note;
     }
 
 }

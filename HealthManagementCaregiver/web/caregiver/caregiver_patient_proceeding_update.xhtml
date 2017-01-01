@@ -20,6 +20,14 @@
                         itemLabel="#{material.description}" />
                 </h:selectOneMenu>
                 
+                <h:outputLabel for="note" value="Note: " />
+                <h:inputTextarea
+                    id="note"
+                    rows="10"
+                    cols="20"
+                    value="#{caregiverManager.currentProceeding.note}"/>
+                <h:message for="text" errorStyle="color: red" />
+                
                 <br /><br />
 
                 <h:commandButton

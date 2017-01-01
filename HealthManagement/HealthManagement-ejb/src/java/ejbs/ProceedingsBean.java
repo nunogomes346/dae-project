@@ -30,7 +30,7 @@ public class ProceedingsBean {
     @PersistenceContext
     EntityManager em;
     
-    public void create(int materialID, Long patientID, Long needID, String caregiverUsername, String date)
+    public void create(int materialID, Long patientID, Long needID, String caregiverUsername, String date, String note)
             throws EntityDoesNotExistException, MyConstraintViolationException {
         try {
             Material material = em.find(Material.class, materialID);
@@ -53,7 +53,7 @@ public class ProceedingsBean {
                 throw new EntityDoesNotExistException("There is no caregiver with that username.");
             }
             
-            Proceeding proceeding  = new Proceeding(material, patient, need, caregiver, date);
+            Proceeding proceeding  = new Proceeding(material, patient, need, caregiver, date, note);
             
             em.persist(proceeding);
         } catch (EntityDoesNotExistException e) {
@@ -65,7 +65,7 @@ public class ProceedingsBean {
         }
     }
     
-    public void update(Long proceedingID, int materialID)
+    public void update(Long proceedingID, int materialID, String note)
             throws EntityDoesNotExistException, MyConstraintViolationException {
         try {
             Proceeding proceeding = em.find(Proceeding.class, proceedingID);
@@ -79,6 +79,7 @@ public class ProceedingsBean {
             }
             
             proceeding.setMaterial(material);
+            proceeding.setNote(note);
             
             em.persist(proceeding);
         } catch (EntityDoesNotExistException e) {
@@ -140,7 +141,7 @@ public class ProceedingsBean {
     @Path("create")
     public void createProceedingREST(ProceedingDTO p) throws EntityDoesNotExistException {
         try {
-            create(p.getMaterialID(), p.getPatientID(), p.getNeedID(), p.getCaregiverUsername(), p.getProceedingDate());
+            create(p.getMaterialID(), p.getPatientID(), p.getNeedID(), p.getCaregiverUsername(), p.getProceedingDate(), p.getNote());
         } catch (EntityDoesNotExistException e) {
             throw e;
         } catch (Exception e) {
@@ -153,7 +154,7 @@ public class ProceedingsBean {
     @Path("update")
     public void updateProceedingREST(ProceedingDTO p) throws EntityDoesNotExistException, MyConstraintViolationException{
         try {
-            update(p.getProceedingId(), p.getMaterialID());
+            update(p.getProceedingId(), p.getMaterialID(), p.getNote());
         } catch (EntityDoesNotExistException e) {
             throw e;
         } catch (ConstraintViolationException e) {
@@ -187,7 +188,8 @@ public class ProceedingsBean {
                 proceeding.getNeed().getId(),
                 proceeding.getNeed().getDescription(),
                 proceeding.getCaregiver().getUsername(),
-                proceeding.getProceedingDate()
+                proceeding.getProceedingDate(),
+                proceeding.getNote()
         );
     }
     

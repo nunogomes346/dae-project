@@ -21,13 +21,13 @@ public class HealthcareProBean {
     @PersistenceContext
     EntityManager em;
     
-    public void create(String username, String password, String name, String mail) 
+    public void create(String username, String password, String name, String mail, String facility, String job) 
             throws EntityAlreadyExistsException, MyConstraintViolationException {
         try {
             if (em.find(HealthcarePro.class, username) != null) {
                 throw new EntityAlreadyExistsException("A healthcarePro with that username already exists.");
             }
-            HealthcarePro healthcarepro = new HealthcarePro(username, password, name, mail);
+            HealthcarePro healthcarepro = new HealthcarePro(username, password, name, mail, facility, job);
 
             em.persist(healthcarepro);
         } catch (EntityAlreadyExistsException e) {
@@ -39,7 +39,7 @@ public class HealthcareProBean {
         }
     }
     
-    public void update(String username, String password, String name, String mail) 
+    public void update(String username, String password, String name, String mail, String facility, String job) 
             throws EntityDoesNotExistException, MyConstraintViolationException {
         try {
             HealthcarePro healthcarePro = em.find(HealthcarePro.class, username);
@@ -50,6 +50,8 @@ public class HealthcareProBean {
             healthcarePro.setPassword(password);
             healthcarePro.setName(name);
             healthcarePro.setMail(mail);
+            healthcarePro.setFacility(facility);
+            healthcarePro.setJob(job);
             
             em.merge(healthcarePro);
         } catch (EntityDoesNotExistException e) {
@@ -107,7 +109,9 @@ public class HealthcareProBean {
                 healthcarePro.getUsername(),
                 null,
                 healthcarePro.getName(),
-                healthcarePro.getMail());
+                healthcarePro.getMail(),
+                healthcarePro.getFacility(),
+                healthcarePro.getJob());
     }
     
     List<HealthcareProDTO> HealthcareprosToDTOs(List<HealthcarePro> healthcarePros) {

@@ -34,6 +34,16 @@
                 </h:inputText>
                 <h:message errorStyle="color:red; display:inline" for="mail" />
                 
+                <h:outputLabel for="facility" value="Facility: " />
+                <h:inputText id="facility" size="52" value="#{administratorManager.newHealthcarePro.facility}"
+                             required="true" requiredMessage="  Facility is required"/>
+                <h:message errorStyle="color:red; display:inline" for="facility" />
+                
+                <h:outputLabel for="job" value="Job: " />
+                <h:inputText id="job" size="52" value="#{administratorManager.newHealthcarePro.job}"
+                             required="true" requiredMessage="  Job is required"/>
+                <h:message errorStyle="color:red; display:inline" for="job" />
+                
                 <h:commandButton value="Create" id="createButton"
                                  action="#{administratorManager.createHealthcarePro}"
                                  binding="#{administratorManager.component}"/>
