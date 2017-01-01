@@ -13,18 +13,22 @@ public class ProceedingDTO {
     private String materialDescription;
     private Long patientID;
     private String patientName;
+    private Long needID;
+    private String needDescription;
     private String caregiverUsername;
     private String proceedingDate;
 
     public ProceedingDTO() { }
     
     public ProceedingDTO(Long proceedingId, int materialID, String materialDescription, Long patientID, 
-            String patientName, String caregiverUsername, String proceedingDate) {
+            String patientName, Long needID, String needDescription, String caregiverUsername, String proceedingDate) {
         this.proceedingId = proceedingId;
         this.materialID = materialID;
         this.materialDescription = materialDescription;
         this.patientID = patientID;
         this.patientName = patientName;
+        this.needID = needID;
+        this.needDescription = needDescription;
         this.caregiverUsername = caregiverUsername;
         this.proceedingDate = proceedingDate;
     }
@@ -69,6 +73,22 @@ public class ProceedingDTO {
         this.patientName = patientName;
     }
 
+    public Long getNeedID() {
+        return needID;
+    }
+
+    public void setNeedID(Long needID) {
+        this.needID = needID;
+    }
+
+    public String getNeedDescription() {
+        return needDescription;
+    }
+
+    public void setNeedDescription(String needDescription) {
+        this.needDescription = needDescription;
+    }
+
     public String getCaregiverUsername() {
         return caregiverUsername;
     }
@@ -91,6 +111,8 @@ public class ProceedingDTO {
         setMaterialDescription(null);
         setPatientID(null);
         setPatientName(null);
+        setNeedID(null);
+        setNeedDescription(null);
         setCaregiverUsername(null);
         setProceedingDate(null);
     }

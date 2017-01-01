@@ -1,6 +1,5 @@
 package web;
 
-import static com.sun.xml.ws.security.addressing.impl.policy.Constants.logger;
 import dtos.CaregiverDTO;
 import dtos.EmergencyContactDTO;
 import dtos.FaqDTO;
@@ -14,11 +13,12 @@ import dtos.VideoDTO;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
-import java.util.ArrayList;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
-import javax.ejb.EJB;
 import javax.faces.bean.ManagedBean;
 import javax.faces.component.UIComponent;
 import javax.faces.component.UIParameter;
@@ -26,6 +26,7 @@ import javax.faces.event.ActionEvent;
 import javax.inject.Inject;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
 import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
@@ -39,8 +40,8 @@ public class CaregiverManager implements Serializable {
     private UserManager userManager;
 
     private PatientDTO currentPatient;
-    private CaregiverDTO newCaregiver;
-    private CaregiverDTO currentCaregiver;
+    
+    private NeedDTO currentNeed;
 
     private EmergencyContactDTO currentEmergencyContact;
     private FaqDTO currentFaq;
@@ -48,7 +49,10 @@ public class CaregiverManager implements Serializable {
     private TextDTO currentText;
     private VideoDTO currentVideo;
     
-    private NeedDTO currentNeed;
+    private ProceedingDTO newProceeding;
+    private ProceedingDTO currentProceeding;
+    
+    private int materialId;
 
     private HttpAuthenticationFeature feature;
     
@@ -58,7 +62,7 @@ public class CaregiverManager implements Serializable {
     private static final Logger LOGGER = Logger.getLogger("web.CaregiverManager");
     
     public CaregiverManager() {
-        newCaregiver = new CaregiverDTO();
+        this.newProceeding = new ProceedingDTO();
         client = ClientBuilder.newClient();        
         feature = null;
     }
@@ -84,6 +88,134 @@ public class CaregiverManager implements Serializable {
             FacesExceptionHandler.handleException(e, "Unexpected error! Try again latter!", LOGGER);
         }
         return returnedPatients;
+    }
+    
+    public List<NeedDTO> getCaregiverPatientsNeedsREST() {
+        
+        List<NeedDTO> returnedNeeds = null;
+        try {
+            returnedNeeds = client.target(baseUri)
+                    .path("/patients/{id}/needs")
+                    .resolveTemplate("id", currentPatient.getId())
+                    .request(MediaType.APPLICATION_XML)
+                    .get(new GenericType<List<NeedDTO>>() {});
+        } catch (Exception e) {
+            FacesExceptionHandler.handleException(e, "Unexpected error! Try again latter!", LOGGER);
+        }
+        return returnedNeeds;
+    }
+    
+    public List<EmergencyContactDTO> getNeedEmergencyContactsREST() {
+        List<EmergencyContactDTO> returnedEmergencyContacts = null;
+        try {
+            returnedEmergencyContacts = client.target(baseUri)
+                    .path("/caregivers/{username}/needs/{id}/emergencyContacts")
+                    .resolveTemplate("username", userManager.getUsername())
+                    .resolveTemplate("id", currentNeed.getId())
+                    .request(MediaType.APPLICATION_XML)
+                    .get(new GenericType<List<EmergencyContactDTO>>() {});
+        } catch (Exception e) {
+            FacesExceptionHandler.handleException(e, "Unexpected error! Try again latter!", LOGGER);
+        }    
+        return returnedEmergencyContacts;
+    }
+    
+    public List<FaqDTO> getNeedFaqsREST() {
+        List<FaqDTO> returnedFaqs = null;
+        try {
+            returnedFaqs = client.target(baseUri)
+                    .path("/caregivers/{username}/needs/{id}/faqs")
+                    .resolveTemplate("username", userManager.getUsername())
+                    .resolveTemplate("id", currentNeed.getId())
+                    .request(MediaType.APPLICATION_XML)
+                    .get(new GenericType<List<FaqDTO>>() {});
+        } catch (Exception e) {
+            FacesExceptionHandler.handleException(e, "Unexpected error! Try again latter!", LOGGER);
+        }    
+        return returnedFaqs;
+    }
+    
+    public List<TextDTO> getNeedTextsREST() {
+        List<TextDTO> returnedTexts = null;
+        try {
+            returnedTexts = client.target(baseUri)
+                    .path("/caregivers/{username}/needs/{id}/texts")
+                    .resolveTemplate("username", userManager.getUsername())
+                    .resolveTemplate("id", currentNeed.getId())
+                    .request(MediaType.APPLICATION_XML)
+                    .get(new GenericType<List<TextDTO>>() {});
+        } catch (Exception e) {
+            FacesExceptionHandler.handleException(e, "Unexpected error! Try again latter!", LOGGER);
+        }    
+        return returnedTexts;
+    }
+    
+    public List<TutorialDTO> getNeedTutorialsREST() {
+        List<TutorialDTO> returnedTutorials = null;
+        try {
+            returnedTutorials = client.target(baseUri)
+                    .path("/caregivers/{username}/needs/{id}/tutorials")
+                    .resolveTemplate("username", userManager.getUsername())
+                    .resolveTemplate("id", currentNeed.getId())
+                    .request(MediaType.APPLICATION_XML)
+                    .get(new GenericType<List<TutorialDTO>>() {});
+        } catch (Exception e) {
+            FacesExceptionHandler.handleException(e, "Unexpected error! Try again latter!", LOGGER);
+        }    
+        return returnedTutorials;
+    }
+    
+    public List<VideoDTO> getNeedVideosREST() {
+        List<VideoDTO> returnedVideos = null;
+        try {
+            returnedVideos = client.target(baseUri)
+                    .path("/caregivers/{username}/needs/{id}/videos")
+                    .resolveTemplate("username", userManager.getUsername())
+                    .resolveTemplate("id", currentNeed.getId())
+                    .request(MediaType.APPLICATION_XML)
+                    .get(new GenericType<List<VideoDTO>>() {});
+        } catch (Exception e) {
+            FacesExceptionHandler.handleException(e, "Unexpected error! Try again latter!", LOGGER);
+        }    
+        return returnedVideos;
+    }
+    
+    public void createProceedingREST(ActionEvent event) {
+        try {
+            UIParameter param = (UIParameter) event.getComponent().findComponent("materialId");
+            int id = Integer.parseInt(param.getValue().toString());
+            
+            newProceeding.setCaregiverUsername(userManager.getUsername());
+            newProceeding.setPatientID(currentPatient.getId());
+            newProceeding.setNeedID(currentNeed.getId());
+            newProceeding.setMaterialID(id);
+            
+            DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+            Date date = new Date();
+            newProceeding.setProceedingDate(dateFormat.format(date));
+        
+            client.target(baseUri)
+                .path("/proceedings/create")
+                .request(MediaType.APPLICATION_XML)
+                .post(Entity.xml(newProceeding));
+            
+            newProceeding.reset();
+        } catch (Exception e){
+            FacesExceptionHandler.handleException(e, "Unexpected error! Try again latter!", LOGGER);
+        }
+    }
+    
+    public String updateProceedingREST() {
+        try {
+            client.target(baseUri)
+                    .path("/proceedings/update")
+                    .request(MediaType.APPLICATION_XML).put(Entity.xml(currentProceeding));
+            
+            return "caregiver_patient_proceedings?faces-redirect=true";
+        } catch (Exception e) {
+            FacesExceptionHandler.handleException(e, "Unexpected error! Try again latter!", LOGGER);
+        }
+        return "caregiver_patient_proceeding_update?faces-redirect=true";
     }
 
     public List<ProceedingDTO> getPatientsProceedingsREST() {
@@ -114,90 +246,21 @@ public class CaregiverManager implements Serializable {
             FacesExceptionHandler.handleException(e, "Unexpected error! Try again latter!", LOGGER);
         }
     }
-
-    public List<NeedDTO> getCaregiverPatientsNeedsREST() {
-        
-        List<NeedDTO> returnedNeeds = null;
-        try {
-            returnedNeeds = client.target(baseUri)
-                    .path("/patients/{id}/needs")
-                    .resolveTemplate("id", currentPatient.getId())
-                    .request(MediaType.APPLICATION_XML)
-                    .get(new GenericType<List<NeedDTO>>() {});
-        } catch (Exception e) {
-            FacesExceptionHandler.handleException(e, "Unexpected error! Try again latter!", LOGGER);
-        }
-        return returnedNeeds;
-    }
     
-    public List<EmergencyContactDTO> getEmergencyContactREST() {
-        List<EmergencyContactDTO> returnedEmergencyContact = null;
+    public List<MaterialDTO> getAllMaterialsREST() {
+        List<MaterialDTO> returnedMaterials = null;
         try {
-            returnedEmergencyContact = client.target(baseUri)
-                    .path("/needs/{id}/emergencyContact")
-                    .resolveTemplate("id", currentNeed.getId())
-                    .request(MediaType.APPLICATION_XML)
-                    .get(new GenericType<List<EmergencyContactDTO>>() {});
+            returnedMaterials = client.target(baseUri)
+                .path("/caregivers/{username}/needs/{id}/materials")
+                .resolveTemplate("username", userManager.getUsername())
+                .resolveTemplate("id", currentProceeding.getNeedID())
+                .request(MediaType.APPLICATION_XML)
+                .get(new GenericType<List<MaterialDTO>>() {});
+            
         } catch (Exception e) {
             FacesExceptionHandler.handleException(e, "Unexpected error! Try again latter!", LOGGER);
         }    
-        return returnedEmergencyContact;
-    }
-    
-    public List<TutorialDTO> getTutorialREST() {
-        List<TutorialDTO> returnedTutorial = null;
-        try {
-            returnedTutorial = client.target(baseUri)
-                    .path("/needs/{id}/tutorial")
-                    .resolveTemplate("id", currentNeed.getId())
-                    .request(MediaType.APPLICATION_XML)
-                    .get(new GenericType<List<TutorialDTO>>() {});
-        } catch (Exception e) {
-            FacesExceptionHandler.handleException(e, "Unexpected error! Try again latter!", LOGGER);
-        }    
-        return returnedTutorial;
-    }
-    
-    public List<VideoDTO> getVideoREST() {
-        List<VideoDTO> returnedVideo = null;
-        try {
-            returnedVideo = client.target(baseUri)
-                    .path("/needs/{id}/video")
-                    .resolveTemplate("id", currentNeed.getId())
-                    .request(MediaType.APPLICATION_XML)
-                    .get(new GenericType<List<VideoDTO>>() {});
-        } catch (Exception e) {
-            FacesExceptionHandler.handleException(e, "Unexpected error! Try again latter!", LOGGER);
-        }    
-        return returnedVideo;
-    }
-    
-    public List<TextDTO> getTextREST() {
-        List<TextDTO> returnedText = null;
-        try {
-            returnedText = client.target(baseUri)
-                    .path("/needs/{id}/text")
-                    .resolveTemplate("id", currentNeed.getId())
-                    .request(MediaType.APPLICATION_XML)
-                    .get(new GenericType<List<TextDTO>>() {});
-        } catch (Exception e) {
-            FacesExceptionHandler.handleException(e, "Unexpected error! Try again latter!", LOGGER);
-        }    
-        return returnedText;
-    }
-    
-    public List<FaqDTO> getFaqREST() {
-        List<FaqDTO> returnedFaq = null;
-        try {
-            returnedFaq = client.target(baseUri)
-                    .path("/needs/{id}/faq")
-                    .resolveTemplate("id", currentNeed.getId())
-                    .request(MediaType.APPLICATION_XML)
-                    .get(new GenericType<List<FaqDTO>>() {});
-        } catch (Exception e) {
-            FacesExceptionHandler.handleException(e, "Unexpected error! Try again latter!", LOGGER);
-        }    
-        return returnedFaq;
+        return returnedMaterials;
     }
         
     // **********************************
@@ -217,22 +280,6 @@ public class CaregiverManager implements Serializable {
 
     public void setCurrentPatient(PatientDTO currentPatient) {
         this.currentPatient = currentPatient;
-    }
-
-    public CaregiverDTO getNewCaregiver() {
-        return newCaregiver;
-    }
-
-    public void setNewCaregiver(CaregiverDTO newCaregiver) {
-        this.newCaregiver = newCaregiver;
-    }
-
-    public CaregiverDTO getCurrentCaregiver() {
-        return currentCaregiver;
-    }
-
-    public void setCurrentCaregiver(CaregiverDTO currentCaregiver) {
-        this.currentCaregiver = currentCaregiver;
     }
 
     public NeedDTO getCurrentNeed() {
@@ -281,6 +328,30 @@ public class CaregiverManager implements Serializable {
 
     public void setCurrentVideo(VideoDTO currentVideo) {
         this.currentVideo = currentVideo;
+    }
+    
+    public ProceedingDTO getNewProceeding() {
+        return newProceeding;
+    }
+
+    public void setNewProceeding(ProceedingDTO newProceeding) {
+        this.newProceeding = newProceeding;
+    }
+
+    public ProceedingDTO getCurrentProceeding() {
+        return currentProceeding;
+    }
+
+    public void setCurrentProceeding(ProceedingDTO currentProceeding) {
+        this.currentProceeding = currentProceeding;
+    }
+
+    public int getMaterialId() {
+        return materialId;
+    }
+
+    public void setMaterialId(int materialId) {
+        this.materialId = materialId;
     }
     
     public UIComponent getComponent() {

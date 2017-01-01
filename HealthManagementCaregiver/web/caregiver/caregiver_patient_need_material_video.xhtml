@@ -10,7 +10,7 @@
         <h:dataTable
             var="video"
             summary="Patient Materials"
-            value="#{caregiverManager.videoREST}"
+            value="#{caregiverManager.needVideosREST}"
             rules="all"
             cellpadding="5">
 
@@ -30,6 +30,20 @@
                     <h:outputText value="Url" />
                 </f:facet>
                 <h:outputText value="#{video.url}" />
+            </h:column>
+            
+            <h:column>
+                <f:facet name="header">
+                    <h:outputText value="Materials" />
+                </f:facet>
+
+                <h:panelGrid columns="1">
+                    <h:form>
+                        <h:commandLink value="Done" actionListener="#{caregiverManager.createProceedingREST}">
+                            <f:param name="materialId" id="materialId" value="#{video.id}" />
+                        </h:commandLink>
+                    </h:form>
+                </h:panelGrid>  
             </h:column>
         </h:dataTable>
     </h:body>

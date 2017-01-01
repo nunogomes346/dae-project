@@ -10,7 +10,7 @@
         <h:dataTable
             var="text"
             summary="Patient Materials"
-            value="#{caregiverManager.textREST}"
+            value="#{caregiverManager.needTextsREST}"
             rules="all"
             cellpadding="5">
 
@@ -30,6 +30,20 @@
                     <h:outputText value="Text" />
                 </f:facet>
                 <h:outputText value="#{text.text}" />
+            </h:column>
+            
+            <h:column>
+                <f:facet name="header">
+                    <h:outputText value="Materials" />
+                </f:facet>
+
+                <h:panelGrid columns="1">
+                    <h:form>
+                        <h:commandLink value="Done" actionListener="#{caregiverManager.createProceedingREST}">
+                            <f:param name="materialId" id="materialId" value="#{text.id}" />
+                        </h:commandLink>
+                    </h:form>
+                </h:panelGrid>  
             </h:column>
         </h:dataTable>
     </h:body>

@@ -31,6 +31,10 @@ public class Proceeding implements Serializable {
     private Patient patient;
     
     @ManyToOne
+    @JoinColumn(name = "NEED_ID")
+    private Need need;
+    
+    @ManyToOne
     @JoinColumn(name = "CAREGIVER_ID")
     private Caregiver caregiver;
     
@@ -38,9 +42,10 @@ public class Proceeding implements Serializable {
 
     public Proceeding() { }
     
-    public Proceeding(Material material, Patient patient, Caregiver caregiver, String proceedingDate) {
+    public Proceeding(Material material, Patient patient, Need need, Caregiver caregiver, String proceedingDate) {
         this.material = material;
         this.patient = patient;
+        this.need = need;
         this.caregiver = caregiver;
         this.proceedingDate = proceedingDate;
     }
@@ -67,6 +72,14 @@ public class Proceeding implements Serializable {
 
     public void setPatient(Patient patient) {
         this.patient = patient;
+    }
+
+    public Need getNeed() {
+        return need;
+    }
+
+    public void setNeed(Need need) {
+        this.need = need;
     }
 
     public Caregiver getCaregiver() {

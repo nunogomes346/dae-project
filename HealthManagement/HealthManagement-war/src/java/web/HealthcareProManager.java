@@ -290,10 +290,10 @@ public class HealthcareProManager implements Serializable{
     
     public String detailsView(MaterialDTO material) {
         switch(material.getType()) {
-            case "Emergency Contact": 
+            case "EmergencyContact": 
                 setCurrentEmergencyContact((EmergencyContactDTO) material);
                 return "healthcarePro_emergencyContact_details?faces-redirect=true";
-            case "FAQ": 
+            case "Faq": 
                 setCurrentFaq((FaqDTO) material);
                 return "healthcarePro_faq_details?faces-redirect=true";
             case "Text": 
@@ -312,10 +312,10 @@ public class HealthcareProManager implements Serializable{
     
     public String updateView(MaterialDTO material) {
         switch(material.getType()) {
-            case "Emergency Contact": 
+            case "EmergencyContact": 
                 setCurrentEmergencyContact((EmergencyContactDTO) material);
                 return "healthcarePro_emergencyContact_update?faces-redirect=true";
-            case "FAQ": 
+            case "Faq": 
                 setCurrentFaq((FaqDTO) material);
                 return "healthcarePro_faq_update?faces-redirect=true";
             case "Text": 
@@ -334,9 +334,9 @@ public class HealthcareProManager implements Serializable{
     
     public void removeMaterial(MaterialDTO material) {
         switch(material.getType()) {
-            case "Emergency Contact": 
+            case "EmergencyContact": 
                 removeEmergencyContact(material.getId());
-            case "FAQ": 
+            case "Faq": 
                 removeFaq(material.getId());
             case "Text": 
                 removeText(material.getId());

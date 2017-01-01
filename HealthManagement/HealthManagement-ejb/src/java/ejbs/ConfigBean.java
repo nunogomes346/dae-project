@@ -129,14 +129,14 @@ public class ConfigBean {
             needBean.associateMaterialToNeed(20, Long.parseLong("7"));
             needBean.associateMaterialToNeed(24, Long.parseLong("7"));
             
-            procedureBean.create(20, Long.parseLong("1"), "piteu", "12-10-2016");
-            procedureBean.create(22, Long.parseLong("1"), "piteu", "23-10-2016");
-            procedureBean.create(22, Long.parseLong("2"), "piteu2", "23-10-2016");
-            procedureBean.create(23, Long.parseLong("1"), "piteu", "15-11-2016");
-            procedureBean.create(20, Long.parseLong("1"), "piteu", "17-11-2016");
-            procedureBean.create(20, Long.parseLong("2"), "piteu2", "17-10-2016");
-            procedureBean.create(22, Long.parseLong("1"), "piteu", "08-12-2016");
-            procedureBean.create(23, Long.parseLong("2"), "piteu2", "08-11-2016");
+            procedureBean.create(20, Long.parseLong("1"), Long.parseLong("9"), "piteu", "12-10-2016 00:01:30");
+            procedureBean.create(22, Long.parseLong("1"), Long.parseLong("9"), "piteu", "23-10-2016 10:10:20");
+            procedureBean.create(22, Long.parseLong("2"), Long.parseLong("8"), "piteu2", "23-10-2016 15:10:55");
+            procedureBean.create(23, Long.parseLong("1"), Long.parseLong("9"), "piteu", "15-11-2016 16:20:54");
+            procedureBean.create(20, Long.parseLong("1"), Long.parseLong("9"), "piteu", "17-11-2016 22:27:20");
+            procedureBean.create(20, Long.parseLong("2"), Long.parseLong("7"), "piteu2", "17-10-2016 16:27:47");
+            procedureBean.create(22, Long.parseLong("1"), Long.parseLong("9"), "piteu", "08-12-2016 23:55:21");
+            procedureBean.create(23, Long.parseLong("2"), Long.parseLong("8"), "piteu2", "08-11-2016 15:36:22");
             
         } catch (EntityAlreadyExistsException | MyConstraintViolationException e) {
             System.err.println("Error: " + e.getMessage());

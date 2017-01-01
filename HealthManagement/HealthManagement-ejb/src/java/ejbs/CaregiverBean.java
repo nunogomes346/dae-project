@@ -13,6 +13,7 @@ import entities.Caregiver;
 import entities.EmergencyContact;
 import entities.FAQ;
 import entities.Material;
+import entities.MaterialGroup;
 import entities.Need;
 import entities.Patient;
 import entities.Proceeding;
@@ -175,8 +176,6 @@ public class CaregiverBean {
         }
     }
     
-    
-   
     public List<NeedDTO> getCaregiverPatientsNeeds(String username)
             throws EntityDoesNotExistException, MyConstraintViolationException {
         try {
@@ -411,6 +410,228 @@ public class CaregiverBean {
             
             return patientBean.patientsToDTOs(patients);
         } catch (EntityDoesNotExistException e) {
+            throw e;             
+        } catch (Exception e) {
+            throw new EJBException(e.getMessage());
+        }
+    }
+    
+    @GET
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Path("{username}/needs/{id}/materials")
+    public List<MaterialDTO> getCaregiverMaterialsREST(@PathParam("username") String username, @PathParam("id") Long needId) 
+            throws EntityDoesNotExistException{
+        try {
+            Need need = em.find(Need.class, needId);
+            if(need == null){
+                throw new EntityDoesNotExistException("There is no need with that id.");
+            } 
+            
+            List<MaterialDTO> materials = new ArrayList<MaterialDTO>();
+            List<MaterialDTO> caregiverMaterials = getCaregiverMaterials(username);
+            List<Material> needMaterials = need.getMaterials();
+            
+            for (MaterialDTO caregiverMaterial : caregiverMaterials) {
+                for (Material needMaterial : needMaterials) {
+                    if(caregiverMaterial.getId() == needMaterial.getId()) {
+                        materials.add(caregiverMaterial);
+                        break;
+                    }
+                }
+            }
+            
+            return materials;
+        } catch (EntityDoesNotExistException e) {
+            throw e;             
+        } catch (Exception e) {
+            throw new EJBException(e.getMessage());
+        }
+    }
+    
+    @GET
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Path("{username}/needs/{id}/emergencyContacts")
+    public List<EmergencyContactDTO> getEmergencyContactREST (@PathParam("username") String username, @PathParam("id") Long id)  throws EntityDoesNotExistException {
+        try{
+            Caregiver caregiver = em.find(Caregiver.class, username);
+            if(caregiver == null){
+                throw new EntityDoesNotExistException("There is no caregiver with that username.");
+            }   
+            
+            Need need = em.find(Need.class, id);
+            if(need == null){
+                throw new EntityDoesNotExistException("There is no Need with that id.");
+            }
+            
+            List<Material> caregiverMaterials = caregiver.getMaterials();
+            List<Material> needMaterials = need.getMaterials();
+            List<EmergencyContact> emergencyContacts = new ArrayList<>();
+            
+            for (Material caregiverMaterial : caregiverMaterials) {
+                for(Material needMaterial : needMaterials){
+                    if(caregiverMaterial == needMaterial &&
+                        caregiverMaterial.getGroup().getGroupName() == MaterialGroup.GROUP.EmergencyContact &&
+                        needMaterial.getGroup().getGroupName() == MaterialGroup.GROUP.EmergencyContact){
+                        emergencyContacts.add((EmergencyContact) caregiverMaterial);
+                        break;
+                    }
+                }
+            }
+            
+            return emergencyContactBean.emergencyContactsToDTOs(emergencyContacts);
+        } catch (EntityDoesNotExistException e) {
+            throw e;             
+        } catch (Exception e) {
+            throw new EJBException(e.getMessage());
+        }
+    }
+    
+    @GET
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Path("{username}/needs/{id}/faqs")
+    public List<FaqDTO> getFaqREST (@PathParam("username") String username, @PathParam("id") Long id)  throws EntityDoesNotExistException {
+        try{
+            Caregiver caregiver = em.find(Caregiver.class, username);
+            if(caregiver == null){
+                throw new EntityDoesNotExistException("There is no caregiver with that username.");
+            }  
+            
+            Need need = em.find(Need.class, id);
+            if(need == null){
+                throw new EntityDoesNotExistException("There is no Need with that id.");
+            }
+            
+            List<Material> caregiverMaterials = caregiver.getMaterials();
+            List<Material> needMaterials = need.getMaterials();
+            List<FAQ> faqs = new ArrayList<>();
+            
+            for (Material caregiverMaterial : caregiverMaterials) {
+                for(Material needMaterial : needMaterials){
+                    if(caregiverMaterial == needMaterial &&
+                        caregiverMaterial.getGroup().getGroupName() == MaterialGroup.GROUP.Faq &&
+                        needMaterial.getGroup().getGroupName() == MaterialGroup.GROUP.Faq){
+                        faqs.add((FAQ) caregiverMaterial);
+                        break;
+                    }
+                }
+            } 
+            
+            return faqBean.faqsToDTOs(faqs);
+        }catch (EntityDoesNotExistException e) {
+            throw e;             
+        } catch (Exception e) {
+            throw new EJBException(e.getMessage());
+        }
+    }
+    
+    @GET
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Path("{username}/needs/{id}/texts")
+    public List<TextDTO> getTextREST (@PathParam("username") String username, @PathParam("id") Long id)  throws EntityDoesNotExistException {
+        try{
+            Caregiver caregiver = em.find(Caregiver.class, username);
+            if(caregiver == null){
+                throw new EntityDoesNotExistException("There is no caregiver with that username.");
+            }  
+            
+            Need need = em.find(Need.class, id);
+            if(need == null){
+                throw new EntityDoesNotExistException("There is no Need with that id.");
+            }
+            
+            List<Material> caregiverMaterials = caregiver.getMaterials();
+            List<Material> needMaterials = need.getMaterials();
+            List<Text> texts = new ArrayList<>();
+            
+            for (Material caregiverMaterial : caregiverMaterials) {
+                for(Material needMaterial : needMaterials){
+                    if(caregiverMaterial == needMaterial &&
+                        caregiverMaterial.getGroup().getGroupName() == MaterialGroup.GROUP.Text &&
+                        needMaterial.getGroup().getGroupName() == MaterialGroup.GROUP.Text){
+                        texts.add((Text) caregiverMaterial);
+                        break;
+                    }
+                }
+            }
+            
+            return textBean.textsToDTOs(texts);
+        }catch (EntityDoesNotExistException e) {
+            throw e;             
+        } catch (Exception e) {
+            throw new EJBException(e.getMessage());
+        }
+    }
+    
+    @GET
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Path("{username}/needs/{id}/tutorials")
+    public List<TutorialDTO> getTutorialREST (@PathParam("username") String username, @PathParam("id") Long id)  throws EntityDoesNotExistException {
+        try{
+            Caregiver caregiver = em.find(Caregiver.class, username);
+            if(caregiver == null){
+                throw new EntityDoesNotExistException("There is no caregiver with that username.");
+            }  
+            
+            Need need = em.find(Need.class, id);
+            if(need == null){
+                throw new EntityDoesNotExistException("There is no Need with that id.");
+            }
+            
+            List<Material> caregiverMaterials = caregiver.getMaterials();
+            List<Material> needMaterials = need.getMaterials();
+            List<Tutorial> tutorials = new ArrayList<>();
+            
+            for (Material caregiverMaterial : caregiverMaterials) {
+                for(Material needMaterial : needMaterials){
+                    if(caregiverMaterial == needMaterial &&
+                        caregiverMaterial.getGroup().getGroupName() == MaterialGroup.GROUP.Tutorial &&
+                        needMaterial.getGroup().getGroupName() == MaterialGroup.GROUP.Tutorial){
+                        tutorials.add((Tutorial) caregiverMaterial);
+                        break;
+                    }
+                }
+            }
+            
+            return tutorialBean.tutorialsToDTOs(tutorials);
+        }catch (EntityDoesNotExistException e) {
+            throw e;             
+        } catch (Exception e) {
+            throw new EJBException(e.getMessage());
+        }
+    }
+    
+    @GET
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Path("{username}/needs/{id}/videos")
+    public List<VideoDTO> getVideoREST (@PathParam("username") String username, @PathParam("id") Long id)  throws EntityDoesNotExistException {
+        try{
+            Caregiver caregiver = em.find(Caregiver.class, username);
+            if(caregiver == null){
+                throw new EntityDoesNotExistException("There is no caregiver with that username.");
+            }  
+            
+            Need need = em.find(Need.class, id);
+            if(need == null){
+                throw new EntityDoesNotExistException("There is no Need with that id.");
+            }
+            
+            List<Material> caregiverMaterials = caregiver.getMaterials();
+            List<Material> needMaterials = need.getMaterials();
+            List<Video> videos = new ArrayList<>();
+            
+            for (Material caregiverMaterial : caregiverMaterials) {
+                for(Material needMaterial : needMaterials){
+                    if(caregiverMaterial == needMaterial &&
+                        caregiverMaterial.getGroup().getGroupName() == MaterialGroup.GROUP.Video &&
+                        needMaterial.getGroup().getGroupName() == MaterialGroup.GROUP.Video){
+                        videos.add((Video) caregiverMaterial);
+                        break;
+                    }
+                }
+            }
+            
+            return videoBean.videosToDTOs(videos);
+        }catch (EntityDoesNotExistException e) {
             throw e;             
         } catch (Exception e) {
             throw new EJBException(e.getMessage());

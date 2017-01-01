@@ -10,7 +10,7 @@
         <h:dataTable
             var="faq"
             summary="Patient Materials"
-            value="#{caregiverManager.faqREST}"
+            value="#{caregiverManager.needFaqsREST}"
             rules="all"
             cellpadding="5">
 
@@ -37,6 +37,20 @@
                     <h:outputText value="Answer" />
                 </f:facet>
                 <h:outputText value="#{faq.answer}" />
+            </h:column>
+            
+            <h:column>
+                <f:facet name="header">
+                    <h:outputText value="Materials" />
+                </f:facet>
+
+                <h:panelGrid columns="1">
+                    <h:form>
+                        <h:commandLink value="Done" actionListener="#{caregiverManager.createProceedingREST}">
+                            <f:param name="materialId" id="materialId" value="#{faq.id}" />
+                        </h:commandLink>
+                    </h:form>
+                </h:panelGrid>  
             </h:column>
         </h:dataTable>
     </h:body>

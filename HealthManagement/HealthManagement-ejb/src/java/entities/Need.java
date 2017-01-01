@@ -12,6 +12,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.validation.constraints.NotNull;
 
 @Entity
@@ -39,16 +40,21 @@ public class Need implements Serializable {
             joinColumns = @JoinColumn(name = "NEED_ID", referencedColumnName = "ID"),
             inverseJoinColumns = @JoinColumn(name = "MATERIAL_ID", referencedColumnName = "ID"))
     private List<Material> materials;
+    
+    @OneToMany(mappedBy = "need")
+    private List<Proceeding> proceedings;
 
     public Need(){
         this.patients = new LinkedList<Patient>();
         this.materials = new LinkedList<Material>();
+        this.proceedings = new LinkedList<Proceeding>();
     }
     
     public Need(String description) {
         this.description = description;
         this.patients = new LinkedList<Patient>();
         this.materials = new LinkedList<Material>();
+        this.proceedings = new LinkedList<Proceeding>();
     }
     
     public Long getId() {
@@ -97,5 +103,21 @@ public class Need implements Serializable {
     
     public void removeMaterial(Material material) {
         this.materials.remove(material);
+    }
+
+    public List<Proceeding> getProceedings() {
+        return proceedings;
+    }
+
+    public void setProceedings(List<Proceeding> proceedings) {
+        this.proceedings = proceedings;
+    }
+    
+    public void addProceeding(Proceeding proceeding){
+        this.proceedings.add(proceeding);
+    }
+    
+    public void removeProceeding(Proceeding proceeding){
+        this.proceedings.remove(proceeding);
     }
 }

@@ -14,7 +14,7 @@ public class FaqDTO extends MaterialDTO {
     public FaqDTO() { }
     
     public FaqDTO(int id,String description, String question, String answer){
-        super(id, description, "FAQ");
+        super(id, description, "Faq");
         this.question = question;
         this.answer = answer;
     }

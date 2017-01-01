@@ -4,10 +4,9 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
-
 @XmlRootElement(name = "Material")
 @XmlAccessorType(XmlAccessType.FIELD)
-public abstract class MaterialDTO implements Serializable{
+public class MaterialDTO implements Serializable{
     
     private int id;
     private String description;

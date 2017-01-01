@@ -3,6 +3,7 @@ package ejbs;
 import dtos.ProceedingDTO;
 import entities.Caregiver;
 import entities.Material;
+import entities.Need;
 import entities.Patient;
 import entities.Proceeding;
 import exceptions.EntityDoesNotExistException;
@@ -17,6 +18,8 @@ import javax.persistence.PersistenceContext;
 import javax.validation.ConstraintViolationException;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.MediaType;
@@ -27,7 +30,7 @@ public class ProceedingsBean {
     @PersistenceContext
     EntityManager em;
     
-    public void create(int materialID, Long patientID, String caregiverUsernameID, String date)
+    public void create(int materialID, Long patientID, Long needID, String caregiverUsername, String date)
             throws EntityDoesNotExistException, MyConstraintViolationException {
         try {
             Material material = em.find(Material.class, materialID);
@@ -40,12 +43,17 @@ public class ProceedingsBean {
                 throw new EntityDoesNotExistException("There is no patient with that id.");
             }
             
-            Caregiver caregiver = em.find(Caregiver.class, caregiverUsernameID);
+            Need need = em.find(Need.class, needID);
+            if (need == null) {
+                throw new EntityDoesNotExistException("There is no need with that id.");
+            }
+            
+            Caregiver caregiver = em.find(Caregiver.class, caregiverUsername);
             if (caregiver == null) {
                 throw new EntityDoesNotExistException("There is no caregiver with that username.");
             }
             
-            Proceeding proceeding  = new Proceeding(material, patient, caregiver, date);
+            Proceeding proceeding  = new Proceeding(material, patient, need, caregiver, date);
             
             em.persist(proceeding);
         } catch (EntityDoesNotExistException e) {
@@ -57,7 +65,7 @@ public class ProceedingsBean {
         }
     }
     
-    public void update(Long proceedingID, Long materialID)
+    public void update(Long proceedingID, int materialID)
             throws EntityDoesNotExistException, MyConstraintViolationException {
         try {
             Proceeding proceeding = em.find(Proceeding.class, proceedingID);
@@ -117,10 +125,39 @@ public class ProceedingsBean {
             proceeding.getCaregiver().removeProceeding(proceeding);
             proceeding.getMaterial().removeProceeding(proceeding);
             proceeding.getPatient().removeProceeding(proceeding);
+            proceeding.getNeed().removeProceeding(proceeding);
             
             em.remove(proceeding);
         } catch (EntityDoesNotExistException e) {
             throw e;
+        } catch (Exception e) {
+            throw new EJBException(e.getMessage());
+        }
+    }
+    
+    @POST
+    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Path("create")
+    public void createProceedingREST(ProceedingDTO p) throws EntityDoesNotExistException {
+        try {
+            create(p.getMaterialID(), p.getPatientID(), p.getNeedID(), p.getCaregiverUsername(), p.getProceedingDate());
+        } catch (EntityDoesNotExistException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new EJBException(e.getMessage());
+        }
+    }
+    
+    @PUT
+    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Path("update")
+    public void updateProceedingREST(ProceedingDTO p) throws EntityDoesNotExistException, MyConstraintViolationException{
+        try {
+            update(p.getProceedingId(), p.getMaterialID());
+        } catch (EntityDoesNotExistException e) {
+            throw e;
+        } catch (ConstraintViolationException e) {
+            throw new MyConstraintViolationException(Utils.getConstraintViolationMessages(e));            
         } catch (Exception e) {
             throw new EJBException(e.getMessage());
         }
@@ -147,10 +184,13 @@ public class ProceedingsBean {
                 proceeding.getMaterial().getDescription(),
                 proceeding.getPatient().getId(),
                 proceeding.getPatient().getName(),
+                proceeding.getNeed().getId(),
+                proceeding.getNeed().getDescription(),
                 proceeding.getCaregiver().getUsername(),
                 proceeding.getProceedingDate()
         );
     }
+    
     public List<ProceedingDTO> proceedingsToDTOs(List<Proceeding> proceedings) {
         List<ProceedingDTO> dtos = new ArrayList<>();
         for (Proceeding p : proceedings) {
