@@ -1,36 +1,34 @@
 <?xml version='1.0' encoding='UTF-8' ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:h="http://xmlns.jcp.org/jsf/html"
-      xmlns:f="http://xmlns.jcp.org/jsf/core">
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
     <h:head>
-        <title>HealthcarePro Details</title>
+        <title>Healthcare Professional Details</title>
     </h:head>
     <h:body>
-
         <h2 name="title">Details for Healthcare Profissional #{administratorManager.currentHealthcarePro.username}</h2>
         
         <h:panelGrid columns="2">
-            <h:outputLabel for="username" value="Username: " />
-            <h:outputText id="username" value="#{administratorManager.currentHealthcarePro.username}"/>
+            <p:outputLabel for="username" value="Username: " />
+            <p:outputLabel id="username" value="#{administratorManager.currentHealthcarePro.username}"/>
 
-            <h:outputLabel for="name" value="Name: " />
-            <h:outputText id="name" value="#{administratorManager.currentHealthcarePro.name}"/>
+            <p:outputLabel for="name" value="Name: " />
+            <p:outputLabel id="name" value="#{administratorManager.currentHealthcarePro.name}"/>
 
-            <h:outputLabel for="mail" value="Mail: " />
-            <h:outputText id="mail" value="#{administratorManager.currentHealthcarePro.mail}"/>
+            <p:outputLabel for="mail" value="Mail: " />
+            <p:outputLabel id="mail" value="#{administratorManager.currentHealthcarePro.mail}"/>
             
-            <h:outputLabel for="facility" value="Facility: " />
-            <h:outputText id="facility" value="#{administratorManager.currentHealthcarePro.facility}"/>
+            <p:outputLabel for="facility" value="Facility: " />
+            <p:outputLabel id="facility" value="#{administratorManager.currentHealthcarePro.facility}"/>
             
-            <h:outputLabel for="job" value="Job: " />
-            <h:outputText id="job" value="#{administratorManager.currentHealthcarePro.job}"/>
+            <p:outputLabel for="job" value="Job: " />
+            <p:outputLabel id="job" value="#{administratorManager.currentHealthcarePro.job}"/>
         </h:panelGrid>
         
-        <h:form>                
-            <h:panelGrid columns="2">
-                <h:commandButton value="Back" id="BackButton" action="/administrator/admin_index?faces-redirect=true" />
-            </h:panelGrid>
+        <h:form>
+            <p:commandButton value="Back" id="BackButton" action="/administrator/admin_index?faces-redirect=true" />
         </h:form>
     </h:body>
 </html>

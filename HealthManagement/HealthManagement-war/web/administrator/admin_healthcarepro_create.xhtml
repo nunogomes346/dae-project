@@ -1,55 +1,84 @@
 <?xml version='1.0' encoding='UTF-8' ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:h="http://xmlns.jcp.org/jsf/html"
-      xmlns:f="http://xmlns.jcp.org/jsf/core">
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
     <h:head>
-        <title>Create HealthcarePro</title>
+        <title>Create Healthcare Professional</title>
     </h:head>
     <h:body>
-        <h2 name="title">Create New Healthcare Profissional</h2>
-        
-        <h:form>
-            <h:panelGrid columns="3">
-                <h:outputLabel for="username" value="Username: " />
-                <h:inputText id="username" size="52" value="#{administratorManager.newHealthcarePro.username}" 
-                             required="true" requiredMessage="  Username is required"/>
-                <h:message errorStyle="color:red; display:inline" for="username" />
-                
-                <h:outputLabel for="password" value="Password: " />
-                <h:inputSecret id="password" size="52" value="#{administratorManager.newHealthcarePro.password}"
-                               required="true" requiredMessage="  Password is required"/>
-                <h:message errorStyle="color:red; display:inline" for="password" />
-                    
-                <h:outputLabel for="name" value="Name: " />
-                <h:inputText id="name" size="52" value="#{administratorManager.newHealthcarePro.name}"
-                             required="true" requiredMessage="  Name is required"/>
-                <h:message errorStyle="color:red; display:inline" for="name" />
-                
-                <h:outputLabel for="mail" value="Mail: " />
-                <h:inputText id="mail" size="52" value="#{administratorManager.newHealthcarePro.mail}"
-                             required="true" requiredMessage="  Mail is required"
-                             validatorMessage="Incorrect mail format">
+        <h2 name="title">Create Healthcare Professional</h2>
+        <h:form>                  
+            <h:panelGrid id="createGrid" columns="3">
+                <p:outputLabel for="username" value="Username: " />
+                <p:inputText 
+                    id="username"
+                    size="30"
+                    required="true"
+                    requiredMessage=" Username is required."
+                    value="#{administratorManager.newHealthcarePro.username}">
+                    <f:validator validatorId="usernameValidator"/>
+                </p:inputText>
+                <p:message for="username" display="text" />
+
+                <p:outputLabel for="password" value="Password: " />
+                <p:password
+                    id="password"
+                    size="30"
+                    required="true"
+                    requiredMessage=" Password is required."
+                    value="#{administratorManager.newHealthcarePro.password}"/>
+                <p:message for="password" display="text" />                      
+
+                <p:outputLabel for="name" value="Name: " />
+                <p:inputText 
+                    id="name"
+                    size="30"
+                    required="true"
+                    requiredMessage=" Name cannot be empty."                            
+                    value="#{administratorManager.newHealthcarePro.name}" />
+                <p:message for="name" display="text" />
+
+                <p:outputLabel for="mail" value="Mail: " />
+                <p:inputText
+                    id="mail"
+                    size="30"
+                    required="true"
+                    requiredMessage=" Mail is required."                            
+                    value="#{administratorManager.newHealthcarePro.mail}"
+                    validatorMessage="Incorrect mail format" >
                     <f:validateRegex pattern="[\w\.-]*[a-zA-Z0-9_]@[\w\.-]*[a-zA-Z0-9]\.[a-zA-Z][a-zA-Z\.]*[a-zA-Z]" />
-                </h:inputText>
-                <h:message errorStyle="color:red; display:inline" for="mail" />
+                </p:inputText>    
+                <p:message for="mail" display="text" />
                 
-                <h:outputLabel for="facility" value="Facility: " />
-                <h:inputText id="facility" size="52" value="#{administratorManager.newHealthcarePro.facility}"
-                             required="true" requiredMessage="  Facility is required"/>
-                <h:message errorStyle="color:red; display:inline" for="facility" />
+                <p:outputLabel for="facility" value="Facility: " />
+                <p:inputText
+                    id="facility"
+                    size="30"
+                    required="true"
+                    requiredMessage=" Facility is required."                            
+                    value="#{administratorManager.newHealthcarePro.facility}" /> 
+                <p:message for="facility" display="text" />
                 
-                <h:outputLabel for="job" value="Job: " />
-                <h:inputText id="job" size="52" value="#{administratorManager.newHealthcarePro.job}"
-                             required="true" requiredMessage="  Job is required"/>
-                <h:message errorStyle="color:red; display:inline" for="job" />
-                
-                <h:commandButton value="Create" id="createButton"
-                                 action="#{administratorManager.createHealthcarePro}"
-                                 binding="#{administratorManager.component}"/>
-                <h:message errorStyle="color:red; display:inline" for="createButton" />
-            </h:panelGrid>
-        </h:form>
+                <p:outputLabel for="job" value="Job: " />
+                <p:inputText
+                    id="job"
+                    size="30"
+                    required="true"
+                    requiredMessage=" Job is required."                            
+                    value="#{administratorManager.newHealthcarePro.job}" />
+                <p:message for="job" display="text" />
+
+                <p:commandButton
+                    id="submit"
+                    value="Create"
+                    binding="#{administratorManager.component}" 
+                    action="#{administratorManager.createHealthcarePro}" 
+                    update="createGrid"/>
+                <p:message for="submit" display="text" />
+            </h:panelGrid > 
+        </h:form>     
     </h:body>
 </html>
 
