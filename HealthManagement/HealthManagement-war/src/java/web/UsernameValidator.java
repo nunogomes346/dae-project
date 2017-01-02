@@ -28,7 +28,7 @@ public class UsernameValidator implements Validator {
                 ((UIInput) toValidate).setValid(false);
             }
         } catch (Exception e) {
-            FacesExceptionHandler.handleException(e, "Unkown error.", logger);
+            FacesExceptionHandler.handleException(e, "Unknown error.", logger);
         }
     }
 }

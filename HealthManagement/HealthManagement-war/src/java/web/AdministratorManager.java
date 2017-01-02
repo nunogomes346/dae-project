@@ -128,7 +128,7 @@ public class AdministratorManager implements Serializable {
 
         return null;
     }
-
+    
     public String updateAdministrator() {
         try {
             administratorBean.update(
