@@ -22,6 +22,8 @@ public class ConfigBean {
     
     @EJB
     NeedBean needBean;
+    @EJB
+    ProceedingsBean procedureBean;
 
     @EJB
     EmergencyContactBean emergencyBean;
@@ -41,7 +43,7 @@ public class ConfigBean {
             administratorBean.create("joaocaroco", "adminpw", "João Caroço", "joaoc2800@gmail.com");
             administratorBean.create("pedrodomingues", "adminpw", "Pedro Domingues", "pedrolcd@outlook.com");
 
-            healthcareProBean.create("teddy", "propw", "Bruno Fonseca", "teddy@gmail.com");
+            healthcareProBean.create("teddy", "propw", "Bruno Fonseca", "teddy@gmail.com", "Hospital", "Médico");
 
             caregiverBean.create("piteu", "carepw", "Bruno Anastácio", "piteu@gmail.com");
             caregiverBean.create("piteu2", "carepw", "Bruno Anastácio2", "piteu@gmail.com");
@@ -67,6 +69,9 @@ public class ConfigBean {
             needBean.associateNeedToPatient(Long.parseLong("8"), Long.parseLong("2"));
             needBean.associateNeedToPatient(Long.parseLong("7"), Long.parseLong("2"));
             needBean.associateNeedToPatient(Long.parseLong("9"), Long.parseLong("1"));
+            
+            patientBean.associatePatientToCaregiver(Long.parseLong("1"), "piteu");
+            patientBean.associatePatientToCaregiver(Long.parseLong("2"), "piteu2");
             
             // MATERIALS: IDs -> 12 - 24
             emergencyBean.create("112", "Numero de Emergencia Nacional", "112");
@@ -123,6 +128,15 @@ public class ConfigBean {
             needBean.associateMaterialToNeed(19, Long.parseLong("8"));
             needBean.associateMaterialToNeed(20, Long.parseLong("7"));
             needBean.associateMaterialToNeed(24, Long.parseLong("7"));
+            
+            procedureBean.create(20, Long.parseLong("1"), Long.parseLong("9"), "piteu", "12-10-2016 00:01:30", null);
+            procedureBean.create(22, Long.parseLong("1"), Long.parseLong("9"), "piteu", "23-10-2016 10:10:20", null);
+            procedureBean.create(22, Long.parseLong("2"), Long.parseLong("8"), "piteu2", "23-10-2016 15:10:55", null);
+            procedureBean.create(23, Long.parseLong("1"), Long.parseLong("9"), "piteu", "15-11-2016 16:20:54", null);
+            procedureBean.create(20, Long.parseLong("1"), Long.parseLong("9"), "piteu", "17-11-2016 22:27:20", null);
+            procedureBean.create(20, Long.parseLong("2"), Long.parseLong("7"), "piteu2", "17-10-2016 16:27:47", null);
+            procedureBean.create(22, Long.parseLong("1"), Long.parseLong("9"), "piteu", "08-12-2016 23:55:21", null);
+            procedureBean.create(23, Long.parseLong("2"), Long.parseLong("8"), "piteu2", "08-11-2016 15:36:22", null);
             
         } catch (EntityAlreadyExistsException | MyConstraintViolationException e) {
             System.err.println("Error: " + e.getMessage());

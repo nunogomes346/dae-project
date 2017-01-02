@@ -167,7 +167,9 @@ public class AdministratorManager implements Serializable {
                     newHealthcarePro.getUsername(),
                     newHealthcarePro.getPassword(),
                     newHealthcarePro.getName(),
-                    newHealthcarePro.getMail());
+                    newHealthcarePro.getMail(),
+                    newHealthcarePro.getFacility(),
+                    newHealthcarePro.getJob());
 
             setFilteredHealthcarePros(null);
             
@@ -198,7 +200,9 @@ public class AdministratorManager implements Serializable {
                     currentHealthcarePro.getUsername(),
                     currentHealthcarePro.getPassword(),
                     currentHealthcarePro.getName(),
-                    currentHealthcarePro.getMail());
+                    currentHealthcarePro.getMail(),
+                    currentHealthcarePro.getFacility(),
+                    currentHealthcarePro.getJob());
             
             setFilteredHealthcarePros(null);
 
@@ -310,10 +314,10 @@ public class AdministratorManager implements Serializable {
     
     public String detailsView(MaterialDTO material) {
         switch(material.getType()) {
-            case "Emergency Contact": 
+            case "EmergencyContact": 
                 setCurrentEmergencyContact((EmergencyContactDTO) material);
                 return "admin_emergencyContact_details?faces-redirect=true";
-            case "FAQ": 
+            case "Faq": 
                 setCurrentFaq((FaqDTO) material);
                 return "admin_faq_details?faces-redirect=true";
             case "Text": 
@@ -332,10 +336,10 @@ public class AdministratorManager implements Serializable {
     
     public String updateView(MaterialDTO material) {
         switch(material.getType()) {
-            case "Emergency Contact": 
+            case "EmergencyContact": 
                 setCurrentEmergencyContact((EmergencyContactDTO) material);
                 return "admin_emergencyContact_update?faces-redirect=true";
-            case "FAQ": 
+            case "Faq": 
                 setCurrentFaq((FaqDTO) material);
                 return "admin_faq_update?faces-redirect=true";
             case "Text": 
@@ -354,9 +358,9 @@ public class AdministratorManager implements Serializable {
     
     public void removeMaterial(MaterialDTO material) {
         switch(material.getType()) {
-            case "Emergency Contact": 
+            case "EmergencyContact": 
                 removeEmergencyContact(material.getId());
-            case "FAQ": 
+            case "Faq": 
                 removeFaq(material.getId());
             case "Text": 
                 removeText(material.getId());

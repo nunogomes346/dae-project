@@ -14,7 +14,7 @@ public class EmergencyContactDTO extends MaterialDTO {
     public EmergencyContactDTO(){ }
     
     public EmergencyContactDTO(int id, String description, String name, String telephoneNumber) {
-        super(id, description, "Emergency Contact");
+        super(id, description, "EmergencyContact");
         this.name = name;
         this.telephoneNumber = telephoneNumber;
     }

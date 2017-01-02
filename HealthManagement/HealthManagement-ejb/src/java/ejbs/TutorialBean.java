@@ -1,13 +1,20 @@
 package ejbs;
 
 import dtos.TutorialDTO;
+import entities.Caregiver;
+import entities.Need;
+import entities.Proceeding;
 import entities.Tutorial;
+import exceptions.EntityDoesNotExistException;
+import exceptions.MyConstraintViolationException;
+import exceptions.Utils;
 import java.util.ArrayList;
 import java.util.List;
 import javax.ejb.EJBException;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.validation.ConstraintViolationException;
 
 @Stateless
 public class TutorialBean {
@@ -15,54 +22,40 @@ public class TutorialBean {
     @PersistenceContext
     EntityManager em;
 
-    /* Mesmo parametros */
-    public void create(String description, String text) {
+    public void create(String description, String text) 
+            throws MyConstraintViolationException {
         try {
             Tutorial tutorial = new Tutorial(description, text);
 
             em.persist(tutorial);
+        } catch (ConstraintViolationException e) {
+            throw new MyConstraintViolationException(Utils.getConstraintViolationMessages(e));
         } catch (EJBException e) {
             throw new EJBException(e.getMessage());
         }
     }
 
-    public void update(int id, String description, String text) {
+    public void update(int id, String description, String text) 
+            throws EntityDoesNotExistException, MyConstraintViolationException {
         try {
             Tutorial tutorial = em.find(Tutorial.class, id);
             if (tutorial == null) {
-                return;
+                throw new EntityDoesNotExistException("There is no Tutorial with that id.");
             }
 
             tutorial.setDescription(description);
             tutorial.setText(text);
 
             em.merge(tutorial);
+        } catch (EntityDoesNotExistException e) {
+            throw e;
+        } catch (ConstraintViolationException e) {
+            throw new MyConstraintViolationException(Utils.getConstraintViolationMessages(e));
         } catch (EJBException e) {
             throw new EJBException(e.getMessage());
         }
     }
 
-    public Tutorial getProcedure(int id) {
-        try {
-            Tutorial tutorial = em.find(Tutorial.class, id);
-
-            return tutorial;
-        } catch (EJBException e) {
-            throw new EJBException(e.getMessage());
-        }
-    }
-
-    public void remove(int id) {
-        try {
-            Tutorial tutorial = em.find(Tutorial.class, id);
-
-            em.remove(tutorial);
-        } catch (EJBException e) {
-            throw new EJBException(e.getMessage());
-        }
-    }
-
-    /* Criar um rest */
     public List<TutorialDTO> getAll() {
         try {
             List<Tutorial> tutorials = (List<Tutorial>) em.createNamedQuery("getAllTutorials").getResultList();
@@ -73,8 +66,50 @@ public class TutorialBean {
         }
     }
     
+    public TutorialDTO getTutorial(int id) throws EntityDoesNotExistException {
+        try {
+            Tutorial tutorial = em.find(Tutorial.class, id);
+            if (tutorial == null) {
+                throw new EntityDoesNotExistException("There is no Tutorial with that id.");
+            }
+
+            return tutorialToDTO(tutorial);
+        } catch (EntityDoesNotExistException e) {
+            throw e;
+        } catch (EJBException e) {
+            throw new EJBException(e.getMessage());
+        }
+    }
+
+    public void remove(int id) throws EntityDoesNotExistException {
+        try {
+            Tutorial tutorial = em.find(Tutorial.class, id);
+            if (tutorial == null) {
+                throw new EntityDoesNotExistException("There is no Tutorial with that id.");
+            }
+
+            for (Caregiver caregiver : tutorial.getCaregivers()) {
+                caregiver.removeMaterial(tutorial);
+            }
+            
+            for (Need need : tutorial.getNeeds()) {
+                need.removeMaterial(tutorial);
+            }
+            
+            for (Proceeding proceeding : tutorial.getProceedings()) {
+                proceeding.setMaterial(null);
+            }
+            
+            em.remove(tutorial);
+        } catch (EntityDoesNotExistException e) {
+            throw e;
+        } catch (EJBException e) {
+            throw new EJBException(e.getMessage());
+        }
+    }
+    
     //Build DTOs
-    TutorialDTO tutorialToDTO(Tutorial tutorial) {
+    public TutorialDTO tutorialToDTO(Tutorial tutorial) {
         return new TutorialDTO(
                 tutorial.getId(),
                 tutorial.getDescription(),
@@ -82,7 +117,7 @@ public class TutorialBean {
         );
     }
 
-    List<TutorialDTO> tutorialsToDTOs(List<Tutorial> tutorials) {
+    public List<TutorialDTO> tutorialsToDTOs(List<Tutorial> tutorials) {
         List<TutorialDTO> dtos = new ArrayList<>();
         for (Tutorial t : tutorials) {
             dtos.add(tutorialToDTO(t));

@@ -1,0 +1,63 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>
+        <title>Facelet Title</title>
+    </h:head>
+    <h:body>
+        <h:form>
+            <h:dataTable
+                var="need"
+                summary="Patient Needs"
+                value="#{caregiverManager.caregiverPatientsNeedsREST}"
+                rules="all"
+                cellpadding="5">
+
+                <h:column>
+                    <f:facet name="header">
+                        <h:outputText value="Need" />
+                    </f:facet>
+                    <h:outputText value="#{need.description}" />
+                </h:column>
+
+                <h:column>
+                    <f:facet name="header">
+                        <h:outputText value="Materials" />
+                    </f:facet>
+
+                    <h:panelGrid columns="5" styleClass="noBorders">
+                        <h:commandButton value="Emergency" id="emergency" action="caregiver_patient_need_material_emergency_contact?faces-redirect=true">
+                            <f:setPropertyActionListener target="#{caregiverManager.currentNeed}"
+                                                         value="#{need}" />
+                        </h:commandButton>
+
+                        <h:commandButton value="FAQ" id="faq" action="caregiver_patient_need_material_faq?faces-redirect=true">
+                           <f:setPropertyActionListener target="#{caregiverManager.currentNeed}"
+                                                        value="#{need}" />
+                        </h:commandButton>
+
+                        <h:commandButton value="Text" id="text" action="caregiver_patient_need_material_text?faces-redirect=true">
+                           <f:setPropertyActionListener target="#{caregiverManager.currentNeed}" 
+                                                        value="#{need}" />
+                        </h:commandButton>
+
+                        <h:commandButton value="Tutorial" id="tutorial" action="caregiver_patient_need_material_tutorial?faces-redirect=true">
+                           <f:setPropertyActionListener target="#{caregiverManager.currentNeed}" 
+                                                        value="#{need}" />
+                        </h:commandButton>
+
+                        <h:commandButton value="Video" id="video" action="caregiver_patient_need_material_video?faces-redirect=true">
+                            <f:setPropertyActionListener target="#{caregiverManager.currentNeed}"
+                                                         value="#{need}" />
+                        </h:commandButton>
+
+
+                    </h:panelGrid>  
+                </h:column>
+            </h:dataTable>
+        </h:form>
+    </h:body>
+</html>
+

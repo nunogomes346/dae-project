@@ -1,10 +1,21 @@
 package web;
 
 import dtos.CaregiverDTO;
+import dtos.EmergencyContactDTO;
+import dtos.FaqDTO;
+import dtos.MaterialDTO;
+import dtos.NeedDTO;
 import dtos.PatientDTO;
+import dtos.ProceedingDTO;
+import dtos.TextDTO;
+import dtos.TutorialDTO;
+import dtos.VideoDTO;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
@@ -27,11 +38,22 @@ public class CaregiverManager implements Serializable {
 
     @Inject
     private UserManager userManager;
-    
- 
+
     private PatientDTO currentPatient;
-    private CaregiverDTO newCaregiver;
-    private CaregiverDTO currentCaregiver;
+    
+    private NeedDTO currentNeed;
+
+    private EmergencyContactDTO currentEmergencyContact;
+    private FaqDTO currentFaq;
+    private TutorialDTO currentTutorial;
+    private TextDTO currentText;
+    private VideoDTO currentVideo;
+    
+    private ProceedingDTO newProceeding;
+    private ProceedingDTO currentProceeding;
+    
+    private int materialId;
+
     private HttpAuthenticationFeature feature;
     
     private Client client;
@@ -40,7 +62,7 @@ public class CaregiverManager implements Serializable {
     private static final Logger LOGGER = Logger.getLogger("web.CaregiverManager");
     
     public CaregiverManager() {
-        newCaregiver = new CaregiverDTO();
+        this.newProceeding = new ProceedingDTO();
         client = ClientBuilder.newClient();        
         feature = null;
     }
@@ -52,29 +74,9 @@ public class CaregiverManager implements Serializable {
     }
     
     // ***************************************
-    // ************ CAREGIVER ************
+    // ************ CAREGIVER ****************
     // *************************************** 
-    
-    /*
-    public String createAdministratorREST() { 
-        try {
-            client.target(baseUri)
-                    .path("/administrators/create")
-                    .request(MediaType.APPLICATION_XML).post(Entity.xml(newAdministrator));
-            
-            newAdministrator.reset();
-            
-            return "admin_index?faces-redirect=true";
-        } catch (Exception e) {
-            FacesExceptionHandler.handleException(e, "Unexpected error! Try again latter!", LOGGER);
-        }
-        return null;
-    }
-    */
-    
     public List<PatientDTO> getCaregiversPatientsREST() {
-        
-        
         List<PatientDTO> returnedPatients = null;
         try {
             returnedPatients = client.target(baseUri)
@@ -88,49 +90,181 @@ public class CaregiverManager implements Serializable {
         return returnedPatients;
     }
     
-    public void patientMaterials(){
+    public List<NeedDTO> getCaregiverPatientsNeedsREST() {
         
-    }
-    
-    /*
-    public String updateAdministratorREST() {   
+        List<NeedDTO> returnedNeeds = null;
         try {
-            client.target(baseUri)
-                    .path("/administrators/update")
-                    .request(MediaType.APPLICATION_XML).put(Entity.xml(currentAdministrator));
-            
-            if(currentAdministrator.getUsername().compareTo(userManager.getUsername()) == 0) {
-                return userManager.logout();
-            }
-            
-            return "admin_index?faces-redirect=true";
-           
+            returnedNeeds = client.target(baseUri)
+                    .path("/patients/{id}/needs")
+                    .resolveTemplate("id", currentPatient.getId())
+                    .request(MediaType.APPLICATION_XML)
+                    .get(new GenericType<List<NeedDTO>>() {});
         } catch (Exception e) {
             FacesExceptionHandler.handleException(e, "Unexpected error! Try again latter!", LOGGER);
         }
-        return "admin_administrator_update";
+        return returnedNeeds;
     }
-    */
     
-    /*
-    public void removeAdministratorREST(ActionEvent event) {
+    public List<EmergencyContactDTO> getNeedEmergencyContactsREST() {
+        List<EmergencyContactDTO> returnedEmergencyContacts = null;
         try {
-            UIParameter param = (UIParameter) event.getComponent().findComponent("deleteAdministratorId");
-            String id = param.getValue().toString();
+            returnedEmergencyContacts = client.target(baseUri)
+                    .path("/caregivers/{username}/needs/{id}/emergencyContacts")
+                    .resolveTemplate("username", userManager.getUsername())
+                    .resolveTemplate("id", currentNeed.getId())
+                    .request(MediaType.APPLICATION_XML)
+                    .get(new GenericType<List<EmergencyContactDTO>>() {});
+        } catch (Exception e) {
+            FacesExceptionHandler.handleException(e, "Unexpected error! Try again latter!", LOGGER);
+        }    
+        return returnedEmergencyContacts;
+    }
+    
+    public List<FaqDTO> getNeedFaqsREST() {
+        List<FaqDTO> returnedFaqs = null;
+        try {
+            returnedFaqs = client.target(baseUri)
+                    .path("/caregivers/{username}/needs/{id}/faqs")
+                    .resolveTemplate("username", userManager.getUsername())
+                    .resolveTemplate("id", currentNeed.getId())
+                    .request(MediaType.APPLICATION_XML)
+                    .get(new GenericType<List<FaqDTO>>() {});
+        } catch (Exception e) {
+            FacesExceptionHandler.handleException(e, "Unexpected error! Try again latter!", LOGGER);
+        }    
+        return returnedFaqs;
+    }
+    
+    public List<TextDTO> getNeedTextsREST() {
+        List<TextDTO> returnedTexts = null;
+        try {
+            returnedTexts = client.target(baseUri)
+                    .path("/caregivers/{username}/needs/{id}/texts")
+                    .resolveTemplate("username", userManager.getUsername())
+                    .resolveTemplate("id", currentNeed.getId())
+                    .request(MediaType.APPLICATION_XML)
+                    .get(new GenericType<List<TextDTO>>() {});
+        } catch (Exception e) {
+            FacesExceptionHandler.handleException(e, "Unexpected error! Try again latter!", LOGGER);
+        }    
+        return returnedTexts;
+    }
+    
+    public List<TutorialDTO> getNeedTutorialsREST() {
+        List<TutorialDTO> returnedTutorials = null;
+        try {
+            returnedTutorials = client.target(baseUri)
+                    .path("/caregivers/{username}/needs/{id}/tutorials")
+                    .resolveTemplate("username", userManager.getUsername())
+                    .resolveTemplate("id", currentNeed.getId())
+                    .request(MediaType.APPLICATION_XML)
+                    .get(new GenericType<List<TutorialDTO>>() {});
+        } catch (Exception e) {
+            FacesExceptionHandler.handleException(e, "Unexpected error! Try again latter!", LOGGER);
+        }    
+        return returnedTutorials;
+    }
+    
+    public List<VideoDTO> getNeedVideosREST() {
+        List<VideoDTO> returnedVideos = null;
+        try {
+            returnedVideos = client.target(baseUri)
+                    .path("/caregivers/{username}/needs/{id}/videos")
+                    .resolveTemplate("username", userManager.getUsername())
+                    .resolveTemplate("id", currentNeed.getId())
+                    .request(MediaType.APPLICATION_XML)
+                    .get(new GenericType<List<VideoDTO>>() {});
+        } catch (Exception e) {
+            FacesExceptionHandler.handleException(e, "Unexpected error! Try again latter!", LOGGER);
+        }    
+        return returnedVideos;
+    }
+    
+    public void createProceedingREST(ActionEvent event) {
+        try {
+            UIParameter param = (UIParameter) event.getComponent().findComponent("materialId");
+            int id = Integer.parseInt(param.getValue().toString());
+            
+            newProceeding.setCaregiverUsername(userManager.getUsername());
+            newProceeding.setPatientID(currentPatient.getId());
+            newProceeding.setNeedID(currentNeed.getId());
+            newProceeding.setMaterialID(id);
+            
+            DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+            Date date = new Date();
+            newProceeding.setProceedingDate(dateFormat.format(date));
+        
+            client.target(baseUri)
+                .path("/proceedings/create")
+                .request(MediaType.APPLICATION_XML)
+                .post(Entity.xml(newProceeding));
+            
+            newProceeding.reset();
+        } catch (Exception e){
+            FacesExceptionHandler.handleException(e, "Unexpected error! Try again latter!", LOGGER);
+        }
+    }
+    
+    public String updateProceedingREST() {
+        try {
+            client.target(baseUri)
+                    .path("/proceedings/update")
+                    .request(MediaType.APPLICATION_XML).put(Entity.xml(currentProceeding));
+            
+            return "caregiver_patient_proceedings?faces-redirect=true";
+        } catch (Exception e) {
+            FacesExceptionHandler.handleException(e, "Unexpected error! Try again latter!", LOGGER);
+        }
+        return "caregiver_patient_proceeding_update?faces-redirect=true";
+    }
+
+    public List<ProceedingDTO> getPatientsProceedingsREST() {
+        List<ProceedingDTO> returnedProceeding = null;
+        try {
+            returnedProceeding = client.target(baseUri)
+                .path("/patients/{patientId}/proceedings")
+                .resolveTemplate("patientId", currentPatient.getId())
+                .request(MediaType.APPLICATION_XML)
+                .get(new GenericType<List<ProceedingDTO>>() {});
+        } catch (Exception e){
+            FacesExceptionHandler.handleException(e, "Unexpected error! Try again latter!", LOGGER);
+        }
+        return returnedProceeding;
+    }
+    
+    public void removeProceedingREST(ActionEvent event) {
+        try {
+            UIParameter param = (UIParameter) event.getComponent().findComponent("deleteProceedingId");
+            Long proceedingId = Long.parseLong(param.getValue().toString());
             
             client.target(baseUri)
-                    .path("/administrators/delete/{username}")
-                    .resolveTemplate("username", id)
+                    .path("/proceedings/{proceedingId}")
+                    .resolveTemplate("proceedingId", proceedingId)
                     .request().delete();
 
         } catch (Exception e) {
             FacesExceptionHandler.handleException(e, "Unexpected error! Try again latter!", LOGGER);
         }
     }
-    */
     
+    public List<MaterialDTO> getAllMaterialsREST() {
+        List<MaterialDTO> returnedMaterials = null;
+        try {
+            returnedMaterials = client.target(baseUri)
+                .path("/caregivers/{username}/needs/{id}/materials")
+                .resolveTemplate("username", userManager.getUsername())
+                .resolveTemplate("id", currentProceeding.getNeedID())
+                .request(MediaType.APPLICATION_XML)
+                .get(new GenericType<List<MaterialDTO>>() {});
+            
+        } catch (Exception e) {
+            FacesExceptionHandler.handleException(e, "Unexpected error! Try again latter!", LOGGER);
+        }    
+        return returnedMaterials;
+    }
+        
     // **********************************
-    // ************ GETS&SETS *******
+    // ************ GETS&SETS ***********
     // **********************************
     public UserManager getUserManager() {
         return userManager;
@@ -148,24 +282,78 @@ public class CaregiverManager implements Serializable {
         this.currentPatient = currentPatient;
     }
 
-    public CaregiverDTO getNewCaregiver() {
-        return newCaregiver;
+    public NeedDTO getCurrentNeed() {
+        return currentNeed;
     }
 
-    public void setNewCaregiver(CaregiverDTO newCaregiver) {
-        this.newCaregiver = newCaregiver;
+    public void setCurrentNeed(NeedDTO currentNeed) {
+        this.currentNeed = currentNeed;
     }
 
-    public CaregiverDTO getCurrentCaregiver() {
-        return currentCaregiver;
+    public EmergencyContactDTO getCurrentEmergencyContact() {
+        return currentEmergencyContact;
     }
 
-    public void setCurrentCaregiver(CaregiverDTO currentCaregiver) {
-        this.currentCaregiver = currentCaregiver;
+    public void setCurrentEmergencyContact(EmergencyContactDTO currentEmergencyContact) {
+        this.currentEmergencyContact = currentEmergencyContact;
+    }
+
+    public FaqDTO getCurrentFaq() {
+        return currentFaq;
+    }
+
+    public void setCurrentFaq(FaqDTO currentFaq) {
+        this.currentFaq = currentFaq;
+    }
+
+    public TutorialDTO getCurrentTutorial() {
+        return currentTutorial;
+    }
+
+    public void setCurrentTutorial(TutorialDTO currentTutorial) {
+        this.currentTutorial = currentTutorial;
+    }
+
+    public TextDTO getCurrentText() {
+        return currentText;
+    }
+
+    public void setCurrentText(TextDTO currentText) {
+        this.currentText = currentText;
+    }
+
+    public VideoDTO getCurrentVideo() {
+        return currentVideo;
+    }
+
+    public void setCurrentVideo(VideoDTO currentVideo) {
+        this.currentVideo = currentVideo;
     }
     
-    
+    public ProceedingDTO getNewProceeding() {
+        return newProceeding;
+    }
 
+    public void setNewProceeding(ProceedingDTO newProceeding) {
+        this.newProceeding = newProceeding;
+    }
+
+    public ProceedingDTO getCurrentProceeding() {
+        return currentProceeding;
+    }
+
+    public void setCurrentProceeding(ProceedingDTO currentProceeding) {
+        this.currentProceeding = currentProceeding;
+    }
+
+    public int getMaterialId() {
+        return materialId;
+    }
+
+    public void setMaterialId(int materialId) {
+        this.materialId = materialId;
+    }
+    
     public UIComponent getComponent() {
         return component;
     }
@@ -173,8 +361,4 @@ public class CaregiverManager implements Serializable {
     public void setComponent(UIComponent component) {
         this.component = component;
     }
-    
-    /*
-    Consumir Rest
-    */
 }

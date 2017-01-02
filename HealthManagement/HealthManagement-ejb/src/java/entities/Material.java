@@ -21,7 +21,7 @@ public class Material implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private int id; // it was long before being int
+    private int id;
     
     @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "material")
     protected MaterialGroup group;
@@ -35,12 +35,12 @@ public class Material implements Serializable {
     private List<Caregiver> caregivers;
 
     @OneToMany(mappedBy = "material")
-    private List<RegisteredProcedure> registeredProcedures;
+    private List<Proceeding> proceedings;
     
     public Material(){
         this.needs = new LinkedList<Need>();
         this.caregivers = new LinkedList<Caregiver>();
-        this.registeredProcedures = new LinkedList<RegisteredProcedure>();
+        this.proceedings = new LinkedList<Proceeding>();
     }
     
     public Material(String description, GROUP group){
@@ -48,7 +48,7 @@ public class Material implements Serializable {
         this.group = new MaterialGroup(group, this);
         this.needs = new LinkedList<Need>();
         this.caregivers = new LinkedList<Caregiver>();
-        this.registeredProcedures = new LinkedList<RegisteredProcedure>();
+        this.proceedings = new LinkedList<Proceeding>();
     }
 
     public int getId() {
@@ -65,6 +65,10 @@ public class Material implements Serializable {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public MaterialGroup getGroup() {
+        return group;
     }
     
     public List<Need> getNeeds() {
@@ -97,5 +101,21 @@ public class Material implements Serializable {
     
     public void removeCaregiver(Caregiver caregiver) {
         this.caregivers.remove(caregiver);
+    }
+    
+    public List<Proceeding> getProceedings() {
+        return proceedings;
+    }
+
+    public void setProceedings(List<Proceeding> proceedings) {
+        this.proceedings = proceedings;
+    }
+    
+    public void addProceeding(Proceeding proceeding){
+        this.proceedings.add(proceeding);
+    }
+    
+    public void removeProceeding(Proceeding proceeding){
+        this.proceedings.remove(proceeding);
     }
 }

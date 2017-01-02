@@ -12,45 +12,52 @@ import javax.persistence.NamedQuery;
 
 @Entity
 @NamedQueries({
-    @NamedQuery(name = "getAllRegisteredProcedures",
-            query = "SELECT n FROM RegisteredProcedure n ORDER BY n.id ")
-})
-public class RegisteredProcedure implements Serializable {
+    @NamedQuery(name = "getAllProceeding",
+            query = "SELECT p FROM Proceeding p ORDER BY p.id ")
+    }
+)
+public class Proceeding implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private int id; // it was long before being int
-
+    private Long id;
+    
     @ManyToOne
     @JoinColumn(name = "MATERIAL_ID")
     private Material material;
     
-    // patient
     @ManyToOne
     @JoinColumn(name = "PATIENT_ID")
     private Patient patient;
     
-    // caregiver
+    @ManyToOne
+    @JoinColumn(name = "NEED_ID")
+    private Need need;
+    
     @ManyToOne
     @JoinColumn(name = "CAREGIVER_ID")
     private Caregiver caregiver;
     
-    private String date;
+    private String proceedingDate;
     
-    public RegisteredProcedure() {}
+    private String note;
+
+    public Proceeding() { }
     
-    public RegisteredProcedure(Material material, Patient patient, Caregiver caregiver, String date){
+    public Proceeding(Material material, Patient patient, Need need, Caregiver caregiver, String proceedingDate, String note) {
         this.material = material;
         this.patient = patient;
+        this.need = need;
         this.caregiver = caregiver;
-        this.date = date;
+        this.proceedingDate = proceedingDate;
+        this.note = note;
     }
-
-    public int getId() {
+    
+    public Long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -70,6 +77,14 @@ public class RegisteredProcedure implements Serializable {
         this.patient = patient;
     }
 
+    public Need getNeed() {
+        return need;
+    }
+
+    public void setNeed(Need need) {
+        this.need = need;
+    }
+
     public Caregiver getCaregiver() {
         return caregiver;
     }
@@ -78,14 +93,20 @@ public class RegisteredProcedure implements Serializable {
         this.caregiver = caregiver;
     }
 
-    public String getDate() {
-        return date;
+    public String getProceedingDate() {
+        return proceedingDate;
     }
 
-    public void setDate(String date) {
-        this.date = date;
+    public void setProceedingDate(String proceedingDate) {
+        this.proceedingDate = proceedingDate;
     }
-    
-    
-    
+
+    public String getNote() {
+        return note;
+    }
+
+    public void setNote(String note) {
+        this.note = note;
+    }
+
 }

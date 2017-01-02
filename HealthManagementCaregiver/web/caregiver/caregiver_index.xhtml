@@ -30,19 +30,23 @@
                     <h:outputText value="Mail" />
                 </f:facet>
                 <h:outputText value="#{patient.mail}" />
-            </h:column>                        
-
+            </h:column>
+            
             <h:column>
                 <f:facet name="header">
                     <h:outputText value="Actions" />
                 </f:facet>
                 <h:form>
-                    <h:commandLink value="Materials" actionListener="#{caregiverManager.patientMaterials}">
-                        <f:param name="patientId" id="patientId" value="#{patient.id}" />
+                    <h:commandButton value="Needs" id="needs" action="caregiver_patient_needs?faces-redirect=true">
+                       <f:setPropertyActionListener target="#{caregiverManager.currentPatient}" value="#{patient}" />
+                    </h:commandButton>
+
+                    <h:commandLink value="See Procedures" id="listProcedures"
+                                   action="caregiver_patient_proceedings?faces-redirect=true">
+                        <f:setPropertyActionListener target="#{caregiverManager.currentPatient}" value="#{patient}" />
                     </h:commandLink>
                 </h:form>
             </h:column>
-
         </h:dataTable>
     </h:body>
 </html>

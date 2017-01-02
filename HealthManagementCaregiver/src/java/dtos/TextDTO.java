@@ -11,8 +11,8 @@ public class TextDTO extends MaterialDTO{
 
     public TextDTO() { }
     
-    public TextDTO (int id,String text){
-        super(id);
+    public TextDTO (int id, String description, String text){
+        super(id, description, "Text");
         this.text = text;
     }
 
@@ -24,6 +24,7 @@ public class TextDTO extends MaterialDTO{
         this.text = text;
     }
 
+    @Override
     public void reset() {
         super.reset();
         setText(null);

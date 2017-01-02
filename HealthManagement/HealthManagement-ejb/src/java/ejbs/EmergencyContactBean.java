@@ -1,13 +1,20 @@
 package ejbs;
 
 import dtos.EmergencyContactDTO;
+import entities.Caregiver;
 import entities.EmergencyContact;
+import entities.Need;
+import entities.Proceeding;
+import exceptions.EntityDoesNotExistException;
+import exceptions.MyConstraintViolationException;
+import exceptions.Utils;
 import java.util.ArrayList;
 import java.util.List;
 import javax.ejb.EJBException;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.validation.ConstraintViolationException;
 
 @Stateless
 public class EmergencyContactBean {
@@ -15,22 +22,25 @@ public class EmergencyContactBean {
     @PersistenceContext
     EntityManager em;
 
-    /* Mesmo parametros */
-    public void create(String description, String name, String telephoneNumber) {
+    public void create(String description, String name, String telephoneNumber)
+            throws MyConstraintViolationException {
         try {
             EmergencyContact emergencyContact = new EmergencyContact(description, name, telephoneNumber);
 
             em.persist(emergencyContact);
+        } catch (ConstraintViolationException e) {
+            throw new MyConstraintViolationException(Utils.getConstraintViolationMessages(e));
         } catch (EJBException e) {
             throw new EJBException(e.getMessage());
         }
     }
 
-    public void update(int id, String description, String name, String telephoneNumber) {
+    public void update(int id, String description, String name, String telephoneNumber)
+            throws EntityDoesNotExistException, MyConstraintViolationException {
         try {
             EmergencyContact emergencyContact = em.find(EmergencyContact.class, id);
             if (emergencyContact == null) {
-                return;
+                throw new EntityDoesNotExistException("There is no Emergency Contact with that id.");
             }
             
             emergencyContact.setDescription(description);
@@ -38,31 +48,15 @@ public class EmergencyContactBean {
             emergencyContact.setTelephoneNumber(telephoneNumber);
 
             em.merge(emergencyContact);
+        } catch (EntityDoesNotExistException e) {
+            throw e;
+        } catch (ConstraintViolationException e) {
+            throw new MyConstraintViolationException(Utils.getConstraintViolationMessages(e));
         } catch (EJBException e) {
             throw new EJBException(e.getMessage());
         }
     }
-
-    public EmergencyContact getEmergencyContact(int id) {
-        try {
-            EmergencyContact emergencyContact = em.find(EmergencyContact.class, id);
-
-            return emergencyContact;
-        } catch (EJBException e) {
-            throw new EJBException(e.getMessage());
-        }
-    }
-
-    public void remove(int id) {
-        try {
-            EmergencyContact emergencyContact = em.find(EmergencyContact.class, id);
-
-            em.remove(emergencyContact);
-        } catch (EJBException e) {
-            throw new EJBException(e.getMessage());
-        }
-    }
-
+    
     public List<EmergencyContactDTO> getAll() {
         try {
             List<EmergencyContact> emergencyContacts = (List<EmergencyContact>) em.createNamedQuery("getAllEmergencyContacts").getResultList();
@@ -73,8 +67,50 @@ public class EmergencyContactBean {
         }
     }
 
+    public EmergencyContactDTO getEmergencyContact(int id) throws EntityDoesNotExistException {
+        try {
+            EmergencyContact emergencyContact = em.find(EmergencyContact.class, id);
+            if (emergencyContact == null) {
+                throw new EntityDoesNotExistException("There is no Emergency Contact with that id.");
+            }
+
+            return emergencyContactToDTO(emergencyContact);
+        } catch (EntityDoesNotExistException e) {
+            throw e;
+        } catch (EJBException e) {
+            throw new EJBException(e.getMessage());
+        }
+    }
+
+    public void remove(int id) throws EntityDoesNotExistException {
+        try {
+            EmergencyContact emergencyContact = em.find(EmergencyContact.class, id);
+            if (emergencyContact == null) {
+                throw new EntityDoesNotExistException("There is no Emergency Contact with that id.");
+            }
+
+            for (Caregiver caregiver : emergencyContact.getCaregivers()) {
+                caregiver.removeMaterial(emergencyContact);
+            }
+            
+            for (Need need : emergencyContact.getNeeds()) {
+                need.removeMaterial(emergencyContact);
+            }
+            
+            for (Proceeding proceeding : emergencyContact.getProceedings()) {
+                proceeding.setMaterial(null);
+            }
+            
+            em.remove(emergencyContact);
+        } catch (EntityDoesNotExistException e) {
+            throw e;
+        } catch (EJBException e) {
+            throw new EJBException(e.getMessage());
+        }
+    }
+
     //Build DTOs
-    EmergencyContactDTO emergencyContactToDTO(EmergencyContact emergencyContact) {
+    public EmergencyContactDTO emergencyContactToDTO(EmergencyContact emergencyContact) {
         return new EmergencyContactDTO(
                 emergencyContact.getId(),
                 emergencyContact.getDescription(),
@@ -83,7 +119,7 @@ public class EmergencyContactBean {
         );
     }
 
-    List<EmergencyContactDTO> emergencyContactsToDTOs(List<EmergencyContact> emergencyContacts) {
+    public List<EmergencyContactDTO> emergencyContactsToDTOs(List<EmergencyContact> emergencyContacts) {
         List<EmergencyContactDTO> dtos = new ArrayList<>();
         for (EmergencyContact ec : emergencyContacts) {
             dtos.add(emergencyContactToDTO(ec));

@@ -1,0 +1,40 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>
+        <title>Proceeding Details</title>
+    </h:head>
+    <h:body>
+
+        <h2 name="title">Details for Proceeding</h2>
+        
+        <h:panelGrid columns="2">
+            <h:outputLabel for="caregiver" value="Caregiver: " />
+            <h:outputText id="caregiver" value="#{caregiverManager.currentProceeding.caregiverUsername}"/>
+
+            <h:outputLabel for="patient" value="Patient: " />
+            <h:outputText id="patient" value="#{caregiverManager.currentProceeding.patientName}"/>
+
+            <h:outputLabel for="need" value="Need: " />
+            <h:outputText id="need" value="#{caregiverManager.currentProceeding.needDescription}"/>
+            
+            <h:outputLabel for="material" value="Material: " />
+            <h:outputText id="material" value="#{caregiverManager.currentProceeding.materialDescription}"/>
+            
+            <h:outputLabel for="date" value="Date: " />
+            <h:outputText id="date" value="#{caregiverManager.currentProceeding.proceedingDate}"/>
+            
+            <h:outputLabel for="note" value="Note: " />
+            <h:outputText id="note" value="#{caregiverManager.currentProceeding.note}"/>
+        </h:panelGrid>
+        
+        <h:form>                
+            <h:panelGrid columns="2">
+                <h:commandButton value="Back" id="BackButton" action="/caregiver/caregiver_patient_proceedings?faces-redirect=true" />
+            </h:panelGrid>
+        </h:form>
+    </h:body>
+</html>
+

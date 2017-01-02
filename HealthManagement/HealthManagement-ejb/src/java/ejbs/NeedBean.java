@@ -9,6 +9,7 @@ import exceptions.MyConstraintViolationException;
 import exceptions.Utils;
 import java.util.ArrayList;
 import java.util.List;
+import javax.ejb.EJB;
 import javax.ejb.EJBException;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -39,6 +40,21 @@ public class NeedBean {
             
             return needsToDTOs(needs); 
         } catch(EJBException e) {
+            throw new EJBException(e.getMessage());
+        }
+    }
+    
+    public NeedDTO getNeed(Long id) throws EntityDoesNotExistException {
+        try {
+            Need need = em.find(Need.class, id);
+            if (need == null) {
+                throw new EntityDoesNotExistException("There is no Need with that id.");
+            }
+            
+            return needToDTO(need);
+        } catch (EntityDoesNotExistException e) {
+            throw e;
+        } catch (EJBException e) {
             throw new EJBException(e.getMessage());
         }
     }
@@ -74,13 +90,9 @@ public class NeedBean {
                 patient.removeNeed(need);
             }
             
-            need.setPatients(null);
-            
             for (Material material : need.getMaterials()) {
                 material.removeNeed(need);
             }
-            
-            need.setMaterials(null);
             
             em.remove(need);
         } catch (EntityDoesNotExistException e) {
@@ -183,17 +195,19 @@ public class NeedBean {
     }
     
     //Build DTOs
-    NeedDTO needToDTO(Need need) {
+    public NeedDTO needToDTO(Need need) {
         return new NeedDTO(
                 need.getId(),
                 need.getDescription());
     }
     
-    List<NeedDTO> needsToDTOs(List<Need> needs) {
+    public List<NeedDTO> needsToDTOs(List<Need> needs) {
         List<NeedDTO> dtos = new ArrayList<>();
         for (Need n : needs) {
             dtos.add(needToDTO(n));
         }
         return dtos;
     }
+    
+    
 }
