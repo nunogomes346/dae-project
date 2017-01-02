@@ -1,28 +1,28 @@
 <?xml version='1.0' encoding='UTF-8' ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:h="http://xmlns.jcp.org/jsf/html"
-      xmlns:f="http://xmlns.jcp.org/jsf/core">
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
     <h:head>
-        <title>Administrator Details</title>
+        <title>Emergency Contact Details</title>
     </h:head>
     <h:body>
-
-        <h2 name="title">Details for Emergency Contact</h2>
+        <h2 name="title">Details of Emergency Contact</h2>
         
         <h:panelGrid columns="2">
-            <h:outputLabel for="description" value="Description: " />
-            <h:outputText id="description" value="#{administratorManager.currentEmergencyContact.description}"/>
+            <p:outputLabel for="description" value="Description: " />
+            <p:outputLabel id="description" value="#{administratorManager.currentEmergencyContact.description}"/>
             
-            <h:outputLabel for="name" value="Name: " />
-            <h:outputText id="name" value="#{administratorManager.currentEmergencyContact.name}"/>
+            <p:outputLabel for="name" value="Name: " />
+            <p:outputLabel id="name" value="#{administratorManager.currentEmergencyContact.name}"/>
 
-            <h:outputLabel for="telephoneNumber" value="Telephone Number: " />
-            <h:outputText id="telephoneNumber" value="#{administratorManager.currentEmergencyContact.telephoneNumber}"/>
+            <p:outputLabel for="telephoneNumber" value="Telephone Number: " />
+            <p:outputLabel id="telephoneNumber" value="#{administratorManager.currentEmergencyContact.telephoneNumber}"/>
         </h:panelGrid>
         
         <h:form>
-            <h:commandButton value="Back" id="BackButton" action="/administrator/admin_index?faces-redirect=true" />
+            <p:commandButton value="Back" id="BackButton" action="/administrator/admin_index?faces-redirect=true" />
         </h:form>
     </h:body>
 </html>

@@ -87,7 +87,7 @@ public class VideoBean {
             if (video == null) {
                 throw new EntityDoesNotExistException("There is no Video with that id.");
             }
-
+            
             for (Caregiver caregiver : video.getCaregivers()) {
                 caregiver.removeMaterial(video);
             }

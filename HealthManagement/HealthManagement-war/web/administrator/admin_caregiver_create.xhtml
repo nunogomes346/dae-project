@@ -1,67 +1,65 @@
 <?xml version='1.0' encoding='UTF-8' ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:h="http://xmlns.jcp.org/jsf/html"
-      xmlns:f="http://java.sun.com/jsf/core">
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
     <h:head>
-        <title>Caregiver Create</title>
+        <title>Create Caregiver</title>
     </h:head>
     <h:body>
+        <h2 name="title">Create Caregiver</h2>
         <h:form>                  
-            <h:panelGrid columns="3">
-
-                <h:outputLabel for="username" value="Username: " />
-                <h:inputText 
+            <h:panelGrid id="createGrid" columns="3">
+                <p:outputLabel for="username" value="Username: " />
+                <p:inputText 
                     id="username"
-                    size="20"
+                    size="30"
                     required="true"
-                    requiredMessage="Error: Username cannot be empty."
+                    requiredMessage=" Username is required."
                     value="#{administratorManager.newCaregiver.username}">
                     <f:validator validatorId="usernameValidator"/>
-                </h:inputText>
-                <h:message for="username" errorStyle="color: red" />
+                </p:inputText>
+                <p:message for="username" display="text" />
 
-                <h:outputLabel for="password" value="Password: " />
-                <h:inputSecret
+                <p:outputLabel for="password" value="Password: " />
+                <p:password
                     id="password"
-                    size="20"
+                    size="30"
                     required="true"
-                    requiredMessage="Error: Password cannot be empty."
+                    requiredMessage=" Password is required."
                     value="#{administratorManager.newCaregiver.password}"/>
-                <h:message for="password" errorStyle="color: red" />                        
+                <p:message for="password" display="text" />                      
 
-                <h:outputLabel for="name" value="Name: " />
-                <h:inputText 
+                <p:outputLabel for="name" value="Name: " />
+                <p:inputText 
                     id="name"
-                    size="52"
+                    size="30"
                     required="true"
-                    requiredMessage="Error: Name cannot be empty."                            
+                    requiredMessage=" Name is required."                            
                     value="#{administratorManager.newCaregiver.name}" />
-                <h:message for="name" errorStyle="color: red" />
+                <p:message for="name" display="text" />
 
-                <h:outputLabel for="mail" value="Mail: " />
-                <h:inputText
+                <p:outputLabel for="mail" value="Mail: " />
+                <p:inputText
                     id="mail"
-                    size="52"
+                    size="30"
                     required="true"
-                    requiredMessage="Error: Mail cannot be empty."                            
-                    value="#{administratorManager.newCaregiver.mail}" >
+                    requiredMessage=" Mail is required."                            
+                    value="#{administratorManager.newCaregiver.mail}"
+                    validatorMessage="Incorrect mail format" >
                     <f:validateRegex pattern="[\w\.-]*[a-zA-Z0-9_]@[\w\.-]*[a-zA-Z0-9]\.[a-zA-Z][a-zA-Z\.]*[a-zA-Z]" />
-                </h:inputText>    
-                <h:message for="mail" errorStyle="color: red" />
-                <br></br>
+                </p:inputText>    
+                <p:message for="mail" display="text" />
 
-
-                <br></br>
-
-                <h:commandButton
+                <p:commandButton
                     id="submit"
                     value="Create"
                     binding="#{administratorManager.component}" 
-                    action="#{administratorManager.createCaregiver}" />
-                <h:message for="submit" style="color: red"/>
-            </h:panelGrid >                       
-
+                    action="#{administratorManager.createCaregiver}" 
+                    update="createGrid"/>
+                <p:message for="submit" display="text" />
+            </h:panelGrid> 
         </h:form>     
     </h:body>
 </html>

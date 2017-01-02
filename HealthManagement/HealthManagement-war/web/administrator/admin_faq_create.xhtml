@@ -1,51 +1,51 @@
 <?xml version='1.0' encoding='UTF-8' ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:h="http://xmlns.jcp.org/jsf/html">
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
     <h:head>
-        <title>Health Management</title>
+        <title>Create FAQ</title>
     </h:head>
     <h:body>
-        <h:form>                  
-            <h:panelGrid columns="3">
-                <h:outputLabel for="Description" value="Description: " />
-                <h:inputText 
+        <h2 name="title">Create FAQ</h2>
+        <h:form>           
+            <h:panelGrid id="createGrid" columns="3">
+                <p:outputLabel for="description" value="Description: " />
+                <p:inputText 
                     id="description"
-                    size="20"
+                    size="40"
                     required="true"
-                    requiredMessage="Error: Description cannot be empty."
-                    value="#{administratorManager.newFaq.description}"/>
-                <h:message for="description" errorStyle="color: red" />
-                
-                <h:outputLabel for="question" value="Question: " />
-                <h:inputText 
+                    requiredMessage=" Description is required."
+                    value="#{administratorManager.newFaq.description}" />
+                <p:message for="description" display="text" />                  
+
+                <p:outputLabel for="question" value="Question: " />
+                <p:inputText 
                     id="question"
-                    size="20"
+                    size="40"
                     required="true"
-                    requiredMessage="Error: Question cannot be empty."
-                    value="#{administratorManager.newFaq.question}"/>
-                <h:message for="question" errorStyle="color: red" />
+                    requiredMessage=" Question is required."                            
+                    value="#{administratorManager.newFaq.question}" />
+                <p:message for="question" display="text" />
 
-                <h:outputLabel for="answer" value="Answer: " />
-                <h:inputTextarea
+                <p:outputLabel for="answer" value="Answer: " />
+                <p:inputTextarea
                     id="answer"
-                    rows="10"
-                    cols="40"
+                    rows="10" cols="40"
                     required="true"
-                    requiredMessage="Error: Answer cannot be empty."
-                    value="#{administratorManager.newFaq.answer}"/>
-                <h:message for="answer" errorStyle="color: red" />
+                    requiredMessage=" Answer is required."                            
+                    value="#{administratorManager.newFaq.answer}" />    
+                <p:message for="answer" display="text" />
 
-                <br></br>
-
-                <h:commandButton
+                <p:commandButton
                     id="submit"
                     value="Create"
                     binding="#{administratorManager.component}" 
-                    action="#{administratorManager.createFaq}" />
-                <h:message for="submit" style="color: red"/>
-            </h:panelGrid >                       
-
+                    action="#{administratorManager.createFaq}" 
+                    update="createGrid"/>
+                <p:message for="submit" display="text" />
+            </h:panelGrid>
         </h:form>     
     </h:body>
 </html>

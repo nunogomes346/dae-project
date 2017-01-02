@@ -1,35 +1,51 @@
 <?xml version='1.0' encoding='UTF-8' ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:h="http://xmlns.jcp.org/jsf/html"
-      xmlns:f="http://java.sun.com/jsf/core">
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
     <h:head>
         <title>Update Emergency Contact</title>
     </h:head>
     <h:body>
-        
         <h2 name="title">Update Information for Emergency Contact</h2>
         
         <h:form>
-            <h:panelGrid columns="3">
-                <h:outputLabel for="description" value="Description: " />
-                <h:inputText id="description" size="52" value="#{administratorManager.currentEmergencyContact.description}"
-                                required="true" requiredMessage="  Description is required"/>
-                <h:message errorStyle="color:red; display:inline" for="description" />
+            <h:panelGrid id="updateGrid" columns="3">
+                <p:outputLabel for="description" value="Description: " />
+                <p:inputText 
+                    id="description"
+                    size="30"
+                    required="true"
+                    requiredMessage=" Description is required."
+                    value="#{administratorManager.currentEmergencyContact.description}" />
+                <p:message for="description" display="text" />                  
+
+                <p:outputLabel for="name" value="Name: " />
+                <p:inputText 
+                    id="name"
+                    size="30"
+                    required="true"
+                    requiredMessage=" Name is required."                            
+                    value="#{administratorManager.currentEmergencyContact.name}" />
+                <p:message for="name" display="text" />
+
+                <p:outputLabel for="telephoneNumber" value="Telephone Number: " />
+                <p:inputText
+                    id="telephoneNumber"
+                    size="30"
+                    required="true"
+                    requiredMessage=" Telephone Number is required."                            
+                    value="#{administratorManager.currentEmergencyContact.telephoneNumber}" />    
+                <p:message for="telephoneNumber" display="text" />
                 
-                <h:outputLabel for="name" value="Name: " />
-                <h:inputText id="name" size="52" value="#{administratorManager.currentEmergencyContact.name}"
-                                required="true" requiredMessage="  Name is required"/>
-                <h:message errorStyle="color:red; display:inline" for="name" />
-                
-                <h:outputLabel for="telephoneNumber" value="Telephone Number: " />
-                <h:inputText id="telephoneNumber" size="52" value="#{administratorManager.currentEmergencyContact.telephoneNumber}"
-                             required="true" requiredMessage="  Telephone Number is required"/>
-                <h:message errorStyle="color:red; display:inline" for="telephoneNumber" />
-                
-                <h:commandButton value="Update" id="updateButton"
-                                 action="#{administratorManager.updateEmergengyContact}" />
-                <h:message for="updateButton" />
+                <p:commandButton
+                    id="update"
+                    value="Update"
+                    binding="#{administratorManager.component}" 
+                    action="#{administratorManager.updateEmergengyContact}" 
+                    update="updateGrid"/>
+                <p:message for="update" display="text" />
             </h:panelGrid>
         </h:form>
     </h:body>

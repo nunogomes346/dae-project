@@ -1,50 +1,51 @@
 <?xml version='1.0' encoding='UTF-8' ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:h="http://xmlns.jcp.org/jsf/html">
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
     <h:head>
-        <title>Health Management</title>
+        <title>Create Emergency Contact</title>
     </h:head>
     <h:body>
-        <h:form>                  
-            <h:panelGrid columns="3">
-                <h:outputLabel for="Description" value="Description: " />
-                <h:inputText 
+        <h2 name="title">Create Emergency Contact</h2>
+        <h:form>          
+            <h:panelGrid id="createGrid" columns="3">
+                <p:outputLabel for="description" value="Description: " />
+                <p:inputText 
                     id="description"
-                    size="20"
+                    size="30"
                     required="true"
-                    requiredMessage="Error: Description cannot be empty."
-                    value="#{administratorManager.newEmergencyContact.description}"/>
-                <h:message for="description" errorStyle="color: red" />
-                
-                <h:outputLabel for="Name" value="Name: " />
-                <h:inputText 
+                    requiredMessage=" Description is required."
+                    value="#{administratorManager.newEmergencyContact.description}" />
+                <p:message for="description" display="text" />                  
+
+                <p:outputLabel for="name" value="Name: " />
+                <p:inputText 
                     id="name"
-                    size="20"
+                    size="30"
                     required="true"
-                    requiredMessage="Error: Name cannot be empty."
-                    value="#{administratorManager.newEmergencyContact.name}"/>
-                <h:message for="name" errorStyle="color: red" />
+                    requiredMessage=" Name is required."                            
+                    value="#{administratorManager.newEmergencyContact.name}" />
+                <p:message for="name" display="text" />
 
-                <h:outputLabel for="telephoneNumber" value="Telephone Number: " />
-                <h:inputText
+                <p:outputLabel for="telephoneNumber" value="Telephone Number: " />
+                <p:inputText
                     id="telephoneNumber"
-                    size="20"
+                    size="30"
                     required="true"
-                    requiredMessage="Error: Telephone Number cannot be empty."
-                    value="#{administratorManager.newEmergencyContact.telephoneNumber}"/>
-                <h:message for="telephoneNumber" errorStyle="color: red" />
+                    requiredMessage=" Telephone Number is required."                            
+                    value="#{administratorManager.newEmergencyContact.telephoneNumber}" />    
+                <p:message for="telephoneNumber" display="text" />
 
-                <br></br>
-
-                <h:commandButton
+                <p:commandButton
                     id="submit"
                     value="Create"
                     binding="#{administratorManager.component}" 
-                    action="#{administratorManager.createEmergencyContact}" />
-                <h:message for="submit" style="color: red"/>
-            </h:panelGrid >                       
-
+                    action="#{administratorManager.createEmergencyContact}" 
+                    update="createGrid"/>
+                <p:message for="submit" display="text" />
+            </h:panelGrid>
         </h:form>     
     </h:body>
 </html>

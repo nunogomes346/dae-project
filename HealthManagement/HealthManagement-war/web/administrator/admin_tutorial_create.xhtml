@@ -1,42 +1,43 @@
 <?xml version='1.0' encoding='UTF-8' ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:h="http://xmlns.jcp.org/jsf/html">
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
     <h:head>
-        <title>Health Management</title>
+        <title>Create Tutorial</title>
     </h:head>
     <h:body>
-        <h:form>                  
-            <h:panelGrid columns="3">
-                <h:outputLabel for="Description" value="Description: " />
-                <h:inputText 
+        <h2 name="title">Create Tutorial</h2>
+        <h:form>                 
+            <h:panelGrid id="createGrid" columns="3">
+                <p:outputLabel for="description" value="Description: " />
+                <p:inputText 
                     id="description"
-                    size="20"
+                    size="40"
                     required="true"
-                    requiredMessage="Error: Description cannot be empty."
-                    value="#{administratorManager.newTutorial.description}"/>
-                <h:message for="description" errorStyle="color: red" />
-                
-                <h:outputLabel for="text" value="Text: " />
-                <h:inputTextarea
+                    requiredMessage=" Description is required."
+                    value="#{administratorManager.newTutorial.description}" />
+                <p:message for="description" display="text" />                  
+
+                <p:outputLabel for="text" value="Text: " />
+                <p:inputTextarea 
                     id="text"
                     rows="10"
                     cols="40"
                     required="true"
-                    requiredMessage="Error: Text cannot be empty."
-                    value="#{administratorManager.newTutorial.text}"/>
-                <h:message for="text" errorStyle="color: red" />
-
-                <br></br>
-
-                <h:commandButton
+                    requiredMessage=" Text is required."                            
+                    value="#{administratorManager.newTutorial.text}" />
+                <p:message for="text" display="text" />
+                
+                <p:commandButton
                     id="submit"
                     value="Create"
                     binding="#{administratorManager.component}" 
-                    action="#{administratorManager.createTutorial}" />
-                <h:message for="submit" style="color: red"/>
-            </h:panelGrid >                       
-
+                    action="#{administratorManager.createTutorial}" 
+                    update="createGrid"/>
+                <p:message for="submit" display="text" />
+            </h:panelGrid>
         </h:form>     
     </h:body>
 </html>
