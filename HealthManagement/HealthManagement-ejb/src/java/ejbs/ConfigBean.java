@@ -68,6 +68,7 @@ public class ConfigBean {
             needBean.associateNeedToPatient(Long.parseLong("7"), Long.parseLong("3"));
             needBean.associateNeedToPatient(Long.parseLong("8"), Long.parseLong("2"));
             needBean.associateNeedToPatient(Long.parseLong("7"), Long.parseLong("2"));
+            needBean.associateNeedToPatient(Long.parseLong("7"), Long.parseLong("1"));
             needBean.associateNeedToPatient(Long.parseLong("9"), Long.parseLong("1"));
             
             patientBean.associatePatientToCaregiver(Long.parseLong("1"), "piteu");
@@ -119,23 +120,22 @@ public class ConfigBean {
             videoBean.create("video 2", "https://www.youtube.com/watch?v=NzV6h9K8ApQ");
             videoBean.create("video 3", "https://www.youtube.com/watch?v=W3EHXiuktgM");
             
-            needBean.associateMaterialToNeed(12, Long.parseLong("7"));
-            needBean.associateMaterialToNeed(14, Long.parseLong("8"));
-            needBean.associateMaterialToNeed(17, Long.parseLong("7"));
-            needBean.associateMaterialToNeed(22, Long.parseLong("9"));
-            needBean.associateMaterialToNeed(23, Long.parseLong("9"));
-            needBean.associateMaterialToNeed(15, Long.parseLong("9"));
-            needBean.associateMaterialToNeed(19, Long.parseLong("8"));
-            needBean.associateMaterialToNeed(20, Long.parseLong("7"));
-            needBean.associateMaterialToNeed(24, Long.parseLong("7"));
+            caregiverBean.associateMaterial("piteu", 23, Long.parseLong("7"));
+            caregiverBean.associateMaterial("piteu", 20, Long.parseLong("7"));
+            caregiverBean.associateMaterial("piteu", 23, Long.parseLong("9"));
+            caregiverBean.associateMaterial("piteu", 20, Long.parseLong("9"));
+            caregiverBean.associateMaterial("piteu", 22, Long.parseLong("9"));
+            caregiverBean.associateMaterial("piteu2", 22, Long.parseLong("8"));
+            caregiverBean.associateMaterial("piteu2", 20, Long.parseLong("7"));
+            caregiverBean.associateMaterial("piteu2", 23, Long.parseLong("8"));
             
             procedureBean.create(20, Long.parseLong("1"), Long.parseLong("9"), "piteu", "12-10-2016 00:01:30", null);
             procedureBean.create(22, Long.parseLong("1"), Long.parseLong("9"), "piteu", "23-10-2016 10:10:20", null);
             procedureBean.create(22, Long.parseLong("2"), Long.parseLong("8"), "piteu2", "23-10-2016 15:10:55", null);
             procedureBean.create(23, Long.parseLong("1"), Long.parseLong("9"), "piteu", "15-11-2016 16:20:54", null);
-            procedureBean.create(20, Long.parseLong("1"), Long.parseLong("9"), "piteu", "17-11-2016 22:27:20", null);
+            procedureBean.create(20, Long.parseLong("1"), Long.parseLong("7"), "piteu", "17-11-2016 22:27:20", null);
             procedureBean.create(20, Long.parseLong("2"), Long.parseLong("7"), "piteu2", "17-10-2016 16:27:47", null);
-            procedureBean.create(22, Long.parseLong("1"), Long.parseLong("9"), "piteu", "08-12-2016 23:55:21", null);
+            procedureBean.create(23, Long.parseLong("1"), Long.parseLong("7"), "piteu", "08-12-2016 23:55:21", null);
             procedureBean.create(23, Long.parseLong("2"), Long.parseLong("8"), "piteu2", "08-11-2016 15:36:22", null);
             
         } catch (EntityAlreadyExistsException | MyConstraintViolationException e) {

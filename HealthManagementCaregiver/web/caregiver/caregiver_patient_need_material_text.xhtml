@@ -1,51 +1,67 @@
 <?xml version='1.0' encoding='UTF-8' ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:h="http://xmlns.jcp.org/jsf/html"
-      xmlns:f="http://xmlns.jcp.org/jsf/core">
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
     <h:head>
-        <title>Facelet Title</title>
+        <title>Need Texts</title>
+        
+        <style>
+            .noBorders.ui-panelgrid>*>tr, .noBorders.ui-panelgrid .ui-panelgrid-cell {
+                border: none;
+            }
+            
+            .ui-button-text {
+                padding: 5px !important;
+            }
+        </style>
     </h:head>
     <h:body>
-        <h:dataTable
-            var="text"
-            summary="Patient Materials"
-            value="#{caregiverManager.needTextsREST}"
-            rules="all"
-            cellpadding="5">
-
-            <f:facet name="header">
-                    <h:outputText value="Text" />
+        <h2>Texts from Need "#{caregiverManager.currentNeed.description}"</h2>
+        
+        <h:form>
+            <p:dataTable
+                id="textsTable"
+                var="text"
+                summary="Table of texts"
+                value="#{caregiverManager.needTextsREST}"
+                widgetVar="textsTable"
+                emptyMessage="No texts associated to this need"
+                rows="10"
+                paginator="true"
+                paginatorPosition="bottom"
+                paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                rowsPerPageTemplate="5,10,15"
+                style="margin-bottom:40px">
+                
+                <f:facet name="header">
+                    <p:outputPanel>
+                        <h:outputText value="Texts" />
+                    </p:outputPanel>
                 </f:facet>
                 
-            <h:column>
-                <f:facet name="header">
-                    <h:outputText value="Description" />
-                </f:facet>
-                <h:outputText value="#{text.description}" />
-            </h:column>
+                <p:column headerText="Description">
+                    <h:outputText value="#{text.description}" />
+                </p:column>
+                
+                <p:column headerText="Text">
+                    <h:outputText value="#{text.text}" />
+                </p:column>
+                
+                <p:column headerText="Proceedings" style="width: 100px">
+                    <p:commandButton value="Done"
+                                     id="done"
+                                     actionListener="#{caregiverManager.createProceedingREST}">
+                        <f:param name="materialId" id="materialId" value="#{text.id}" />
+                    </p:commandButton>
+                </p:column>
+            </p:dataTable>
+                        
+            <br />
             
-            <h:column>
-                <f:facet name="header">
-                    <h:outputText value="Text" />
-                </f:facet>
-                <h:outputText value="#{text.text}" />
-            </h:column>
-            
-            <h:column>
-                <f:facet name="header">
-                    <h:outputText value="Materials" />
-                </f:facet>
-
-                <h:panelGrid columns="1">
-                    <h:form>
-                        <h:commandLink value="Done" actionListener="#{caregiverManager.createProceedingREST}">
-                            <f:param name="materialId" id="materialId" value="#{text.id}" />
-                        </h:commandLink>
-                    </h:form>
-                </h:panelGrid>  
-            </h:column>
-        </h:dataTable>
+            <p:commandButton value="Back" id="BackButton" action="/caregiver/caregiver_patient_needs?faces-redirect=true" />
+        </h:form> 
     </h:body>
 </html>
 

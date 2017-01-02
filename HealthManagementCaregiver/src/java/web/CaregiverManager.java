@@ -40,6 +40,7 @@ public class CaregiverManager implements Serializable {
     private UserManager userManager;
 
     private PatientDTO currentPatient;
+    private List<PatientDTO> filteredPatients;
     
     private NeedDTO currentNeed;
 
@@ -55,7 +56,6 @@ public class CaregiverManager implements Serializable {
     private int materialId;
 
     private HttpAuthenticationFeature feature;
-    
     private Client client;
     private final String baseUri = "http://localhost:8080/HealthManagement-war/webapi";
     private UIComponent component;
@@ -352,6 +352,14 @@ public class CaregiverManager implements Serializable {
 
     public void setMaterialId(int materialId) {
         this.materialId = materialId;
+    }
+
+    public List<PatientDTO> getFilteredPatients() {
+        return filteredPatients;
+    }
+
+    public void setFilteredPatients(List<PatientDTO> filteredPatients) {
+        this.filteredPatients = filteredPatients;
     }
     
     public UIComponent getComponent() {

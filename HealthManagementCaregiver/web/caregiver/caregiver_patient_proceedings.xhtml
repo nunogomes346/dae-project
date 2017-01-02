@@ -1,78 +1,92 @@
 <?xml version='1.0' encoding='UTF-8' ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:h="http://xmlns.jcp.org/jsf/html"
-      xmlns:f="http://xmlns.jcp.org/jsf/core">
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
     <h:head>
-        <title>Facelet Title</title>
+        <title>Patient Proceedings</title>
+        
+        <style>
+            .noBorders.ui-panelgrid>*>tr, .noBorders.ui-panelgrid .ui-panelgrid-cell {
+                border: none;
+            }
+            
+            .ui-button-text {
+                padding: 5px !important;
+            }
+        </style>
     </h:head>
     <h:body>
-        <h:dataTable
-            var="proceeding"
-            summary="Proceedings"
-            value="#{caregiverManager.patientsProceedingsREST}"
-            rules="all"
-            cellpadding="5">
-            
-            <f:facet name="header">
-                <h:outputText value="Proceedings" />
-            </f:facet>
-            
-            <h:column>
+        <h2>Proceedings from Patient "#{caregiverManager.currentPatient.name}"</h2>
+        <h:form>
+            <p:dataTable
+                id="patientProceedings"
+                var="proceeding"
+                summary="Table of Patient Proceedings"
+                value="#{caregiverManager.patientsProceedingsREST}"
+                widgetVar="patientProceedings"
+                emptyMessage="No proceedings from patient"
+                rows="10"
+                paginator="true"
+                paginatorPosition="bottom"
+                paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                rowsPerPageTemplate="5,10,15"
+                style="margin-bottom:40px">
+                
                 <f:facet name="header">
-                    <h:outputText value="Material Description" />
+                    <p:outputPanel>
+                        <h:outputText value="Proceedings" />
+                    </p:outputPanel>
                 </f:facet>
-                <h:outputText value="#{proceeding.materialDescription}" />
-            </h:column>
-            
-            <h:column>
-                <f:facet name="header">
-                    <h:outputText value="Caregiver username" />
-                </f:facet>
-                <h:outputText value="#{proceeding.caregiverUsername}" />
-            </h:column>
-            
-            <h:column>
-                <f:facet name="header">
-                    <h:outputText value="Patient Name" />
-                </f:facet>
-                <h:outputText value="#{proceeding.patientName}" />
-            </h:column>
-            
-            <h:column>
-                <f:facet name="header">
-                    <h:outputText value="Need Description" />
-                </f:facet>
-                <h:outputText value="#{proceeding.needDescription}" />
-            </h:column>
-            
-            <h:column>
-                <f:facet name="header">
-                    <h:outputText value="Date" />
-                </f:facet>
-                <h:outputText value="#{proceeding.proceedingDate}" />
-            </h:column>
-            
-            <h:column>
-                <f:facet name="header">
-                    <h:outputText value="Actions" />
-                </f:facet>
-                <h:panelGrid columns="3">
-                    <h:form>
-                        <h:commandButton value="Details" id="details" action="caregiver_patient_proceeding_details?faces-redirect=true">
+                
+                <p:column headerText="Material Description" style="width: 15%">
+                    <h:outputText value="#{proceeding.materialDescription}" />
+                </p:column>
+                
+                <p:column headerText="Caregiver Username"  style="width: 15%">
+                    <h:outputText value="#{proceeding.caregiverUsername}" />
+                </p:column>
+                
+                <p:column headerText="Patient Name" style="width: 15%">
+                    <h:outputText value="#{proceeding.patientName}" />
+                </p:column>
+                
+                <p:column headerText="Need Description" style="width: 15%">
+                    <h:outputText value="#{proceeding.needDescription}" />
+                </p:column>
+                
+                <p:column headerText="Date" style="width: 15%">
+                    <h:outputText value="#{proceeding.proceedingDate}" />
+                </p:column>
+                
+                <p:column headerText="Actions">
+                    <p:panelGrid columns="3" styleClass="noBorders">
+                        <p:commandButton value="Details" 
+                                         id="details" 
+                                         action="caregiver_patient_proceeding_details?faces-redirect=true">
                             <f:setPropertyActionListener target="#{caregiverManager.currentProceeding}" value="#{proceeding}" />
-                        </h:commandButton>
+                        </p:commandButton>
                         
-                        <h:commandButton value="Update" id="update" action="caregiver_patient_proceeding_update?faces-redirect=true">
+                        <p:commandButton value="Update" 
+                                         id="update" 
+                                         action="caregiver_patient_proceeding_update?faces-redirect=true">
                             <f:setPropertyActionListener target="#{caregiverManager.currentProceeding}" value="#{proceeding}" />
-                        </h:commandButton>
+                        </p:commandButton>
                         
-                        <h:commandButton value="Remove" id="remove" actionListener="#{caregiverManager.removeProceedingREST}">
+                        <p:commandButton value="Remove"
+                                         id="remove" 
+                                         actionListener="#{caregiverManager.removeProceedingREST}"
+                                         update="patientProceedings">
                             <f:param name="deleteProceedingId" id="deleteProceedingId" value="#{proceeding.proceedingId}" />
-                        </h:commandButton>
-                    </h:form>
-                </h:panelGrid>
-            </h:column>
-        </h:dataTable>
+                        </p:commandButton>
+                    </p:panelGrid>
+                </p:column>
+            </p:dataTable>
+            
+            <br />
+            
+            <p:commandButton value="Back" id="BackButton" action="/caregiver/caregiver_index?faces-redirect=true" />
+        </h:form>
     </h:body>
 </html>
