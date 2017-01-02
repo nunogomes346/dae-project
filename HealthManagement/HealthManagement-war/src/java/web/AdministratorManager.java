@@ -360,14 +360,19 @@ public class AdministratorManager implements Serializable {
         switch(material.getType()) {
             case "EmergencyContact": 
                 removeEmergencyContact(material.getId());
+                break;
             case "Faq": 
                 removeFaq(material.getId());
+                break;
             case "Text": 
                 removeText(material.getId());
+                break;
             case "Tutorial": 
                 removeTutorial(material.getId());
+                break;
             case "Video": 
                 removeVideo(material.getId());
+                break;
         }
     }
 	

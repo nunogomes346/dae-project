@@ -3,7 +3,6 @@ package ejbs;
 import dtos.VideoDTO;
 import entities.Caregiver;
 import entities.Need;
-import entities.Proceeding;
 import entities.Video;
 import exceptions.EntityDoesNotExistException;
 import exceptions.MyConstraintViolationException;
@@ -94,10 +93,6 @@ public class VideoBean {
             
             for (Need need : video.getNeeds()) {
                 need.removeMaterial(video);
-            }
-            
-            for (Proceeding proceeding : video.getProceedings()) {
-                proceeding.setMaterial(null);
             }
             
             em.remove(video);

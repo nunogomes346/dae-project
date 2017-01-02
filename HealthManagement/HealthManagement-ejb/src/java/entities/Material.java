@@ -34,7 +34,7 @@ public class Material implements Serializable {
     @ManyToMany(mappedBy = "materials")
     private List<Caregiver> caregivers;
 
-    @OneToMany(mappedBy = "material")
+    @OneToMany(mappedBy = "material", cascade = CascadeType.REMOVE)
     private List<Proceeding> proceedings;
     
     public Material(){

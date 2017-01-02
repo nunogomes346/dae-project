@@ -56,6 +56,11 @@ public class ProceedingsBean {
             Proceeding proceeding  = new Proceeding(material, patient, need, caregiver, date, note);
             
             em.persist(proceeding);
+            
+            material.addProceeding(proceeding);
+            patient.addProceeding(proceeding);
+            need.addProceeding(proceeding);
+            caregiver.addProceeding(proceeding);
         } catch (EntityDoesNotExistException e) {
             throw e;
         } catch (ConstraintViolationException e) {
