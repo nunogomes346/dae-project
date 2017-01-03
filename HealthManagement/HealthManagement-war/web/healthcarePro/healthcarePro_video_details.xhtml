@@ -15,7 +15,9 @@
             <p:outputLabel id="description" value="#{healthcareProManager.currentVideo.description}"/>
             
             <p:outputLabel for="url" value="URL: " />
-            <p:outputLabel id="url" value="#{healthcareProManager.currentVideo.url}"/>
+            <h:outputLink id="url"  value="#{healthcareProManager.currentVideo.url}">
+                #{healthcareProManager.currentVideo.url}
+            </h:outputLink>
         </h:panelGrid>
         
         <h:form>                

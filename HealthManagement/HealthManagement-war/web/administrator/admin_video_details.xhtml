@@ -13,12 +13,14 @@
         <h:panelGrid columns="2">
             <p:outputLabel for="description" value="Description: " />
             <p:outputLabel id="description" value="#{administratorManager.currentVideo.description}"/>
-            
+
             <p:outputLabel for="url" value="URL: " />
-            <p:outputLabel id="url" value="#{administratorManager.currentVideo.url}"/>
+            <h:outputLink id="url"  value="#{administratorManager.currentVideo.url}">
+                #{administratorManager.currentVideo.url}
+            </h:outputLink>
         </h:panelGrid>
-        
-        <h:form>                
+
+        <h:form>
             <p:commandButton value="Back" id="BackButton" action="/administrator/admin_index?faces-redirect=true" />
         </h:form>
     </h:body>

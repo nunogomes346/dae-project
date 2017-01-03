@@ -46,7 +46,9 @@
                 </p:column>
                 
                 <p:column headerText="URL">
-                    <h:outputText value="#{video.url}" />
+                    <h:outputLink id="url"  value="#{video.url}">
+                        #{video.url}
+                    </h:outputLink>
                 </p:column>
                 
                 <p:column headerText="Proceedings" style="width: 10%">
