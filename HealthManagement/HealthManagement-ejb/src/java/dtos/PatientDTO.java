@@ -8,10 +8,10 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class PatientDTO {
     
-    protected Long id;
-    protected String name;
-    protected String mail;
-    protected String caregiverUsername;
+    private Long id;
+    private String name;
+    private String mail;
+    private String caregiverUsername;
     
     public PatientDTO() { }
 

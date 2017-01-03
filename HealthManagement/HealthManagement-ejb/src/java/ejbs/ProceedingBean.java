@@ -2,6 +2,7 @@ package ejbs;
 
 import dtos.ProceedingDTO;
 import entities.Caregiver;
+import entities.Counter;
 import entities.Material;
 import entities.Need;
 import entities.Patient;
@@ -61,6 +62,18 @@ public class ProceedingBean {
             patient.addProceeding(proceeding);
             need.addProceeding(proceeding);
             caregiver.addProceeding(proceeding);
+            
+            List<Counter> allCounters = (List<Counter>) em.createNamedQuery("getAllCounters").getResultList();
+            Counter counterToIncrement = null;
+            for (Counter counter : allCounters) {
+                if (counter.getCaregiver() == caregiver && counter.getResource().compareTo(material.getDescription()) == 0) {
+                    counter.incrementCounter();
+                    counterToIncrement = counter;
+                    break;
+                }
+            }
+
+            em.merge(counterToIncrement);
         } catch (EntityDoesNotExistException e) {
             throw e;
         } catch (ConstraintViolationException e) {
@@ -133,6 +146,17 @@ public class ProceedingBean {
             proceeding.getPatient().removeProceeding(proceeding);
             proceeding.getNeed().removeProceeding(proceeding);
             
+            List<Counter> allCounters = (List<Counter>) em.createNamedQuery("getAllCounters").getResultList();
+            Counter counterToRemove = null;
+            for (Counter counter : allCounters) {
+                if (counter.getCaregiver() == proceeding.getCaregiver() && 
+                        counter.getResource().compareTo(proceeding.getMaterial().getDescription()) == 0) {
+                    counterToRemove = counter;
+                    break;
+                }
+            }
+            
+            em.remove(counterToRemove);
             em.remove(proceeding);
         } catch (EntityDoesNotExistException e) {
             throw e;

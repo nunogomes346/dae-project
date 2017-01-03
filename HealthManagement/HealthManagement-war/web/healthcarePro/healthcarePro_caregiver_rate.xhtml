@@ -10,6 +10,41 @@
     <h:body>
         <h2 name="title">Rate Caregiver #{healthcareProManager.currentCaregiver.username}</h2>
         <h:form>
+            <p:outputLabel>Caregiver "#{healthcareProManager.currentCaregiver.username}" 
+                logged in #{healthcareProManager.loginCounter} times. 
+            </p:outputLabel>
+            
+            <br /><br />
+            
+            <p:dataTable
+                id="countersTable"
+                var="counter"
+                summary="Table of Counters Proceedings done"
+                value="#{healthcareProManager.caregiverProceedingsPerformedCounter}"
+                widgetVar="countersTable"
+                emptyMessage="No proceedings performed"
+                rows="10"
+                paginator="true"
+                paginatorPosition="bottom"
+                paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                rowsPerPageTemplate="5,10,15"
+                style="margin-bottom:40px; width: 40%">
+                
+                <f:facet name="header">
+                    <p:outputPanel>
+                        <h:outputText value="Proceedings Performed" />
+                    </p:outputPanel>
+                </f:facet>
+                
+                <p:column headerText="Resource">
+                    <h:outputText value="#{counter.resource}" style="width: 20%" />
+                </p:column>
+                
+                <p:column headerText="Counter">
+                    <h:outputText value="#{counter.counter}" style="width: 20%" />
+                </p:column>
+            </p:dataTable>
+            
             <h:panelGrid columns="2">
                 <p:outputLabel for="rate" value="Rate: " />
                 <p:selectOneMenu id="rate" value="#{healthcareProManager.currentCaregiver.rate}">
@@ -24,6 +59,12 @@
                     id="submit"
                     value="Rate"
                     action="#{healthcareProManager.rateCaregiver}" />
+            </h:panelGrid>
+            
+            <br />
+            
+            <h:panelGrid columns="1">
+                <p:commandButton value="Back" id="BackButton" action="/healthcarePro/healthcarePro_index?faces-redirect=true" />
             </h:panelGrid>
         </h:form>
     </h:body>

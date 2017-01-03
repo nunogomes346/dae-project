@@ -34,10 +34,14 @@ public class Caregiver extends User implements Serializable {
     
     private String rate;
     
+    @OneToMany(mappedBy = "caregiver", cascade = CascadeType.REMOVE)
+    private List<Counter> counters;
+    
     public Caregiver() {  
        this.patients = new LinkedList<Patient>();
        this.materials = new LinkedList<Material>();
        this.proceedings = new LinkedList<Proceeding>();
+       this.counters = new LinkedList<Counter>();
     }
     
     public Caregiver(String username, String password, String name, String mail) {
@@ -46,6 +50,7 @@ public class Caregiver extends User implements Serializable {
         this.materials = new LinkedList<Material>();
         this.proceedings = new LinkedList<Proceeding>();
         this.rate = "No rate";
+        this.counters = new LinkedList<Counter>();
     }
 
     public List<Patient> getPatients() {
@@ -102,5 +107,21 @@ public class Caregiver extends User implements Serializable {
     
     public void removeProceeding(Proceeding proceeding){
         this.proceedings.remove(proceeding);
+    }
+
+    public List<Counter> getCounters() {
+        return counters;
+    }
+
+    public void setCounters(List<Counter> counters) {
+        this.counters = counters;
+    }
+    
+    public void addCounter(Counter counter){
+        this.counters.add(counter);
+    }
+    
+    public void removeCounter(Counter counter){
+        this.counters.remove(counter);
     }
 }

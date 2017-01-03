@@ -1,6 +1,7 @@
 package ejbs;
 
 import dtos.CaregiverDTO;
+import dtos.CounterDTO;
 import dtos.EmergencyContactDTO;
 import dtos.FaqDTO;
 import dtos.MaterialDTO;
@@ -11,6 +12,7 @@ import dtos.TextDTO;
 import dtos.TutorialDTO;
 import dtos.VideoDTO;
 import entities.Caregiver;
+import entities.Counter;
 import entities.EmergencyContact;
 import entities.FAQ;
 import entities.Material;
@@ -80,6 +82,10 @@ public class CaregiverBean {
             Caregiver caregiver = new Caregiver(username, password, name, mail);
 
             em.persist(caregiver);
+            
+            Counter counter = new Counter("login", 0, caregiver);
+
+            em.persist(counter);
         } catch (EntityAlreadyExistsException e) {
             throw e;
         } catch (ConstraintViolationException e) {
@@ -152,6 +158,53 @@ public class CaregiverBean {
             }
             
             em.remove(caregiver);
+        } catch (EntityDoesNotExistException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new EJBException(e.getMessage());
+        }
+    }
+    
+    public int getLoginCounter(String username) 
+            throws EntityDoesNotExistException {
+        try {
+            Caregiver caregiver = em.find(Caregiver.class, username);
+            if (caregiver == null) {
+                throw new EntityDoesNotExistException("There is no caregiver with that username.");
+            }
+            
+            List<Counter> allCounters = (List<Counter>) em.createNamedQuery("getAllCounters").getResultList();
+            for (Counter counter : allCounters) {
+                if (counter.getCaregiver() == caregiver && counter.getResource().compareTo("login") == 0) {
+                    return counter.getCounter();
+                }
+            }
+        } catch (EntityDoesNotExistException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new EJBException(e.getMessage());
+        }
+        
+        return 0;
+    }
+    
+    public List<CounterDTO> getCaregiverProceedingsPerformedCounter(String username) 
+            throws EntityDoesNotExistException {
+        try {
+            Caregiver caregiver = em.find(Caregiver.class, username);
+            if (caregiver == null) {
+                throw new EntityDoesNotExistException("There is no caregiver with that username.");
+            }
+            
+            List<Counter> allCounters = (List<Counter>) em.createNamedQuery("getAllCounters").getResultList();
+            List<Counter> countersProceedingsPerformed = new LinkedList<Counter>();
+            for (Counter counter : allCounters) {
+                if (counter.getCaregiver() == caregiver && counter.getResource().compareTo("login") != 0) {
+                    countersProceedingsPerformed.add(counter);
+                }
+            }
+            
+            return countersToDTOs(countersProceedingsPerformed);
         } catch (EntityDoesNotExistException e) {
             throw e;
         } catch (Exception e) {
@@ -363,6 +416,10 @@ public class CaregiverBean {
             if(canInsert) {
                 caregiver.addMaterial(material);
                 material.addCaregiver(caregiver);
+                
+                Counter counter = new Counter(material.getDescription(), 0, caregiver);
+
+                em.persist(counter);
             }
             
             for (Material needMaterial : need.getMaterials()) {
@@ -406,7 +463,6 @@ public class CaregiverBean {
             material.removeCaregiver(caregiver);
             caregiver.removeMaterial(material);
             
-            // remover todos os proceedings associados a este material e caregiver
             List <Proceeding> proceedings = new LinkedList<Proceeding>(caregiver.getProceedings());
             for (Proceeding proceeding : proceedings) {
                 if (proceeding.getMaterial() == material) {
@@ -417,12 +473,50 @@ public class CaregiverBean {
                     em.remove(proceeding);
                 }
             }
+            
+            List<Counter> allCounters = (List<Counter>) em.createNamedQuery("getAllCounters").getResultList();
+            Counter counterToRemove = null;
+            for (Counter counter : allCounters) {
+                if (counter.getCaregiver() == caregiver && counter.getResource().compareTo(material.getDescription()) == 0) {
+                    counterToRemove = counter;
+                    break;
+                }
+            }
 
+            em.remove(counterToRemove);
         } catch (EntityDoesNotExistException | MaterialNotAssociatedToCaregiverException e) {
             throw e;
         } catch (ConstraintViolationException e) {
             throw new MyConstraintViolationException(Utils.getConstraintViolationMessages(e));            
         } catch(EJBException e) {
+            throw new EJBException(e.getMessage());
+        }
+    }
+    
+    @GET
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Path("{username}/login")
+    public void caregiverLoginREST(@PathParam("username") String username) throws EntityDoesNotExistException{
+        try {
+            Caregiver caregiver = em.find(Caregiver.class, username);
+            if(caregiver == null){
+                throw new EntityDoesNotExistException("There is no caregiver with that username.");
+            }            
+            
+            List<Counter> allCounters = (List<Counter>) em.createNamedQuery("getAllCounters").getResultList();
+            Counter counterToIncrement = null;
+            for (Counter counter : allCounters) {
+                if (counter.getCaregiver() == caregiver && counter.getResource().compareTo("login") == 0) {
+                    counter.incrementCounter();
+                    counterToIncrement = counter;
+                    break;
+                }
+            }
+
+            em.merge(counterToIncrement);
+        } catch (EntityDoesNotExistException e) {
+            throw e;             
+        } catch (Exception e) {
             throw new EJBException(e.getMessage());
         }
     }
@@ -435,7 +529,7 @@ public class CaregiverBean {
             Caregiver caregiver = em.find(Caregiver.class, username);
             if(caregiver == null){
                 throw new EntityDoesNotExistException("There is no caregiver with that username.");
-            }            
+            }
             
             List<Patient> patients = (List<Patient>) caregiver.getPatients();
             
@@ -743,6 +837,22 @@ public class CaregiverBean {
         List<CaregiverDTO> dtos = new ArrayList<>();
         for (Caregiver c : caregivers) {
             dtos.add(caregiverToDTO(c));
+        }
+        return dtos;
+    }
+    
+    CounterDTO counterToDTO(Counter counter) {
+        return new CounterDTO(
+                counter.getId(),
+                counter.getResource(),
+                counter.getCounter(),
+                counter.getCaregiver().getUsername());
+    }
+    
+    List<CounterDTO> countersToDTOs(List<Counter> counters) {
+        List<CounterDTO> dtos = new ArrayList<>();
+        for (Counter c : counters) {
+            dtos.add(counterToDTO(c));
         }
         return dtos;
     }

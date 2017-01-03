@@ -11,7 +11,6 @@ import exceptions.MyConstraintViolationException;
 import exceptions.Utils;
 import java.util.ArrayList;
 import java.util.List;
-import javax.ejb.EJB;
 import javax.ejb.EJBException;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -26,7 +25,7 @@ public class PatientBean {
     
     public void create(String name, String mail) 
             throws MyConstraintViolationException{
-        try {            
+        try {     
             Patient patient = new Patient(name, mail);
 
             em.persist(patient);

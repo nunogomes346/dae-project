@@ -49,7 +49,7 @@ public class ConfigBean {
             caregiverBean.create("piteu2", "carepw", "Bruno Anastácio2", "piteu@gmail.com");
             caregiverBean.create("piteu3", "carepw", "Bruno Anastácio3", "piteu@gmail.com");
             
-            // IDs -> 1 - 6
+            // IDs -> 4 - 9
             patientBean.create("João Sousa", "sousa@gmail.com");
             patientBean.create("João Sousa1", "sousa@gmail.com");
             patientBean.create("João Sousa2", "sousa@gmail.com");
@@ -57,24 +57,24 @@ public class ConfigBean {
             patientBean.create("João Sousa4", "sousa@gmail.com");
             patientBean.create("João Sousa5", "sousa@gmail.com");
             
-            // NEEDS: IDs -> 7 - 9
+            // NEEDS: IDs -> 10 - 12
             needBean.create("Mudar sonda gastrica");
             needBean.create("Dar comprimidos po colesterol");
             needBean.create("Levar o paciente ao wc");
             
-            needBean.associateNeedToPatient(Long.parseLong("7"), Long.parseLong("5"));
-            needBean.associateNeedToPatient(Long.parseLong("8"), Long.parseLong("5"));
-            needBean.associateNeedToPatient(Long.parseLong("9"), Long.parseLong("4"));
-            needBean.associateNeedToPatient(Long.parseLong("7"), Long.parseLong("3"));
-            needBean.associateNeedToPatient(Long.parseLong("8"), Long.parseLong("2"));
-            needBean.associateNeedToPatient(Long.parseLong("7"), Long.parseLong("2"));
-            needBean.associateNeedToPatient(Long.parseLong("7"), Long.parseLong("1"));
-            needBean.associateNeedToPatient(Long.parseLong("9"), Long.parseLong("1"));
+            needBean.associateNeedToPatient(Long.parseLong("10"), Long.parseLong("8"));
+            needBean.associateNeedToPatient(Long.parseLong("11"), Long.parseLong("8"));
+            needBean.associateNeedToPatient(Long.parseLong("12"), Long.parseLong("7"));
+            needBean.associateNeedToPatient(Long.parseLong("10"), Long.parseLong("6"));
+            needBean.associateNeedToPatient(Long.parseLong("11"), Long.parseLong("5"));
+            needBean.associateNeedToPatient(Long.parseLong("10"), Long.parseLong("5"));
+            needBean.associateNeedToPatient(Long.parseLong("10"), Long.parseLong("4"));
+            needBean.associateNeedToPatient(Long.parseLong("12"), Long.parseLong("4"));
             
-            patientBean.associatePatientToCaregiver(Long.parseLong("1"), "piteu");
-            patientBean.associatePatientToCaregiver(Long.parseLong("2"), "piteu2");
+            patientBean.associatePatientToCaregiver(Long.parseLong("4"), "piteu");
+            patientBean.associatePatientToCaregiver(Long.parseLong("5"), "piteu2");
             
-            // MATERIALS: IDs -> 12 - 24
+            // MATERIALS: IDs -> 15 - 27
             emergencyBean.create("112", "Numero de Emergencia Nacional", "112");
             emergencyBean.create("urgencias de leiria", "Urgência Geral da Unidade Hospitalar de Leiria", "244 817 078");
             emergencyBean.create("saude 24", "Saude 24", "808 242 424");
@@ -120,23 +120,23 @@ public class ConfigBean {
             videoBean.create("video 2", "https://www.youtube.com/watch?v=NzV6h9K8ApQ");
             videoBean.create("video 3", "https://www.youtube.com/watch?v=W3EHXiuktgM");
             
-            caregiverBean.associateMaterial("piteu", 23, Long.parseLong("7"));
-            caregiverBean.associateMaterial("piteu", 20, Long.parseLong("7"));
-            caregiverBean.associateMaterial("piteu", 23, Long.parseLong("9"));
-            caregiverBean.associateMaterial("piteu", 20, Long.parseLong("9"));
-            caregiverBean.associateMaterial("piteu", 22, Long.parseLong("9"));
-            caregiverBean.associateMaterial("piteu2", 22, Long.parseLong("8"));
-            caregiverBean.associateMaterial("piteu2", 20, Long.parseLong("7"));
-            caregiverBean.associateMaterial("piteu2", 23, Long.parseLong("8"));
+            caregiverBean.associateMaterial("piteu", 26, Long.parseLong("10"));
+            caregiverBean.associateMaterial("piteu", 23, Long.parseLong("10"));
+            caregiverBean.associateMaterial("piteu", 26, Long.parseLong("12"));
+            caregiverBean.associateMaterial("piteu", 23, Long.parseLong("12"));
+            caregiverBean.associateMaterial("piteu", 25, Long.parseLong("12"));
+            caregiverBean.associateMaterial("piteu2", 25, Long.parseLong("11"));
+            caregiverBean.associateMaterial("piteu2", 23, Long.parseLong("10"));
+            caregiverBean.associateMaterial("piteu2", 26, Long.parseLong("11"));
             
-            proceedingBean.create(22, Long.parseLong("1"), Long.parseLong("9"), "piteu", "12-10-2016 00:01:30", null);
-            proceedingBean.create(22, Long.parseLong("1"), Long.parseLong("9"), "piteu", "23-10-2016 10:10:20", null);
-            proceedingBean.create(22, Long.parseLong("2"), Long.parseLong("8"), "piteu2", "23-10-2016 15:10:55", null);
-            proceedingBean.create(23, Long.parseLong("1"), Long.parseLong("7"), "piteu", "15-11-2016 16:20:54", null);
-            proceedingBean.create(20, Long.parseLong("1"), Long.parseLong("7"), "piteu", "17-11-2016 22:27:20", null);
-            proceedingBean.create(20, Long.parseLong("2"), Long.parseLong("7"), "piteu2", "17-10-2016 16:27:47", null);
-            proceedingBean.create(23, Long.parseLong("1"), Long.parseLong("7"), "piteu", "08-12-2016 23:55:21", null);
-            proceedingBean.create(23, Long.parseLong("2"), Long.parseLong("8"), "piteu2", "08-11-2016 15:36:22", null);
+            proceedingBean.create(25, Long.parseLong("4"), Long.parseLong("12"), "piteu", "12-10-2016 00:01:30", null);
+            proceedingBean.create(25, Long.parseLong("4"), Long.parseLong("12"), "piteu", "23-10-2016 10:10:20", null);
+            proceedingBean.create(25, Long.parseLong("5"), Long.parseLong("11"), "piteu2", "23-10-2016 15:10:55", null);
+            proceedingBean.create(26, Long.parseLong("4"), Long.parseLong("10"), "piteu", "15-11-2016 16:20:54", null);
+            proceedingBean.create(23, Long.parseLong("4"), Long.parseLong("10"), "piteu", "17-11-2016 22:27:20", null);
+            proceedingBean.create(23, Long.parseLong("5"), Long.parseLong("10"), "piteu2", "17-10-2016 16:27:47", null);
+            proceedingBean.create(26, Long.parseLong("4"), Long.parseLong("10"), "piteu", "08-12-2016 23:55:21", null);
+            proceedingBean.create(26, Long.parseLong("5"), Long.parseLong("11"), "piteu2", "08-11-2016 15:36:22", null);
             
         } catch (EntityAlreadyExistsException | MyConstraintViolationException e) {
             System.err.println("Error: " + e.getMessage());

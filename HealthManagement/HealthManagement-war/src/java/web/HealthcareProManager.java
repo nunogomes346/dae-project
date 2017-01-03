@@ -2,6 +2,7 @@ package web;
 
 import static com.sun.xml.ws.security.addressing.impl.policy.Constants.logger;
 import dtos.CaregiverDTO;
+import dtos.CounterDTO;
 import dtos.EmergencyContactDTO;
 import dtos.FaqDTO;
 import dtos.MaterialDTO;
@@ -194,7 +195,30 @@ public class HealthcareProManager implements Serializable{
         }
     }
     
-    public String rateCaregiver(){
+    public int getLoginCounter() {
+        try {
+            return caregiverBean.getLoginCounter(currentCaregiver.getUsername());
+        } catch (EntityDoesNotExistException e) {
+            FacesExceptionHandler.handleException(e, e.getMessage(), logger);
+        } catch (Exception e) {
+            FacesExceptionHandler.handleException(e, "Unexpected error! Try again latter!", logger);
+        }
+        
+        return 0;
+    }
+    
+    public List<CounterDTO> getCaregiverProceedingsPerformedCounter() {
+        try {
+            return caregiverBean.getCaregiverProceedingsPerformedCounter(currentCaregiver.getUsername());
+        } catch (EntityDoesNotExistException e) {
+            FacesExceptionHandler.handleException(e, e.getMessage(), logger);
+        } catch (Exception e) {
+            FacesExceptionHandler.handleException(e, "Unexpected error! Try again latter!", logger);
+        }
+        return null;
+    }
+    
+    public String rateCaregiver() {
         try {
             caregiverBean.rate(
                     currentCaregiver.getUsername(),
