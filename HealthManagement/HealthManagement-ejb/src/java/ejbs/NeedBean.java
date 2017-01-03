@@ -5,11 +5,14 @@ import entities.Material;
 import entities.Need;
 import entities.Patient;
 import exceptions.EntityDoesNotExistException;
+import exceptions.MaterialAssociatedToNeedException;
+import exceptions.MaterialNotAssociatedToNeedException;
 import exceptions.MyConstraintViolationException;
+import exceptions.NeedAssociatedToPatientException;
+import exceptions.NeedNotAssociatedToPatientException;
 import exceptions.Utils;
 import java.util.ArrayList;
 import java.util.List;
-import javax.ejb.EJB;
 import javax.ejb.EJBException;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -103,7 +106,7 @@ public class NeedBean {
     }
     
     public void associateNeedToPatient(Long needId, Long patientId) 
-            throws EntityDoesNotExistException {
+            throws EntityDoesNotExistException, NeedAssociatedToPatientException {
         try {
             Need need = em.find(Need.class, needId);
             if (need == null) {
@@ -115,10 +118,14 @@ public class NeedBean {
                 throw new EntityDoesNotExistException("There is no patient with that code.");
             }
 
+            if (patient.getNeeds().contains(need)) {
+                throw new NeedAssociatedToPatientException("Need already associated to patient.");
+            }
+            
             need.addPatient(patient);
             patient.addNeed(need);
 
-        } catch (EntityDoesNotExistException e) {
+        } catch (EntityDoesNotExistException | NeedAssociatedToPatientException e) {
             throw e;
         } catch (Exception e) {
             throw new EJBException(e.getMessage());
@@ -126,7 +133,7 @@ public class NeedBean {
     }
     
     public void diassociateNeedFromPatient(Long needId, Long patientId) 
-            throws EntityDoesNotExistException {
+            throws EntityDoesNotExistException, NeedNotAssociatedToPatientException {
         try {
             Need need = em.find(Need.class, needId);
             if (need == null) {
@@ -136,12 +143,16 @@ public class NeedBean {
             Patient patient = em.find(Patient.class, patientId);
             if (patient == null) {
                 throw new EntityDoesNotExistException("There is no patient with that code.");
-            }        
+            }   
+            
+            if (!patient.getNeeds().contains(need)) {
+                throw new NeedNotAssociatedToPatientException("Need is already diassociated from patient.");
+            }
             
             need.removePatient(patient);
             patient.removeNeed(need);
 
-        } catch (EntityDoesNotExistException e) {
+        } catch (EntityDoesNotExistException | NeedNotAssociatedToPatientException e) {
             throw e;             
         } catch (Exception e) {
             throw new EJBException(e.getMessage());
@@ -149,7 +160,7 @@ public class NeedBean {
     }
     
     public void associateMaterialToNeed(int materialId, Long needId) 
-            throws EntityDoesNotExistException {
+            throws EntityDoesNotExistException, MaterialAssociatedToNeedException {
         try {
             Need need = em.find(Need.class, needId);
             if (need == null) {
@@ -161,10 +172,14 @@ public class NeedBean {
                 throw new EntityDoesNotExistException("There is no material with that id.");
             }
 
+            if (need.getMaterials().contains(material)) {
+                throw new MaterialAssociatedToNeedException("Material already associated to need.");
+            }
+            
             need.addMaterial(material);
             material.addNeed(need);
 
-        } catch (EntityDoesNotExistException e) {
+        } catch (EntityDoesNotExistException | MaterialAssociatedToNeedException e) {
             throw e;
         } catch (Exception e) {
             throw new EJBException(e.getMessage());
@@ -172,7 +187,7 @@ public class NeedBean {
     }
     
     public void diassociateMaterialFromNeed(int materialId, Long needId) 
-            throws EntityDoesNotExistException {
+            throws EntityDoesNotExistException, MaterialNotAssociatedToNeedException {
         try {
             Need need = em.find(Need.class, needId);
             if (need == null) {
@@ -182,12 +197,16 @@ public class NeedBean {
             Material material = em.find(Material.class, materialId);
             if (material == null) {
                 throw new EntityDoesNotExistException("There is no material with that id.");
-            }       
+            }    
+            
+            if (!need.getMaterials().contains(material)) {
+                throw new MaterialNotAssociatedToNeedException("Material is already diassociated from need.");
+            }
             
             need.removeMaterial(material);
             material.removeNeed(need);
 
-        } catch (EntityDoesNotExistException e) {
+        } catch (EntityDoesNotExistException | MaterialNotAssociatedToNeedException e) {
             throw e;             
         } catch (Exception e) {
             throw new EJBException(e.getMessage());

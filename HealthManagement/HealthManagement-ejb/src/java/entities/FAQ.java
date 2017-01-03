@@ -8,6 +8,7 @@ import static javax.persistence.FetchType.EAGER;
 import javax.persistence.Lob;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.validation.constraints.NotNull;
 
 @Entity
 @NamedQueries({
@@ -17,9 +18,11 @@ import javax.persistence.NamedQuery;
 public class FAQ extends Material implements Serializable {
     
     @Lob @Basic(fetch=EAGER)
+    @NotNull
     private String question;
     
     @Lob @Basic(fetch=EAGER)
+    @NotNull
     private String answer;
     
     public FAQ(){

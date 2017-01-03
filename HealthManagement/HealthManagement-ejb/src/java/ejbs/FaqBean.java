@@ -97,10 +97,6 @@ public class FaqBean {
                 need.removeMaterial(faq);
             }
             
-            for (Proceeding proceeding : faq.getProceedings()) {
-                proceeding.setMaterial(null);
-            }
-            
             em.remove(faq);
         } catch (EntityDoesNotExistException e) {
             throw e;    

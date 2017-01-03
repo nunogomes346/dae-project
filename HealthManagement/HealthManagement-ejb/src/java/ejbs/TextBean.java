@@ -96,10 +96,6 @@ public class TextBean {
                 need.removeMaterial(text);
             }
             
-            for (Proceeding proceeding : text.getProceedings()) {
-                proceeding.setMaterial(null);
-            }
-            
             em.remove(text);
         } catch (EntityDoesNotExistException e) {
             throw e;

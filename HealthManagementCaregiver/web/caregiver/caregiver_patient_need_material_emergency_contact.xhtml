@@ -27,7 +27,7 @@
                 summary="Table of emergencyContacts"
                 value="#{caregiverManager.needEmergencyContactsREST}"
                 widgetVar="emergencyContactsTable"
-                emptyMessage="No emergency contacts associated to this need"
+                emptyMessage="No emergency contacts found"
                 rows="10"
                 paginator="true"
                 paginatorPosition="bottom"
@@ -53,7 +53,7 @@
                     <h:outputText value="#{emergencyContact.telephoneNumber}" />
                 </p:column>
                 
-                <p:column headerText="Proceedings" style="width: 100px">
+                <p:column headerText="Proceedings" style="width: 10%">
                     <p:commandButton value="Done"
                                      id="done"
                                      actionListener="#{caregiverManager.createProceedingREST}">

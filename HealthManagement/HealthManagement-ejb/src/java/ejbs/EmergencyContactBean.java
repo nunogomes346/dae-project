@@ -97,10 +97,6 @@ public class EmergencyContactBean {
                 need.removeMaterial(emergencyContact);
             }
             
-            for (Proceeding proceeding : emergencyContact.getProceedings()) {
-                proceeding.setMaterial(null);
-            }
-            
             em.remove(emergencyContact);
         } catch (EntityDoesNotExistException e) {
             throw e;

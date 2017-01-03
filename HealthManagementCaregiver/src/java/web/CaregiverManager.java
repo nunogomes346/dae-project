@@ -95,8 +95,9 @@ public class CaregiverManager implements Serializable {
         List<NeedDTO> returnedNeeds = null;
         try {
             returnedNeeds = client.target(baseUri)
-                    .path("/patients/{id}/needs")
-                    .resolveTemplate("id", currentPatient.getId())
+                    .path("/caregivers/{username}/patients/{patientId}/needs")
+                    .resolveTemplate("username", userManager.getUsername())
+                    .resolveTemplate("patientId", currentPatient.getId())
                     .request(MediaType.APPLICATION_XML)
                     .get(new GenericType<List<NeedDTO>>() {});
         } catch (Exception e) {
@@ -222,7 +223,8 @@ public class CaregiverManager implements Serializable {
         List<ProceedingDTO> returnedProceeding = null;
         try {
             returnedProceeding = client.target(baseUri)
-                .path("/patients/{patientId}/proceedings")
+                .path("/caregivers/{username}/patients/{patientId}/proceedings")
+                .resolveTemplate("username", userManager.getUsername())
                 .resolveTemplate("patientId", currentPatient.getId())
                 .request(MediaType.APPLICATION_XML)
                 .get(new GenericType<List<ProceedingDTO>>() {});

@@ -9,6 +9,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.validation.constraints.NotNull;
 
 @Entity
 @NamedQueries({
@@ -24,20 +25,25 @@ public class Proceeding implements Serializable {
     
     @ManyToOne
     @JoinColumn(name = "MATERIAL_ID")
+    @NotNull
     private Material material;
     
     @ManyToOne
     @JoinColumn(name = "PATIENT_ID")
+    @NotNull
     private Patient patient;
     
     @ManyToOne
     @JoinColumn(name = "NEED_ID")
+    @NotNull
     private Need need;
     
     @ManyToOne
     @JoinColumn(name = "CAREGIVER_ID")
+    @NotNull
     private Caregiver caregiver;
     
+    @NotNull
     private String proceedingDate;
     
     private String note;

@@ -5,6 +5,7 @@ import java.io.Serializable;
 import javax.persistence.Entity;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.validation.constraints.NotNull;
 
 @Entity
 @NamedQueries({
@@ -13,7 +14,10 @@ import javax.persistence.NamedQuery;
 })
 public class EmergencyContact extends Material implements Serializable {
 
+    @NotNull
     private String name;
+    
+    @NotNull
     private String telephoneNumber;
     
     public EmergencyContact(){

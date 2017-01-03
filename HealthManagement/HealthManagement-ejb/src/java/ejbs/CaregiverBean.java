@@ -6,6 +6,7 @@ import dtos.FaqDTO;
 import dtos.MaterialDTO;
 import dtos.NeedDTO;
 import dtos.PatientDTO;
+import dtos.ProceedingDTO;
 import dtos.TextDTO;
 import dtos.TutorialDTO;
 import dtos.VideoDTO;
@@ -20,9 +21,12 @@ import entities.Proceeding;
 import entities.Text;
 import entities.Tutorial;
 import entities.Video;
+import exceptions.CaregiverPatientsDoesNotHaveNeedException;
 import exceptions.EntityAlreadyExistsException;
 import exceptions.EntityDoesNotExistException;
+import exceptions.MaterialNotAssociatedToCaregiverException;
 import exceptions.MyConstraintViolationException;
+import exceptions.PatientNotInPatientsException;
 import exceptions.Utils;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -62,6 +66,9 @@ public class CaregiverBean {
     private TextBean textBean;
     @EJB
     private VideoBean videoBean;
+    
+    @EJB
+    private ProceedingBean proceedingBean;
     
     public void create(String username, String password, String name, String mail) 
             throws EntityAlreadyExistsException, MyConstraintViolationException {
@@ -142,10 +149,6 @@ public class CaregiverBean {
             
             for (Material material : caregiver.getMaterials()) {
                 material.removeCaregiver(caregiver);
-            }
-            
-            for (Proceeding proceeding : caregiver.getProceedings()) {
-                proceeding.setCaregiver(null);
             }
             
             em.remove(caregiver);
@@ -318,7 +321,7 @@ public class CaregiverBean {
     }
     
     public void associateMaterial(String username, int materialId, Long needId)
-            throws EntityDoesNotExistException, MyConstraintViolationException {
+            throws EntityDoesNotExistException, MyConstraintViolationException, CaregiverPatientsDoesNotHaveNeedException {
         try {
             boolean canInsert = true;
             
@@ -335,6 +338,18 @@ public class CaregiverBean {
             Need need = em.find(Need.class, needId);
             if (need == null) {
                 throw new EntityDoesNotExistException("There is no need with that id.");
+            }
+            
+            List<Need> allCaregiverPatientsNeeds = new ArrayList<Need>();
+            for (Patient patient : caregiver.getPatients()) {
+                for (Need patientNeed : patient.getNeeds()) {
+                    if(!allCaregiverPatientsNeeds.contains(patientNeed)) {
+                        allCaregiverPatientsNeeds.add(patientNeed);
+                    }
+                }
+            }
+            if (!allCaregiverPatientsNeeds.contains(need)) {
+                throw new CaregiverPatientsDoesNotHaveNeedException("Caregiver patients does not have that need.");
             }
             
             for (Material caregiverMaterial : caregiver.getMaterials()) {
@@ -362,7 +377,7 @@ public class CaregiverBean {
                 material.addNeed(need);
                 need.addMaterial(material);
             }
-        } catch (EntityDoesNotExistException e) {
+        } catch (EntityDoesNotExistException | CaregiverPatientsDoesNotHaveNeedException e) {
             throw e;
         } catch (ConstraintViolationException e) {
             throw new MyConstraintViolationException(Utils.getConstraintViolationMessages(e));            
@@ -372,7 +387,7 @@ public class CaregiverBean {
     }
     
     public void diassociateMaterialFromCaregiver(String username, int materialId) 
-            throws EntityDoesNotExistException, MyConstraintViolationException {
+            throws EntityDoesNotExistException, MyConstraintViolationException, MaterialNotAssociatedToCaregiverException {
         try {
             Caregiver caregiver = em.find(Caregiver.class, username);
             if (caregiver == null) {
@@ -384,10 +399,26 @@ public class CaregiverBean {
                 throw new EntityDoesNotExistException("There is no material with that id.");
             }  
             
+            if (!caregiver.getMaterials().contains(material)) {
+                throw new MaterialNotAssociatedToCaregiverException("Material is already diassociated from caregiver.");
+            }
+            
             material.removeCaregiver(caregiver);
             caregiver.removeMaterial(material);
+            
+            // remover todos os proceedings associados a este material e caregiver
+            List <Proceeding> proceedings = new LinkedList<Proceeding>(caregiver.getProceedings());
+            for (Proceeding proceeding : proceedings) {
+                if (proceeding.getMaterial() == material) {
+                    proceeding.getCaregiver().removeProceeding(proceeding);
+                    proceeding.getNeed().removeProceeding(proceeding);
+                    proceeding.getPatient().removeProceeding(proceeding);
+                    proceeding.getMaterial().removeProceeding(proceeding);
+                    em.remove(proceeding);
+                }
+            }
 
-        } catch (EntityDoesNotExistException e) {
+        } catch (EntityDoesNotExistException | MaterialNotAssociatedToCaregiverException e) {
             throw e;
         } catch (ConstraintViolationException e) {
             throw new MyConstraintViolationException(Utils.getConstraintViolationMessages(e));            
@@ -410,6 +441,36 @@ public class CaregiverBean {
             
             return patientBean.patientsToDTOs(patients);
         } catch (EntityDoesNotExistException e) {
+            throw e;             
+        } catch (Exception e) {
+            throw new EJBException(e.getMessage());
+        }
+    }
+    
+    @GET
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Path("{username}/patients/{patientId}/needs")
+    public List<NeedDTO> getPatientsNeedsREST (@PathParam("username") String username, @PathParam("patientId") Long patientId) 
+            throws EntityDoesNotExistException, PatientNotInPatientsException {
+        try {
+            Caregiver caregiver = em.find(Caregiver.class, username);
+            if(caregiver == null){
+                throw new EntityDoesNotExistException("There is no caregiver with that username.");
+            }  
+            
+            Patient patient = em.find(Patient.class, patientId);
+            if(patient == null){
+                throw new EntityDoesNotExistException("There is no Patient with that id.");
+            }
+            
+            if (!caregiver.getPatients().contains(patient)) {
+                throw new PatientNotInPatientsException("Patient does not exist on caregiver patients list.");
+            }
+            
+            List<Need> needs = (List<Need>) patient.getNeeds();
+            
+            return needBean.needsToDTOs(needs);
+        }catch (EntityDoesNotExistException | PatientNotInPatientsException e) {
             throw e;             
         } catch (Exception e) {
             throw new EJBException(e.getMessage());
@@ -451,7 +512,7 @@ public class CaregiverBean {
     @GET
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     @Path("{username}/needs/{id}/emergencyContacts")
-    public List<EmergencyContactDTO> getEmergencyContactREST (@PathParam("username") String username, @PathParam("id") Long id)  throws EntityDoesNotExistException {
+    public List<EmergencyContactDTO> getEmergencyContactsREST (@PathParam("username") String username, @PathParam("id") Long id)  throws EntityDoesNotExistException {
         try{
             Caregiver caregiver = em.find(Caregiver.class, username);
             if(caregiver == null){
@@ -489,7 +550,7 @@ public class CaregiverBean {
     @GET
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     @Path("{username}/needs/{id}/faqs")
-    public List<FaqDTO> getFaqREST (@PathParam("username") String username, @PathParam("id") Long id)  throws EntityDoesNotExistException {
+    public List<FaqDTO> getFaqsREST (@PathParam("username") String username, @PathParam("id") Long id)  throws EntityDoesNotExistException {
         try{
             Caregiver caregiver = em.find(Caregiver.class, username);
             if(caregiver == null){
@@ -527,7 +588,7 @@ public class CaregiverBean {
     @GET
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     @Path("{username}/needs/{id}/texts")
-    public List<TextDTO> getTextREST (@PathParam("username") String username, @PathParam("id") Long id)  throws EntityDoesNotExistException {
+    public List<TextDTO> getTextsREST (@PathParam("username") String username, @PathParam("id") Long id)  throws EntityDoesNotExistException {
         try{
             Caregiver caregiver = em.find(Caregiver.class, username);
             if(caregiver == null){
@@ -565,7 +626,7 @@ public class CaregiverBean {
     @GET
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     @Path("{username}/needs/{id}/tutorials")
-    public List<TutorialDTO> getTutorialREST (@PathParam("username") String username, @PathParam("id") Long id)  throws EntityDoesNotExistException {
+    public List<TutorialDTO> getTutorialsREST (@PathParam("username") String username, @PathParam("id") Long id)  throws EntityDoesNotExistException {
         try{
             Caregiver caregiver = em.find(Caregiver.class, username);
             if(caregiver == null){
@@ -603,7 +664,7 @@ public class CaregiverBean {
     @GET
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     @Path("{username}/needs/{id}/videos")
-    public List<VideoDTO> getVideoREST (@PathParam("username") String username, @PathParam("id") Long id)  throws EntityDoesNotExistException {
+    public List<VideoDTO> getVideosREST (@PathParam("username") String username, @PathParam("id") Long id)  throws EntityDoesNotExistException {
         try{
             Caregiver caregiver = em.find(Caregiver.class, username);
             if(caregiver == null){
@@ -632,6 +693,36 @@ public class CaregiverBean {
             
             return videoBean.videosToDTOs(videos);
         }catch (EntityDoesNotExistException e) {
+            throw e;             
+        } catch (Exception e) {
+            throw new EJBException(e.getMessage());
+        }
+    }
+    
+    @GET
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Path("{username}/patients/{patientId}/proceedings")
+    public List<ProceedingDTO> getPatientsProceedingsREST(@PathParam("username") String username, @PathParam("patientId") Long patientId) 
+            throws EntityDoesNotExistException, PatientNotInPatientsException {
+        try {
+            Caregiver caregiver = em.find(Caregiver.class, username);
+            if(caregiver == null){
+                throw new EntityDoesNotExistException("There is no caregiver with that username.");
+            }  
+            
+            Patient patient = em.find(Patient.class, patientId);
+            if(patient == null){
+                throw new EntityDoesNotExistException("There is no patient with that id.");
+            }
+            
+            if (!caregiver.getPatients().contains(patient)) {
+                throw new PatientNotInPatientsException("Patient does not exist on caregiver patients list.");
+            }
+            
+            List<Proceeding> proceedings = (List<Proceeding>) patient.getProceedings();
+            
+            return proceedingBean.proceedingsToDTOs(proceedings);
+        } catch (EntityDoesNotExistException | PatientNotInPatientsException e) {
             throw e;             
         } catch (Exception e) {
             throw new EJBException(e.getMessage());

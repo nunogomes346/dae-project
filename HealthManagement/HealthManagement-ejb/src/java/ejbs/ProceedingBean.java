@@ -26,7 +26,7 @@ import javax.ws.rs.core.MediaType;
 
 @Stateless
 @Path("/proceedings")
-public class ProceedingsBean {
+public class ProceedingBean {
     @PersistenceContext
     EntityManager em;
     

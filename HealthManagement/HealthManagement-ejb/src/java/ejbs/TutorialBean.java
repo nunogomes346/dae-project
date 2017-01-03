@@ -96,10 +96,6 @@ public class TutorialBean {
                 need.removeMaterial(tutorial);
             }
             
-            for (Proceeding proceeding : tutorial.getProceedings()) {
-                proceeding.setMaterial(null);
-            }
-            
             em.remove(tutorial);
         } catch (EntityDoesNotExistException e) {
             throw e;

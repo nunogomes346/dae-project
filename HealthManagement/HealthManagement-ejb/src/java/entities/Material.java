@@ -14,6 +14,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "MATERIALS")
@@ -26,6 +27,7 @@ public class Material implements Serializable {
     @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "material")
     protected MaterialGroup group;
     
+    @NotNull
     private String description;
     
     @ManyToMany(mappedBy = "materials")

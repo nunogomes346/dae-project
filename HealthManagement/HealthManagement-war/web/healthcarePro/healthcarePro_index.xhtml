@@ -50,19 +50,19 @@
                     </p:outputPanel>
                 </f:facet>
                 
-                <p:column filterBy="#{caregiver.username}" headerText="Username" filterMatchMode="contains">
+                <p:column filterBy="#{caregiver.username}" headerText="Username" filterMatchMode="contains"  style="width: 15%">
                     <h:outputText value="#{caregiver.username}" />
                 </p:column>
                 
-                <p:column filterBy="#{caregiver.name}" headerText="Name" filterMatchMode="contains">
+                <p:column filterBy="#{caregiver.name}" headerText="Name" filterMatchMode="contains"  style="width: 15%">
                     <h:outputText value="#{caregiver.name}" />
                 </p:column>
                 
-                <p:column filterBy="#{caregiver.mail}" headerText="Mail" filterMatchMode="contains">
+                <p:column filterBy="#{caregiver.mail}" headerText="Mail" filterMatchMode="contains"  style="width: 20%">
                     <h:outputText value="#{caregiver.mail}" />
                 </p:column>
                 
-                <p:column headerText="Actions" style="width: 600px">
+                <p:column headerText="Actions" style="width: 50%">
                     <p:panelGrid columns="6" styleClass="noBorders">
                         <p:commandButton value="Details" id="details" action="healthcarePro_caregiver_details?faces-redirect=true"
                                          oncomplete="PF('caregiversTable').clearFilters()">

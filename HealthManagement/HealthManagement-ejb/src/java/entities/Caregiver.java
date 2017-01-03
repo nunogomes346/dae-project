@@ -4,6 +4,7 @@ import entities.UserGroup.GROUP;
 import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
@@ -22,7 +23,7 @@ public class Caregiver extends User implements Serializable {
     @OneToMany(mappedBy = "caregiver")
     private List<Patient> patients;
 
-    @OneToMany(mappedBy = "caregiver")
+    @OneToMany(mappedBy = "caregiver", cascade = CascadeType.REMOVE)
     private List<Proceeding> proceedings;
    
     @ManyToMany

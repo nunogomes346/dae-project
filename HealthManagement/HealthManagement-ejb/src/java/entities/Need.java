@@ -3,6 +3,7 @@ package entities;
 import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -41,7 +42,7 @@ public class Need implements Serializable {
             inverseJoinColumns = @JoinColumn(name = "MATERIAL_ID", referencedColumnName = "ID"))
     private List<Material> materials;
     
-    @OneToMany(mappedBy = "need")
+    @OneToMany(mappedBy = "need", cascade = CascadeType.REMOVE)
     private List<Proceeding> proceedings;
 
     public Need(){
