@@ -2,9 +2,9 @@ package ejbs;
 
 import dtos.FaqDTO;
 import entities.Caregiver;
+import entities.Counter;
 import entities.FAQ;
 import entities.Need;
-import entities.Proceeding;
 import exceptions.EntityDoesNotExistException;
 import exceptions.MyConstraintViolationException;
 import exceptions.Utils;
@@ -43,6 +43,14 @@ public class FaqBean {
                 throw new EntityDoesNotExistException("There is no FAQ with that id.");
             }
 
+            List<Counter> allCounters = (List<Counter>) em.createNamedQuery("getAllCountersResource")
+                    .setParameter("resource", faq.getDescription())
+                    .getResultList();
+            for (Counter counter : allCounters) {
+                counter.setResource(description);
+                em.merge(counter);                
+            }
+            
             faq.setDescription(description);
             faq.setQuestion(question);
             faq.setAnswer(answer);
@@ -95,6 +103,13 @@ public class FaqBean {
             
             for (Need need : faq.getNeeds()) {
                 need.removeMaterial(faq);
+            }
+            
+            List<Counter> allCounters = (List<Counter>) em.createNamedQuery("getAllCountersResource")
+                    .setParameter("resource", faq.getDescription())
+                    .getResultList();
+            for (Counter counter : allCounters) {
+                em.remove(counter);
             }
             
             em.remove(faq);

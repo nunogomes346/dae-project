@@ -17,6 +17,9 @@ import ejbs.FaqBean;
 import ejbs.TutorialBean;
 import ejbs.TextBean;
 import ejbs.VideoBean;
+import exceptions.EntityAlreadyExistsException;
+import exceptions.EntityDoesNotExistException;
+import exceptions.MyConstraintViolationException;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
@@ -47,7 +50,6 @@ public class AdministratorManager implements Serializable {
     @EJB
     private CaregiverBean caregiverBean;
 
-    /* MATERIALS */
     @EJB
     private EmergencyContactBean emergencyContactBean;
     @EJB
@@ -112,8 +114,10 @@ public class AdministratorManager implements Serializable {
             newAdministrator.reset();
             
             return "admin_index?faces-redirect=true";
+        } catch (EntityAlreadyExistsException | MyConstraintViolationException e) {
+            FacesExceptionHandler.handleException(e, e.getMessage(), component, LOGGER);
         } catch (Exception e) {
-            LOGGER.warning("Error: problem in method createAdministrator");
+            FacesExceptionHandler.handleException(e, "Unexpected error! Try again latter!", component, LOGGER);
         }
 
         return "admin_administrator_create?faces-redirect=true";
@@ -123,7 +127,7 @@ public class AdministratorManager implements Serializable {
         try {
             return administratorBean.getAll();
         } catch (Exception e) {
-            LOGGER.warning("Error: problem in method getAllAdministrators");
+            FacesExceptionHandler.handleException(e, "Unexpected error! Try again latter!", component, LOGGER);
         }
 
         return null;
@@ -140,8 +144,10 @@ public class AdministratorManager implements Serializable {
             setFilteredAdmins(null);
             
             return "admin_index?faces-redirect=true";
+        } catch (EntityDoesNotExistException | MyConstraintViolationException e) {
+            FacesExceptionHandler.handleException(e, e.getMessage(), component, LOGGER);
         } catch (Exception e) {
-            LOGGER.warning("Error: problem in method updateAdministrator");
+            FacesExceptionHandler.handleException(e, "Unexpected error! Try again latter!", component, LOGGER);
         }
 
         return "admin_administrator_update?faces-redirect=true";
@@ -153,8 +159,10 @@ public class AdministratorManager implements Serializable {
             String id = param.getValue().toString();
 
             administratorBean.remove(id);
+        } catch (EntityDoesNotExistException e) {
+            FacesExceptionHandler.handleException(e, e.getMessage(), component, LOGGER);
         } catch (Exception e) {
-            LOGGER.warning("Error: problem in method removeAdministrator");
+            FacesExceptionHandler.handleException(e, "Unexpected error! Try again latter!", component, LOGGER);
         }
     }
 
@@ -176,8 +184,10 @@ public class AdministratorManager implements Serializable {
             newHealthcarePro.reset();
 
             return "admin_index?faces-redirect=true";
+        } catch (EntityAlreadyExistsException | MyConstraintViolationException e) {
+            FacesExceptionHandler.handleException(e, e.getMessage(), component, LOGGER);
         } catch (Exception e) {
-            LOGGER.warning("Error: problem in method createHealthcarePro");
+            FacesExceptionHandler.handleException(e, "Unexpected error! Try again latter!", component, LOGGER);
         }
 
         return "admin_healthcarepro_create?faces-redirect=true";
@@ -185,10 +195,9 @@ public class AdministratorManager implements Serializable {
 
     public List<HealthcareProDTO> getAllHealthcarePros() {
         try {
-
             return healthcareProBean.getAll();
         } catch (Exception e) {
-            LOGGER.warning("Error: problem in method getAllHealthcarePros");
+            FacesExceptionHandler.handleException(e, "Unexpected error! Try again latter!", component, LOGGER);
         }
 
         return null;
@@ -207,8 +216,10 @@ public class AdministratorManager implements Serializable {
             setFilteredHealthcarePros(null);
 
             return "admin_index?faces-redirect=true";
+        } catch (EntityDoesNotExistException | MyConstraintViolationException e) {
+            FacesExceptionHandler.handleException(e, e.getMessage(), component, LOGGER);
         } catch (Exception e) {
-            LOGGER.warning("Error: problem in method updateHealthcarePro");
+            FacesExceptionHandler.handleException(e, "Unexpected error! Try again latter!", component, LOGGER);
         }
 
         return "admin_healthcarepro_update?faces-redirect=true";
@@ -220,8 +231,10 @@ public class AdministratorManager implements Serializable {
             String id = param.getValue().toString();
 
             healthcareProBean.remove(id);
+        } catch (EntityDoesNotExistException e) {
+            FacesExceptionHandler.handleException(e, e.getMessage(), component, LOGGER);
         } catch (Exception e) {
-            LOGGER.warning("Error: problem in method removeHealthcarePro");
+            FacesExceptionHandler.handleException(e, "Unexpected error! Try again latter!", component, LOGGER);
         }
     } 
     
@@ -241,8 +254,10 @@ public class AdministratorManager implements Serializable {
             newCaregiver.reset();
 
             return "admin_index?faces-redirect=true";
+        } catch (EntityAlreadyExistsException | MyConstraintViolationException e) {
+            FacesExceptionHandler.handleException(e, e.getMessage(), component, LOGGER);
         } catch (Exception e) {
-            LOGGER.warning("Error: problem in method createCaregiver");
+            FacesExceptionHandler.handleException(e, "Unexpected error! Try again latter!", component, LOGGER);
         }
 
         return "admin_caregiver_create?faces-redirect=true";
@@ -252,7 +267,7 @@ public class AdministratorManager implements Serializable {
         try {
             return caregiverBean.getAll();
         } catch (Exception e) {
-            LOGGER.warning("Error: problem in method getAllCaregivers");
+            FacesExceptionHandler.handleException(e, "Unexpected error! Try again latter!", component, LOGGER);
         }
 
         return null;
@@ -269,8 +284,10 @@ public class AdministratorManager implements Serializable {
             setFilteredCaregivers(null);
 
             return "admin_index?faces-redirect=true";
+        } catch (EntityDoesNotExistException | MyConstraintViolationException e) {
+            FacesExceptionHandler.handleException(e, e.getMessage(), component, LOGGER);
         } catch (Exception e) {
-            LOGGER.warning("Error: problem in method updateCaregiver");
+            FacesExceptionHandler.handleException(e, "Unexpected error! Try again latter!", component, LOGGER);
         }
 
         return "admin_caregiver_update?faces-redirect=true";
@@ -282,8 +299,10 @@ public class AdministratorManager implements Serializable {
             String id = param.getValue().toString();
 
             caregiverBean.remove(id);
+        } catch (EntityDoesNotExistException e) {
+            FacesExceptionHandler.handleException(e, e.getMessage(), component, LOGGER);
         } catch (Exception e) {
-            LOGGER.warning("Error: problem in method removeCaregiver");
+            FacesExceptionHandler.handleException(e, "Unexpected error! Try again latter!", component, LOGGER);
         }
     }
     
@@ -306,7 +325,7 @@ public class AdministratorManager implements Serializable {
             
             return materials;
         } catch (Exception e) {
-            LOGGER.warning("Error: problem in method getAllMaterials");
+            FacesExceptionHandler.handleException(e, "Unexpected error! Try again latter!", component, LOGGER);
         }
 
         return null;
@@ -391,8 +410,10 @@ public class AdministratorManager implements Serializable {
             newEmergencyContact.reset();
 
             return "admin_index?faces-redirect=true";
+        } catch (MyConstraintViolationException e) {
+            FacesExceptionHandler.handleException(e, e.getMessage(), component, LOGGER);
         } catch (Exception e) {
-            LOGGER.warning("Error: problem in method createEmergencyContact");
+            FacesExceptionHandler.handleException(e, "Unexpected error! Try again latter!", component, LOGGER);
         }
 
         return "admin_emergencyContact_create?faces-redirect=true";
@@ -402,7 +423,7 @@ public class AdministratorManager implements Serializable {
         try {
             return emergencyContactBean.getAll();
         } catch (Exception e) {
-            LOGGER.warning("Error: problem in method getAllEmergencyContacts");
+            FacesExceptionHandler.handleException(e, "Unexpected error! Try again latter!", component, LOGGER);
         }
 
         return null;
@@ -421,8 +442,10 @@ public class AdministratorManager implements Serializable {
             setFilteredMaterials(null);
 
             return "admin_index?faces-redirect=true";
+        } catch (EntityDoesNotExistException | MyConstraintViolationException e) {
+            FacesExceptionHandler.handleException(e, e.getMessage(), component, LOGGER);
         } catch (Exception e) {
-            LOGGER.warning("Error: problem in method updateEmergencyContact");
+            FacesExceptionHandler.handleException(e, "Unexpected error! Try again latter!", component, LOGGER);
         }
 
         return "admin_emergencyContact_update?faces-redirect=true";
@@ -431,8 +454,10 @@ public class AdministratorManager implements Serializable {
     public void removeEmergencyContact(int emergencyContactId) {
         try {
             emergencyContactBean.remove(emergencyContactId);
+        } catch (EntityDoesNotExistException e) {
+            FacesExceptionHandler.handleException(e, e.getMessage(), component, LOGGER);
         } catch (Exception e) {
-            LOGGER.warning("Error: problem in method removeEmergencyContact");
+            FacesExceptionHandler.handleException(e, "Unexpected error! Try again latter!", component, LOGGER);
         }
     }
 
@@ -452,8 +477,10 @@ public class AdministratorManager implements Serializable {
             newFaq.reset();
 
             return "admin_index?faces-redirect=true";
+        } catch (MyConstraintViolationException e) {
+            FacesExceptionHandler.handleException(e, e.getMessage(), component, LOGGER);
         } catch (Exception e) {
-            LOGGER.warning("Error: problem in method createFAQ");
+            FacesExceptionHandler.handleException(e, "Unexpected error! Try again latter!", component, LOGGER);
         }
 
         return "admin_faq_create?faces-redirect=true";
@@ -463,7 +490,7 @@ public class AdministratorManager implements Serializable {
         try {
             return faqBean.getAll();
         } catch (Exception e) {
-            LOGGER.warning("Error: problem in method getAllFaq");
+            FacesExceptionHandler.handleException(e, "Unexpected error! Try again latter!", component, LOGGER);
         }
 
         return null;
@@ -480,8 +507,10 @@ public class AdministratorManager implements Serializable {
             setFilteredMaterials(null);
 
             return "admin_index?faces-redirect=true";
+        } catch (EntityDoesNotExistException | MyConstraintViolationException e) {
+            FacesExceptionHandler.handleException(e, e.getMessage(), component, LOGGER);
         } catch (Exception e) {
-            LOGGER.warning("Error: problem in method updateFaq");
+            FacesExceptionHandler.handleException(e, "Unexpected error! Try again latter!", component, LOGGER);
         }
 
         return "admin_faq_update?faces-redirect=true";
@@ -490,8 +519,10 @@ public class AdministratorManager implements Serializable {
     public void removeFaq(int faqId) {
         try {
             faqBean.remove(faqId);
+        } catch (EntityDoesNotExistException e) {
+            FacesExceptionHandler.handleException(e, e.getMessage(), component, LOGGER);
         } catch (Exception e) {
-            LOGGER.warning("Error: problem in method removeFaq");
+            FacesExceptionHandler.handleException(e, "Unexpected error! Try again latter!", component, LOGGER);
         }
     }
 
@@ -500,7 +531,6 @@ public class AdministratorManager implements Serializable {
     // **************************************
     public String createTutorial() {
         try {
-
             tutorialBean.create(newTutorial.getDescription(), newTutorial.getText());
 
             setFilteredMaterials(null);
@@ -508,8 +538,10 @@ public class AdministratorManager implements Serializable {
             newTutorial.reset();
 
             return "admin_index?faces-redirect=true";
+        } catch (MyConstraintViolationException e) {
+            FacesExceptionHandler.handleException(e, e.getMessage(), component, LOGGER);
         } catch (Exception e) {
-            LOGGER.warning("Error: problem in method createTutorial");
+            FacesExceptionHandler.handleException(e, "Unexpected error! Try again latter!", component, LOGGER);
         }
 
         return "admin_tutorials_create?faces-redirect=true";
@@ -519,7 +551,7 @@ public class AdministratorManager implements Serializable {
         try {
             return tutorialBean.getAll();
         } catch (Exception e) {
-            LOGGER.warning("Error: problem in method getAllTutorials");
+            FacesExceptionHandler.handleException(e, "Unexpected error! Try again latter!", component, LOGGER);
         }
 
         return null;
@@ -527,7 +559,6 @@ public class AdministratorManager implements Serializable {
 
     public String updateTutorial() {
         try {
-
             tutorialBean.update(
                     currentTutorial.getId(),
                     currentTutorial.getDescription(),
@@ -537,8 +568,10 @@ public class AdministratorManager implements Serializable {
             setFilteredMaterials(null);
 
             return "admin_index?faces-redirect=true";
+        } catch (EntityDoesNotExistException | MyConstraintViolationException e) {
+            FacesExceptionHandler.handleException(e, e.getMessage(), component, LOGGER);
         } catch (Exception e) {
-            LOGGER.warning("Error: problem in method updateTutorial");
+            FacesExceptionHandler.handleException(e, "Unexpected error! Try again latter!", component, LOGGER);
         }
 
         return "admin_tutorial_update?faces-redirect=true";
@@ -547,8 +580,10 @@ public class AdministratorManager implements Serializable {
     public void removeTutorial(int tutorialId) {
         try {
             tutorialBean.remove(tutorialId);
+        } catch (EntityDoesNotExistException e) {
+            FacesExceptionHandler.handleException(e, e.getMessage(), component, LOGGER);
         } catch (Exception e) {
-            LOGGER.warning("Error: problem in method removeTutorial");
+            FacesExceptionHandler.handleException(e, "Unexpected error! Try again latter!", component, LOGGER);
         }
     }
     
@@ -557,7 +592,6 @@ public class AdministratorManager implements Serializable {
     // **********************************
     public String createText() {
         try {
-            
             textBean.create(
                     newText.getDescription(),
                     newText.getText()
@@ -568,8 +602,10 @@ public class AdministratorManager implements Serializable {
             newText.reset();
 
             return "admin_index?faces-redirect=true";
+        } catch (MyConstraintViolationException e) {
+            FacesExceptionHandler.handleException(e, e.getMessage(), component, LOGGER);
         } catch (Exception e) {
-            LOGGER.warning("Error: problem in method createText");
+            FacesExceptionHandler.handleException(e, "Unexpected error! Try again latter!", component, LOGGER);
         }
 
         return "admin_text_create?faces-redirect=true";
@@ -579,7 +615,7 @@ public class AdministratorManager implements Serializable {
         try {
             return textBean.getAll();
         } catch (Exception e) {
-            LOGGER.warning("Error: problem in method getAllTexts");
+            FacesExceptionHandler.handleException(e, "Unexpected error! Try again latter!", component, LOGGER);
         }
 
         return null;
@@ -596,8 +632,10 @@ public class AdministratorManager implements Serializable {
             setFilteredMaterials(null);
             
             return "admin_index?faces-redirect=true";
+        } catch (EntityDoesNotExistException | MyConstraintViolationException e) {
+            FacesExceptionHandler.handleException(e, e.getMessage(), component, LOGGER);
         } catch (Exception e) {
-            LOGGER.warning("Error: problem in method updateText");
+            FacesExceptionHandler.handleException(e, "Unexpected error! Try again latter!", component, LOGGER);
         }
 
         return "admin_text_update?faces-redirect=true";
@@ -606,8 +644,10 @@ public class AdministratorManager implements Serializable {
     public void removeText(int textId) {
         try {
             textBean.remove(textId);
+        } catch (EntityDoesNotExistException e) {
+            FacesExceptionHandler.handleException(e, e.getMessage(), component, LOGGER);
         } catch (Exception e) {
-            LOGGER.warning("Error: problem in method removeText");
+            FacesExceptionHandler.handleException(e, "Unexpected error! Try again latter!", component, LOGGER);
         }
     }
 
@@ -616,7 +656,6 @@ public class AdministratorManager implements Serializable {
     // ***********************************
     public String createVideo() {
         try {
-     
             videoBean.create(
                     newVideo.getDescription(),
                     newVideo.getUrl()
@@ -627,8 +666,10 @@ public class AdministratorManager implements Serializable {
             newVideo.reset();
 
             return "admin_index?faces-redirect=true";
+        } catch (MyConstraintViolationException e) {
+            FacesExceptionHandler.handleException(e, e.getMessage(), component, LOGGER);
         } catch (Exception e) {
-            LOGGER.warning("Error: problem in method createVideo");
+            FacesExceptionHandler.handleException(e, "Unexpected error! Try again latter!", component, LOGGER);
         }
 
         return "admin_video_create?faces-redirect=true";
@@ -638,7 +679,7 @@ public class AdministratorManager implements Serializable {
         try {
             return videoBean.getAll();
         } catch (Exception e) {
-            LOGGER.warning("Error: problem in method getAllVideos");
+            FacesExceptionHandler.handleException(e, "Unexpected error! Try again latter!", component, LOGGER);
         }
 
         return null;
@@ -655,8 +696,10 @@ public class AdministratorManager implements Serializable {
             setFilteredMaterials(null);
 
             return "admin_index?faces-redirect=true";
+        } catch (EntityDoesNotExistException | MyConstraintViolationException e) {
+            FacesExceptionHandler.handleException(e, e.getMessage(), component, LOGGER);
         } catch (Exception e) {
-            LOGGER.warning("Error: problem in method updateVideo");
+            FacesExceptionHandler.handleException(e, "Unexpected error! Try again latter!", component, LOGGER);
         }
 
         return "admin_video_update?faces-redirect=true";
@@ -665,8 +708,10 @@ public class AdministratorManager implements Serializable {
     public void removeVideo(int videoId) {
         try {
             videoBean.remove(videoId);
+        } catch (EntityDoesNotExistException e) {
+            FacesExceptionHandler.handleException(e, e.getMessage(), component, LOGGER);
         } catch (Exception e) {
-            LOGGER.warning("Error: problem in method removeVideo");
+            FacesExceptionHandler.handleException(e, "Unexpected error! Try again latter!", component, LOGGER);
         }
     }
     

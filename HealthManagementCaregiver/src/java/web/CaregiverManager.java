@@ -91,7 +91,6 @@ public class CaregiverManager implements Serializable {
     }
     
     public List<NeedDTO> getCaregiverPatientsNeedsREST() {
-        
         List<NeedDTO> returnedNeeds = null;
         try {
             returnedNeeds = client.target(baseUri)

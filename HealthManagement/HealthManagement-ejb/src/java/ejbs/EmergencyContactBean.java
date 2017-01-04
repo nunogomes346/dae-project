@@ -2,9 +2,9 @@ package ejbs;
 
 import dtos.EmergencyContactDTO;
 import entities.Caregiver;
+import entities.Counter;
 import entities.EmergencyContact;
 import entities.Need;
-import entities.Proceeding;
 import exceptions.EntityDoesNotExistException;
 import exceptions.MyConstraintViolationException;
 import exceptions.Utils;
@@ -41,6 +41,14 @@ public class EmergencyContactBean {
             EmergencyContact emergencyContact = em.find(EmergencyContact.class, id);
             if (emergencyContact == null) {
                 throw new EntityDoesNotExistException("There is no Emergency Contact with that id.");
+            }
+            
+            List<Counter> allCounters = (List<Counter>) em.createNamedQuery("getAllCountersResource")
+                    .setParameter("resource", emergencyContact.getDescription())
+                    .getResultList();
+            for (Counter counter : allCounters) {
+                counter.setResource(description);
+                em.merge(counter);                
             }
             
             emergencyContact.setDescription(description);
@@ -95,6 +103,13 @@ public class EmergencyContactBean {
             
             for (Need need : emergencyContact.getNeeds()) {
                 need.removeMaterial(emergencyContact);
+            }
+            
+            List<Counter> allCounters = (List<Counter>) em.createNamedQuery("getAllCountersResource")
+                    .setParameter("resource", emergencyContact.getDescription())
+                    .getResultList();
+            for (Counter counter : allCounters) {
+                em.remove(counter);
             }
             
             em.remove(emergencyContact);

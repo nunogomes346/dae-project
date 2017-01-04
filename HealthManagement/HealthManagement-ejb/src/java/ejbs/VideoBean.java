@@ -2,6 +2,7 @@ package ejbs;
 
 import dtos.VideoDTO;
 import entities.Caregiver;
+import entities.Counter;
 import entities.Need;
 import entities.Video;
 import exceptions.EntityDoesNotExistException;
@@ -40,6 +41,14 @@ public class VideoBean {
             Video video = em.find(Video.class, id);
             if (video == null) {
                 throw new EntityDoesNotExistException("There is no Video with that id.");
+            }
+            
+            List<Counter> allCounters = (List<Counter>) em.createNamedQuery("getAllCountersResource")
+                    .setParameter("resource", video.getDescription())
+                    .getResultList();
+            for (Counter counter : allCounters) {
+                counter.setResource(description);
+                em.merge(counter);                
             }
 
             video.setDescription(description);
@@ -93,6 +102,13 @@ public class VideoBean {
             
             for (Need need : video.getNeeds()) {
                 need.removeMaterial(video);
+            }
+            
+            List<Counter> allCounters = (List<Counter>) em.createNamedQuery("getAllCountersResource")
+                    .setParameter("resource", video.getDescription())
+                    .getResultList();
+            for (Counter counter : allCounters) {
+                em.remove(counter);
             }
             
             em.remove(video);

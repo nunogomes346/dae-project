@@ -105,6 +105,42 @@ public class NeedBean {
         }
     }
     
+    public List<NeedDTO> getPatientNeeds(Long patientId) throws EntityDoesNotExistException{
+        try {
+            Patient patient = em.find(Patient.class, patientId);
+            if (patient == null) {
+                throw new EntityDoesNotExistException("There is no patient with that code.");
+            }           
+            
+            List<Need> needs = (List<Need>) patient.getNeeds();
+            
+            return needsToDTOs(needs);
+        } catch (EntityDoesNotExistException e) {
+            throw e;             
+        } catch (Exception e) {
+            throw new EJBException(e.getMessage());
+        }
+    }
+    
+    public List<NeedDTO> getPatientNotNeeds(Long patientId) throws EntityDoesNotExistException{
+        try {
+            Patient patient = em.find(Patient.class, patientId);
+            if (patient == null) {
+                throw new EntityDoesNotExistException("There is no patient with that code.");
+            }           
+            
+            List<Need> allNeeds = (List<Need>) em.createNamedQuery("getAllNeeds").getResultList();
+            List<Need> needs = (List<Need>) patient.getNeeds();
+            allNeeds.removeAll(needs);
+            
+            return needsToDTOs(allNeeds);
+        } catch (EntityDoesNotExistException e) {
+            throw e;             
+        } catch (Exception e) {
+            throw new EJBException(e.getMessage());
+        }
+    }
+    
     public void associateNeedToPatient(Long needId, Long patientId) 
             throws EntityDoesNotExistException, NeedAssociatedToPatientException {
         try {

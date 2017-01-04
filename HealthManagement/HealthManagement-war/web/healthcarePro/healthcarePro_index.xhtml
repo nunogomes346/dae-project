@@ -101,6 +101,127 @@
         
         <br />
         
+        <h2>View All Patients</h2>
+        <h:form>
+            <p:dataTable
+                id="patientsTable"
+                var="patient"
+                summary="Table of patients"
+                value="#{healthcareProManager.allPatients}"
+                widgetVar="patientsTable"
+                emptyMessage="No patients found with given criteria" 
+                filteredValue="#{healthcareProManager.filteredPatients}"
+                rows="10"
+                paginator="true"
+                paginatorPosition="bottom"
+                paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                rowsPerPageTemplate="5,10,15"
+                style="margin-bottom:40px">
+                
+                <f:facet name="header">
+                    <p:commandLink value="Create Patient"
+                                   action="healthcarePro_patient_create?faces-redirect=true" style="float: left;"
+                                   oncomplete="PF('patientsTable').clearFilters()"/>
+                        
+                    <p:outputPanel style="text-align:right;">
+                        <h:outputText value="Search all fields:" />
+                        <p:inputText id="globalFilter" onkeyup="PF('patientsTable').filter()" style="width:150px" placeholder="Enter keyword"/>
+                    </p:outputPanel>
+                </f:facet>
+                
+                <p:column filterBy="#{patient.name}" headerText="Name" filterMatchMode="contains"  style="width: 30%">
+                    <h:outputText value="#{patient.name}" />
+                </p:column>
+                
+                <p:column filterBy="#{patient.mail}" headerText="Mail" filterMatchMode="contains"  style="width: 30%">
+                    <h:outputText value="#{patient.mail}" />
+                </p:column>
+                
+                <p:column headerText="Actions" style="width: 40%">
+                    <p:panelGrid columns="4" styleClass="noBorders">
+                        <p:commandButton value="Details" id="details" action="healthcarePro_patient_details?faces-redirect=true"
+                                         oncomplete="PF('patientsTable').clearFilters()">
+                            <f:setPropertyActionListener target="#{healthcareProManager.currentPatient}" value="#{patient}" />
+                        </p:commandButton>
+                        
+                        <p:commandButton value="Update" id="update" action="healthcarePro_patient_update?faces-redirect=true"
+                                         oncomplete="PF('patientsTable').clearFilters()">
+                            <f:setPropertyActionListener target="#{healthcareProManager.currentPatient}" value="#{patient}" />
+                        </p:commandButton>
+                        
+                        <p:commandButton value="Needs" id="manageNeeds" action="healthcarePro_patient_manage_needs?faces-redirect=true"
+                                         oncomplete="PF('patientsTable').clearFilters()">
+                            <f:setPropertyActionListener target="#{healthcareProManager.currentPatient}" value="#{patient}" />
+                        </p:commandButton>
+                        
+                        <p:commandButton value="Remove" id="remove"
+                                         actionListener="#{healthcareProManager.removePatient}"
+                                         update="patientsTable" oncomplete="PF('patientsTable').clearFilters()">
+                            <f:param name="deletePatientId" id="deletePatientId" value="#{patient.id}" />
+                        </p:commandButton>
+                    </p:panelGrid>
+                </p:column>
+            </p:dataTable>
+        </h:form>
+        
+        <br />
+        
+        <h2>View All Needs</h2>
+        <h:form>
+            <p:dataTable
+                id="needsTable"
+                var="need"
+                summary="Table of needs"
+                value="#{healthcareProManager.allNeeds}"
+                widgetVar="needsTable"
+                emptyMessage="No needs found"
+                filteredValue="#{healthcareProManager.filteredNeeds}"
+                rows="10"
+                paginator="true"
+                paginatorPosition="bottom"
+                paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                rowsPerPageTemplate="5,10,15"
+                style="margin-bottom:40px">
+                
+                <f:facet name="header">
+                    <p:commandLink value="Create Need"
+                                   action="healthcarePro_need_create?faces-redirect=true" style="float: left;"
+                                   oncomplete="PF('needsTable').clearFilters()"/>
+                    
+                    <p:outputPanel style="text-align:right;">
+                        <h:outputText value="Search all fields:" />
+                        <p:inputText id="globalFilter" onkeyup="PF('needsTable').filter()" style="width:150px" placeholder="Enter keyword"/>
+                    </p:outputPanel>
+                </f:facet>
+                
+                <p:column filterBy="#{need.description}" headerText="Description" filterMatchMode="contains">
+                    <h:outputText value="#{need.description}" />
+                </p:column>
+                
+                <p:column headerText="Actions" style="width: 30%">
+                    <p:panelGrid columns="3" styleClass="noBorders">
+                        <p:commandButton value="Details" id="details" action="healthcarePro_need_details?faces-redirect=true"
+                                         oncomplete="PF('needsTable').clearFilters()">
+                            <f:setPropertyActionListener target="#{healthcareProManager.currentNeed}" value="#{need}" />
+                        </p:commandButton>
+                        
+                        <p:commandButton value="Update" id="update" action="healthcarePro_need_update?faces-redirect=true"
+                                         oncomplete="PF('needsTable').clearFilters()">
+                            <f:setPropertyActionListener target="#{healthcareProManager.currentNeed}" value="#{need}" />
+                        </p:commandButton>
+                        
+                        <p:commandButton value="Remove" id="remove"
+                                         actionListener="#{healthcareProManager.removeNeed}"
+                                         update="needsTable" oncomplete="PF('needsTable').clearFilters()">
+                            <f:param name="deleteNeedId" id="deleteNeedId" value="#{need.id}" />
+                        </p:commandButton>
+                    </p:panelGrid>
+                </p:column>
+            </p:dataTable>
+        </h:form>
+        
+        <br />
+        
         <h2>View All Materials</h2>
         <h:form>
             <p:dataTable

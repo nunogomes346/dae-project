@@ -14,10 +14,13 @@ import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 
 @Entity
-@Table(name = "MATERIALS")
+@Table(name = "MATERIALS", 
+    uniqueConstraints = 
+        @UniqueConstraint(columnNames = {"DESCRIPTION"}))
 public class Material implements Serializable {
 
     @Id

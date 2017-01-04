@@ -2,8 +2,8 @@ package ejbs;
 
 import dtos.TextDTO;
 import entities.Caregiver;
+import entities.Counter;
 import entities.Need;
-import entities.Proceeding;
 import entities.Text;
 import exceptions.EntityDoesNotExistException;
 import exceptions.MyConstraintViolationException;
@@ -43,6 +43,14 @@ public class TextBean {
                 throw new EntityDoesNotExistException("There is no Text with that id.");
             }
 
+            List<Counter> allCounters = (List<Counter>) em.createNamedQuery("getAllCountersResource")
+                    .setParameter("resource", text.getDescription())
+                    .getResultList();
+            for (Counter counter : allCounters) {
+                counter.setResource(description);
+                em.merge(counter);                
+            }
+            
             text.setDescription(description);
             text.setText(textContent);
 
@@ -94,6 +102,13 @@ public class TextBean {
             
             for (Need need : text.getNeeds()) {
                 need.removeMaterial(text);
+            }
+            
+            List<Counter> allCounters = (List<Counter>) em.createNamedQuery("getAllCountersResource")
+                    .setParameter("resource", text.getDescription())
+                    .getResultList();
+            for (Counter counter : allCounters) {
+                em.remove(counter);
             }
             
             em.remove(text);

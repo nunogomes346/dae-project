@@ -14,7 +14,13 @@ import javax.validation.constraints.NotNull;
 @Entity
 @NamedQueries({
     @NamedQuery(name = "getAllCounters",
-            query = "SELECT c FROM Counter c ORDER BY c.id")
+            query = "SELECT c FROM Counter c ORDER BY c.id"),
+    @NamedQuery(name = "getAllCountersCaregiver",
+            query = "SELECT c FROM Counter c WHERE c.caregiver.username = :caregiverUsername ORDER BY c.id"),
+    @NamedQuery(name = "getAllCountersResource",
+            query = "SELECT c FROM Counter c WHERE c.resource = :resource ORDER BY c.id"),
+    @NamedQuery(name = "getAllCountersCaregiverResource",
+            query = "SELECT c FROM Counter c WHERE c.caregiver.username = :caregiverUsername AND c.resource = :resource ORDER BY c.id")
 })
 public class Counter implements Serializable {
 
@@ -67,6 +73,10 @@ public class Counter implements Serializable {
     
     public void incrementCounter() {
         this.counter++;
+    }
+    
+    public void decrementCounter() {
+        this.counter--;
     }
 
     public Caregiver getCaregiver() {

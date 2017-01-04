@@ -1,5 +1,6 @@
 package ejbs;
 
+import dtos.NeedDTO;
 import dtos.PatientDTO;
 import entities.Caregiver;
 import entities.Need;
@@ -89,7 +90,9 @@ public class PatientBean {
                 throw new EntityDoesNotExistException("There is no patient with that id.");
             }
             
-            patient.getCaregiver().removePatient(patient);
+            if (patient.getCaregiver() != null) {
+                patient.getCaregiver().removePatient(patient);
+            }
             
             for (Need need : patient.getNeeds()) {
                 need.removePatient(patient);

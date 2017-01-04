@@ -86,6 +86,8 @@ public class CaregiverBean {
             Counter counter = new Counter("login", 0, caregiver);
 
             em.persist(counter);
+            
+            caregiver.addCounter(counter);
         } catch (EntityAlreadyExistsException e) {
             throw e;
         } catch (ConstraintViolationException e) {
@@ -173,19 +175,17 @@ public class CaregiverBean {
                 throw new EntityDoesNotExistException("There is no caregiver with that username.");
             }
             
-            List<Counter> allCounters = (List<Counter>) em.createNamedQuery("getAllCounters").getResultList();
-            for (Counter counter : allCounters) {
-                if (counter.getCaregiver() == caregiver && counter.getResource().compareTo("login") == 0) {
-                    return counter.getCounter();
-                }
-            }
+            List<Counter> counters = (List<Counter>) em.createNamedQuery("getAllCountersCaregiverResource")
+                    .setParameter("caregiverUsername", caregiver.getUsername())
+                    .setParameter("resource", "login")
+                    .getResultList();
+                    
+            return counters.get(0).getCounter();
         } catch (EntityDoesNotExistException e) {
             throw e;
         } catch (Exception e) {
             throw new EJBException(e.getMessage());
         }
-        
-        return 0;
     }
     
     public List<CounterDTO> getCaregiverProceedingsPerformedCounter(String username) 
@@ -196,10 +196,12 @@ public class CaregiverBean {
                 throw new EntityDoesNotExistException("There is no caregiver with that username.");
             }
             
-            List<Counter> allCounters = (List<Counter>) em.createNamedQuery("getAllCounters").getResultList();
+            List<Counter> allCounters = (List<Counter>) em.createNamedQuery("getAllCountersCaregiver")
+                    .setParameter("caregiverUsername", caregiver.getUsername())
+                    .getResultList();
             List<Counter> countersProceedingsPerformed = new LinkedList<Counter>();
             for (Counter counter : allCounters) {
-                if (counter.getCaregiver() == caregiver && counter.getResource().compareTo("login") != 0) {
+                if (counter.getResource().compareTo("login") != 0) {
                     countersProceedingsPerformed.add(counter);
                 }
             }
@@ -420,6 +422,8 @@ public class CaregiverBean {
                 Counter counter = new Counter(material.getDescription(), 0, caregiver);
 
                 em.persist(counter);
+                
+                caregiver.addCounter(counter);
             }
             
             for (Material needMaterial : need.getMaterials()) {
@@ -474,16 +478,12 @@ public class CaregiverBean {
                 }
             }
             
-            List<Counter> allCounters = (List<Counter>) em.createNamedQuery("getAllCounters").getResultList();
-            Counter counterToRemove = null;
-            for (Counter counter : allCounters) {
-                if (counter.getCaregiver() == caregiver && counter.getResource().compareTo(material.getDescription()) == 0) {
-                    counterToRemove = counter;
-                    break;
-                }
-            }
+            List<Counter> counters = (List<Counter>) em.createNamedQuery("getAllCountersCaregiverResource")
+                    .setParameter("caregiverUsername", caregiver.getUsername())
+                    .setParameter("resource", material.getDescription())
+                    .getResultList();
 
-            em.remove(counterToRemove);
+            em.remove(counters.get(0));
         } catch (EntityDoesNotExistException | MaterialNotAssociatedToCaregiverException e) {
             throw e;
         } catch (ConstraintViolationException e) {
@@ -503,17 +503,14 @@ public class CaregiverBean {
                 throw new EntityDoesNotExistException("There is no caregiver with that username.");
             }            
             
-            List<Counter> allCounters = (List<Counter>) em.createNamedQuery("getAllCounters").getResultList();
-            Counter counterToIncrement = null;
-            for (Counter counter : allCounters) {
-                if (counter.getCaregiver() == caregiver && counter.getResource().compareTo("login") == 0) {
-                    counter.incrementCounter();
-                    counterToIncrement = counter;
-                    break;
-                }
-            }
+            List<Counter> counters = (List<Counter>) em.createNamedQuery("getAllCountersCaregiverResource")
+                    .setParameter("caregiverUsername", caregiver.getUsername())
+                    .setParameter("resource", "login")
+                    .getResultList();
+            
+            counters.get(0).incrementCounter();
 
-            em.merge(counterToIncrement);
+            em.merge(counters.get(0));
         } catch (EntityDoesNotExistException e) {
             throw e;             
         } catch (Exception e) {

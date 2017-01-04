@@ -2,8 +2,8 @@ package ejbs;
 
 import dtos.TutorialDTO;
 import entities.Caregiver;
+import entities.Counter;
 import entities.Need;
-import entities.Proceeding;
 import entities.Tutorial;
 import exceptions.EntityDoesNotExistException;
 import exceptions.MyConstraintViolationException;
@@ -41,6 +41,14 @@ public class TutorialBean {
             Tutorial tutorial = em.find(Tutorial.class, id);
             if (tutorial == null) {
                 throw new EntityDoesNotExistException("There is no Tutorial with that id.");
+            }
+            
+            List<Counter> allCounters = (List<Counter>) em.createNamedQuery("getAllCountersResource")
+                    .setParameter("resource", tutorial.getDescription())
+                    .getResultList();
+            for (Counter counter : allCounters) {
+                counter.setResource(description);
+                em.merge(counter);                
             }
 
             tutorial.setDescription(description);
@@ -94,6 +102,13 @@ public class TutorialBean {
             
             for (Need need : tutorial.getNeeds()) {
                 need.removeMaterial(tutorial);
+            }
+            
+            List<Counter> allCounters = (List<Counter>) em.createNamedQuery("getAllCountersResource")
+                    .setParameter("resource", tutorial.getDescription())
+                    .getResultList();
+            for (Counter counter : allCounters) {
+                em.remove(counter);
             }
             
             em.remove(tutorial);

@@ -14,11 +14,20 @@ import dtos.VideoDTO;
 import ejbs.CaregiverBean;
 import ejbs.EmergencyContactBean;
 import ejbs.FaqBean;
+import ejbs.NeedBean;
 import ejbs.PatientBean;
 import ejbs.TutorialBean;
 import ejbs.TextBean;
 import ejbs.VideoBean;
+import exceptions.CaregiverAssociatedException;
+import exceptions.CaregiverDiassociatedException;
+import exceptions.CaregiverPatientsDoesNotHaveNeedException;
+import exceptions.EntityAlreadyExistsException;
 import exceptions.EntityDoesNotExistException;
+import exceptions.MaterialNotAssociatedToCaregiverException;
+import exceptions.MyConstraintViolationException;
+import exceptions.NeedAssociatedToPatientException;
+import exceptions.NeedNotAssociatedToPatientException;
 import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
@@ -38,11 +47,12 @@ public class HealthcareProManager implements Serializable{
     
     @EJB
     private CaregiverBean caregiverBean;
-    
     @EJB
     private PatientBean patientBean;
     
-    /* MATERIALS */
+    @EJB
+    private NeedBean needBean;
+    
     @EJB
     private EmergencyContactBean emergencyContactBean;
     @EJB
@@ -54,8 +64,11 @@ public class HealthcareProManager implements Serializable{
     @EJB
     private VideoBean videoBean;
     
+    private PatientDTO newPatient;
+    private PatientDTO currentPatient;
     private CaregiverDTO newCaregiver;
     private CaregiverDTO currentCaregiver;
+    private NeedDTO newNeed;
     private NeedDTO currentNeed;
     
     private EmergencyContactDTO newEmergencyContact;
@@ -70,7 +83,9 @@ public class HealthcareProManager implements Serializable{
     private VideoDTO currentVideo;
     
     private List<CaregiverDTO> filteredCaregivers;
+    private List<PatientDTO> filteredPatients;
     private List<MaterialDTO> filteredMaterials;
+    private List<NeedDTO> filteredNeeds;
     
     private Long needId;
     private int materialId;
@@ -80,6 +95,8 @@ public class HealthcareProManager implements Serializable{
     
     public HealthcareProManager() {
         newCaregiver = new CaregiverDTO();
+        newPatient = new PatientDTO();
+        newNeed = new NeedDTO();
         newEmergencyContact = new EmergencyContactDTO();
         newFaq = new FaqDTO();
         newTutorial = new TutorialDTO();
@@ -103,8 +120,10 @@ public class HealthcareProManager implements Serializable{
             newCaregiver.reset();
 
             return "healthcarePro_index?faces-redirect=true";
+        } catch (EntityAlreadyExistsException | MyConstraintViolationException e) {
+            FacesExceptionHandler.handleException(e, e.getMessage(), component, LOGGER);
         } catch (Exception e) {
-            LOGGER.warning("Error: problem in method createCaregiver");
+            FacesExceptionHandler.handleException(e, "Unexpected error! Try again latter!", component, LOGGER);
         }
 
         return "healthcarePro_caregiver_create?faces-redirect=true";
@@ -114,7 +133,7 @@ public class HealthcareProManager implements Serializable{
         try {
             return caregiverBean.getAll();
         } catch (Exception e) {
-            LOGGER.warning("Error: problem in method getAllCaregivers");
+            FacesExceptionHandler.handleException(e, "Unexpected error! Try again latter!", component, LOGGER);
         }
 
         return null;
@@ -131,8 +150,10 @@ public class HealthcareProManager implements Serializable{
             setFilteredCaregivers(null);
 
             return "healthcarePro_index?faces-redirect=true";
+        } catch (EntityDoesNotExistException | MyConstraintViolationException e) {
+            FacesExceptionHandler.handleException(e, e.getMessage(), component, LOGGER);
         } catch (Exception e) {
-            LOGGER.warning("Error: problem in method updateCaregiver");
+            FacesExceptionHandler.handleException(e, "Unexpected error! Try again latter!", component, LOGGER);
         }
 
         return "healthcarePro_caregiver_update?faces-redirect=true";
@@ -144,18 +165,20 @@ public class HealthcareProManager implements Serializable{
             String id = param.getValue().toString();
 
             caregiverBean.remove(id);
+        } catch (EntityDoesNotExistException e) {
+            FacesExceptionHandler.handleException(e, e.getMessage(), component, LOGGER);
         } catch (Exception e) {
-            LOGGER.warning("Error: problem in method removeCaregiver");
+            FacesExceptionHandler.handleException(e, "Unexpected error! Try again latter!", component, LOGGER);
         }
     }
     
     public List<NeedDTO> getCaregiverPatientsNeeds() {
         try {
             return caregiverBean.getCaregiverPatientsNeeds(currentCaregiver.getUsername());
-        } catch (EntityDoesNotExistException e) {
-            FacesExceptionHandler.handleException(e, e.getMessage(), logger);
+        } catch (EntityDoesNotExistException | MyConstraintViolationException e) {
+            FacesExceptionHandler.handleException(e, e.getMessage(), component, LOGGER);
         } catch (Exception e) {
-            FacesExceptionHandler.handleException(e, "Unexpected error! Try again latter!", logger);
+            FacesExceptionHandler.handleException(e, "Unexpected error! Try again latter!", component, LOGGER);
         }
         return null;
     }
@@ -163,10 +186,10 @@ public class HealthcareProManager implements Serializable{
     public List<MaterialDTO> getCaregiverMaterials() {
         try {
             return caregiverBean.getCaregiverMaterials(currentCaregiver.getUsername());
-        } catch (EntityDoesNotExistException e) {
-            FacesExceptionHandler.handleException(e, e.getMessage(), logger);
+        } catch (EntityDoesNotExistException | MyConstraintViolationException e) {
+            FacesExceptionHandler.handleException(e, e.getMessage(), component, LOGGER);
         } catch (Exception e) {
-            FacesExceptionHandler.handleException(e, "Unexpected error! Try again latter!", logger);
+            FacesExceptionHandler.handleException(e, "Unexpected error! Try again latter!", component, LOGGER);
         }
         return null;
     }
@@ -174,10 +197,10 @@ public class HealthcareProManager implements Serializable{
     public List<MaterialDTO> getCaregiverPatientsNeedsMaterial() {
         try {
             return caregiverBean.getCaregiverPatientsNeedsMaterial(currentCaregiver.getUsername(), currentNeed.getId());
-        } catch (EntityDoesNotExistException e) {
-            FacesExceptionHandler.handleException(e, e.getMessage(), logger);
+        } catch (EntityDoesNotExistException | MyConstraintViolationException e) {
+            FacesExceptionHandler.handleException(e, e.getMessage(), component, LOGGER);
         } catch (Exception e) {
-            FacesExceptionHandler.handleException(e, "Unexpected error! Try again latter!", logger);
+            FacesExceptionHandler.handleException(e, "Unexpected error! Try again latter!", component, LOGGER);
         }
         return null;
     }
@@ -188,10 +211,11 @@ public class HealthcareProManager implements Serializable{
             int id = Integer.parseInt(param.getValue().toString());
             
             caregiverBean.diassociateMaterialFromCaregiver(currentCaregiver.getUsername(), id);
-        } catch (EntityDoesNotExistException e) {
-            FacesExceptionHandler.handleException(e, e.getMessage(), logger);
+        } catch (EntityDoesNotExistException | MyConstraintViolationException | 
+                MaterialNotAssociatedToCaregiverException e) {
+            FacesExceptionHandler.handleException(e, e.getMessage(), component, LOGGER);
         } catch (Exception e) {
-            FacesExceptionHandler.handleException(e, "Unexpected error! Try again latter!", logger);
+            FacesExceptionHandler.handleException(e, "Unexpected error! Try again latter!", component, LOGGER);
         }
     }
     
@@ -227,23 +251,99 @@ public class HealthcareProManager implements Serializable{
             setFilteredCaregivers(null);
 
             return "healthcarePro_index?faces-redirect=true";
+        } catch (EntityDoesNotExistException | MyConstraintViolationException e) {
+            FacesExceptionHandler.handleException(e, e.getMessage(), component, LOGGER);
         } catch (Exception e) {
-            return "healthcarePro_caregiver_update?faces-redirect=true"; 
+            FacesExceptionHandler.handleException(e, "Unexpected error! Try again latter!", component, LOGGER);
         }
+        return null;
     }   
+    
+    public void associateMaterial() {
+        try {
+            caregiverBean.associateMaterial(currentCaregiver.getUsername(), materialId, needId);
+        } catch (EntityDoesNotExistException | MyConstraintViolationException | 
+                CaregiverPatientsDoesNotHaveNeedException e) {
+            FacesExceptionHandler.handleException(e, e.getMessage(), component, LOGGER);
+        } catch (Exception e) {
+            FacesExceptionHandler.handleException(e, "Unexpected error! Try again latter!", component, LOGGER);
+        }
+    }
     
     // ***************************************
     // ************** PATIENT ****************
     // ***************************************
+    public String createPatient() {
+        try {
+            patientBean.create(
+                    newPatient.getName(),
+                    newPatient.getMail());
+
+            setFilteredPatients(null);
+            
+            newPatient.reset();
+
+            return "healthcarePro_index?faces-redirect=true";
+        } catch (MyConstraintViolationException e) {
+            FacesExceptionHandler.handleException(e, e.getMessage(), component, LOGGER);
+        } catch (Exception e) {
+            FacesExceptionHandler.handleException(e, "Unexpected error! Try again latter!", component, LOGGER);
+        }
+
+        return "healthcarePro_patient_create?faces-redirect=true";
+    }
+    
+    public List<PatientDTO> getAllPatients() {
+        try {
+            return patientBean.getAll();
+        } catch (Exception e) {
+            FacesExceptionHandler.handleException(e, "Unexpected error! Try again latter!", component, LOGGER);
+        }
+
+        return null;
+    }
+    
+    public String updatePatient() {
+        try {
+            patientBean.update(
+                    currentPatient.getId(),
+                    currentPatient.getName(), 
+                    currentPatient.getMail());
+            
+            setFilteredPatients(null);
+
+            return "healthcarePro_index?faces-redirect=true";
+        } catch (EntityDoesNotExistException | MyConstraintViolationException e) {
+            FacesExceptionHandler.handleException(e, e.getMessage(), component, LOGGER);
+        } catch (Exception e) {
+            FacesExceptionHandler.handleException(e, "Unexpected error! Try again latter!", component, LOGGER);
+        }
+
+        return "healthcarePro_patient_update?faces-redirect=true";
+    }
+    
+    public void removePatient(ActionEvent event) {
+        try {
+            UIParameter param = (UIParameter) event.getComponent().findComponent("deletePatientId");
+            Long id = Long.parseLong(param.getValue().toString());
+
+            patientBean.remove(id);
+        } catch (EntityDoesNotExistException e) {
+            FacesExceptionHandler.handleException(e, e.getMessage(), component, LOGGER);
+        } catch (Exception e) {
+            FacesExceptionHandler.handleException(e, "Unexpected error! Try again latter!", component, LOGGER);
+        }
+    }
+    
     public void associatePatientToCaregiver(ActionEvent event) {
         try {
             UIParameter param = (UIParameter) event.getComponent().findComponent("patientId");
             Long id = Long.parseLong(param.getValue().toString());
             patientBean.associatePatientToCaregiver(id, currentCaregiver.getUsername());
-        } catch (EntityDoesNotExistException e) {
-            FacesExceptionHandler.handleException(e, e.getMessage(), logger);
+        } catch (EntityDoesNotExistException | CaregiverAssociatedException e) {
+            FacesExceptionHandler.handleException(e, e.getMessage(), component, LOGGER);
         } catch (Exception e) {
-            FacesExceptionHandler.handleException(e, "Unexpected error! Try again latter!", logger);
+            FacesExceptionHandler.handleException(e, "Unexpected error! Try again latter!", component, LOGGER);
         }
     }
 
@@ -252,10 +352,10 @@ public class HealthcareProManager implements Serializable{
             UIParameter param = (UIParameter) event.getComponent().findComponent("patientId");
             Long id = Long.parseLong(param.getValue().toString());
             patientBean.diassociatePatientFromCaregiver(id, currentCaregiver.getUsername());
-        } catch (EntityDoesNotExistException e) {
-            FacesExceptionHandler.handleException(e, e.getMessage(), logger);
+        } catch (EntityDoesNotExistException | CaregiverDiassociatedException e) {
+            FacesExceptionHandler.handleException(e, e.getMessage(), component, LOGGER);
         } catch (Exception e) {
-            FacesExceptionHandler.handleException(e, "Unexpected error! Try again latter!", logger);
+            FacesExceptionHandler.handleException(e, "Unexpected error! Try again latter!", component, LOGGER);
         }
     }
     
@@ -281,13 +381,111 @@ public class HealthcareProManager implements Serializable{
         return null;
     }
     
-    public void associateMaterial() {
+    public void associateNeedToPatient(ActionEvent event) {
         try {
-            caregiverBean.associateMaterial(currentCaregiver.getUsername(), materialId, needId);
+            UIParameter param = (UIParameter) event.getComponent().findComponent("needId");
+            Long id = Long.parseLong(param.getValue().toString());
+            needBean.associateNeedToPatient(id, currentPatient.getId());
+        } catch (EntityDoesNotExistException | NeedAssociatedToPatientException e) {
+            FacesExceptionHandler.handleException(e, e.getMessage(), logger);
+        } catch (Exception e) {
+            FacesExceptionHandler.handleException(e, "Unexpected error! Try again latter!", logger);
+        }
+    }
+
+    public void diassociateNeedFromPatient(ActionEvent event) {
+        try {
+            UIParameter param = (UIParameter) event.getComponent().findComponent("needId");
+            Long id = Long.parseLong(param.getValue().toString());
+            needBean.diassociateNeedFromPatient(id, currentPatient.getId());
+        } catch (EntityDoesNotExistException | NeedNotAssociatedToPatientException e) {
+            FacesExceptionHandler.handleException(e, e.getMessage(), logger);
+        } catch (Exception e) {
+            FacesExceptionHandler.handleException(e, "Unexpected error! Try again latter!", logger);
+        }
+    }
+    
+    public List<NeedDTO> getPatientNeeds() {
+        try {
+            return needBean.getPatientNeeds(currentPatient.getId());
         } catch (EntityDoesNotExistException e) {
             FacesExceptionHandler.handleException(e, e.getMessage(), logger);
         } catch (Exception e) {
             FacesExceptionHandler.handleException(e, "Unexpected error! Try again latter!", logger);
+        }
+        return null;
+    }
+
+    public List<NeedDTO> getPatientNotNeeds() {
+        try {
+            return needBean.getPatientNotNeeds(currentPatient.getId());
+        } catch (EntityDoesNotExistException e) {
+            FacesExceptionHandler.handleException(e, e.getMessage(), logger);
+        } catch (Exception e) {
+            FacesExceptionHandler.handleException(e, "Unexpected error! Try again latter!", logger);
+        }
+        return null;
+    }
+    
+    // **********************************
+    // ************ NEED ****************
+    // **********************************
+    public String createNeed() {
+        try {
+            needBean.create(newNeed.getDescription());
+            
+            setFilteredNeeds(null);
+            
+            newNeed.reset();
+
+            return "healthcarePro_index?faces-redirect=true";
+        } catch (MyConstraintViolationException e) {
+            FacesExceptionHandler.handleException(e, e.getMessage(), component, LOGGER);
+        } catch (Exception e) {
+            FacesExceptionHandler.handleException(e, "Unexpected error! Try again latter!", component, LOGGER);
+        }
+
+        return "healthcarePro_need_create?faces-redirect=true";
+    }
+    
+    public List<NeedDTO> getAllNeeds() {
+        try {
+            return needBean.getAll();
+        } catch (Exception e) {
+            FacesExceptionHandler.handleException(e, "Unexpected error! Try again latter!", component, LOGGER);
+        }
+
+        return null;
+    }
+    
+    public String updateNeed() {
+        try {
+            needBean.update(
+                    currentNeed.getId(),
+                    currentNeed.getDescription());
+
+            setFilteredNeeds(null);
+            
+            return "healthcarePro_index?faces-redirect=true";
+        } catch (EntityDoesNotExistException | MyConstraintViolationException e) {
+            FacesExceptionHandler.handleException(e, e.getMessage(), component, LOGGER);
+        } catch (Exception e) {
+            FacesExceptionHandler.handleException(e, "Unexpected error! Try again latter!", component, LOGGER);
+        }
+
+        return "healthcarePro_need_update?faces-redirect=true";
+    }
+    
+    public void removeNeed(ActionEvent event) {
+        try {
+            UIParameter param = (UIParameter) event.getComponent().findComponent("deleteNeedId");
+            Long id = Long.parseLong(param.getValue().toString());
+
+            needBean.remove(id);
+        } catch (EntityDoesNotExistException e) {
+            FacesExceptionHandler.handleException(e, e.getMessage(), component, LOGGER);
+        } catch (Exception e) {
+            FacesExceptionHandler.handleException(e, "Unexpected error! Try again latter!", component, LOGGER);
         }
     }
     
@@ -306,7 +504,7 @@ public class HealthcareProManager implements Serializable{
             
             return materials;
         } catch (Exception e) {
-            LOGGER.warning("Error: problem in method getAllMaterials");
+            FacesExceptionHandler.handleException(e, "Unexpected error! Try again latter!", component, LOGGER);
         }
 
         return null;
@@ -391,8 +589,10 @@ public class HealthcareProManager implements Serializable{
             newEmergencyContact.reset();
 
             return "healthcarePro_index?faces-redirect=true";
+        } catch (MyConstraintViolationException e) {
+            FacesExceptionHandler.handleException(e, e.getMessage(), component, LOGGER);
         } catch (Exception e) {
-            LOGGER.warning("Error: problem in method createEmergencyContact");
+            FacesExceptionHandler.handleException(e, "Unexpected error! Try again latter!", component, LOGGER);
         }
 
         return "healthcarePro_emergencyContact_create?faces-redirect=true";
@@ -402,7 +602,7 @@ public class HealthcareProManager implements Serializable{
         try {
             return emergencyContactBean.getAll();
         } catch (Exception e) {
-            LOGGER.warning("Error: problem in method getAllEmergencyContacts");
+            FacesExceptionHandler.handleException(e, "Unexpected error! Try again latter!", component, LOGGER);
         }
 
         return null;
@@ -410,7 +610,6 @@ public class HealthcareProManager implements Serializable{
 
     public String updateEmergengyContact() {
         try {
-
             emergencyContactBean.update(
                     currentEmergencyContact.getId(),
                     currentEmergencyContact.getDescription(),
@@ -421,8 +620,10 @@ public class HealthcareProManager implements Serializable{
             setFilteredMaterials(null);
 
             return "healthcarePro_index?faces-redirect=true";
+        } catch (EntityDoesNotExistException | MyConstraintViolationException e) {
+            FacesExceptionHandler.handleException(e, e.getMessage(), component, LOGGER);
         } catch (Exception e) {
-            LOGGER.warning("Error: problem in method updateEmergencyContact");
+            FacesExceptionHandler.handleException(e, "Unexpected error! Try again latter!", component, LOGGER);
         }
 
         return "healthcarePro_emergencyContact_update?faces-redirect=true";
@@ -431,8 +632,10 @@ public class HealthcareProManager implements Serializable{
     public void removeEmergencyContact(int materialId) {
         try {
             emergencyContactBean.remove(materialId);
+        } catch (EntityDoesNotExistException e) {
+            FacesExceptionHandler.handleException(e, e.getMessage(), component, LOGGER);
         } catch (Exception e) {
-            LOGGER.warning("Error: problem in method removeEmergencyContact");
+            FacesExceptionHandler.handleException(e, "Unexpected error! Try again latter!", component, LOGGER);
         }
     }
 
@@ -452,8 +655,10 @@ public class HealthcareProManager implements Serializable{
             newFaq.reset();
 
             return "healthcarePro_index?faces-redirect=true";
+        } catch (MyConstraintViolationException e) {
+            FacesExceptionHandler.handleException(e, e.getMessage(), component, LOGGER);
         } catch (Exception e) {
-            LOGGER.warning("Error: problem in method createFAQ");
+            FacesExceptionHandler.handleException(e, "Unexpected error! Try again latter!", component, LOGGER);
         }
 
         return "healthcarePro_faq_create?faces-redirect=true";
@@ -463,7 +668,7 @@ public class HealthcareProManager implements Serializable{
         try {
             return faqBean.getAll();
         } catch (Exception e) {
-            LOGGER.warning("Error: problem in method getAllFaq");
+            FacesExceptionHandler.handleException(e, "Unexpected error! Try again latter!", component, LOGGER);
         }
 
         return null;
@@ -480,8 +685,10 @@ public class HealthcareProManager implements Serializable{
             setFilteredMaterials(null);
 
             return "healthcarePro_index?faces-redirect=true";
+        } catch (EntityDoesNotExistException | MyConstraintViolationException e) {
+            FacesExceptionHandler.handleException(e, e.getMessage(), component, LOGGER);
         } catch (Exception e) {
-            LOGGER.warning("Error: problem in method updateFaq");
+            FacesExceptionHandler.handleException(e, "Unexpected error! Try again latter!", component, LOGGER);
         }
 
         return "healthcarePro_faq_update?faces-redirect=true";
@@ -490,8 +697,10 @@ public class HealthcareProManager implements Serializable{
     public void removeFaq(int materialId) {
         try {
             faqBean.remove(materialId);
+        } catch (EntityDoesNotExistException e) {
+            FacesExceptionHandler.handleException(e, e.getMessage(), component, LOGGER);
         } catch (Exception e) {
-            LOGGER.warning("Error: problem in method removeFaq");
+            FacesExceptionHandler.handleException(e, "Unexpected error! Try again latter!", component, LOGGER);
         }
     }
 
@@ -500,7 +709,6 @@ public class HealthcareProManager implements Serializable{
     // **************************************
     public String createTutorial() {
         try {
-
             tutorialBean.create(newTutorial.getDescription(), newTutorial.getText());
 
             setFilteredMaterials(null);
@@ -508,8 +716,10 @@ public class HealthcareProManager implements Serializable{
             newTutorial.reset();
 
             return "healthcarePro_index?faces-redirect=true";
+        } catch (MyConstraintViolationException e) {
+            FacesExceptionHandler.handleException(e, e.getMessage(), component, LOGGER);
         } catch (Exception e) {
-            LOGGER.warning("Error: problem in method createTutorial");
+            FacesExceptionHandler.handleException(e, "Unexpected error! Try again latter!", component, LOGGER);
         }
 
         return "healthcarePro_tutorials_create?faces-redirect=true";
@@ -519,7 +729,7 @@ public class HealthcareProManager implements Serializable{
         try {
             return tutorialBean.getAll();
         } catch (Exception e) {
-            LOGGER.warning("Error: problem in method getAllTutorials");
+            FacesExceptionHandler.handleException(e, "Unexpected error! Try again latter!", component, LOGGER);
         }
 
         return null;
@@ -527,7 +737,6 @@ public class HealthcareProManager implements Serializable{
 
     public String updateTutorial() {
         try {
-
             tutorialBean.update(
                     currentTutorial.getId(),
                     currentTutorial.getDescription(),
@@ -537,8 +746,10 @@ public class HealthcareProManager implements Serializable{
             setFilteredMaterials(null);
 
             return "healthcarePro_index?faces-redirect=true";
+        } catch (EntityDoesNotExistException | MyConstraintViolationException e) {
+            FacesExceptionHandler.handleException(e, e.getMessage(), component, LOGGER);
         } catch (Exception e) {
-            LOGGER.warning("Error: problem in method updateTutorial");
+            FacesExceptionHandler.handleException(e, "Unexpected error! Try again latter!", component, LOGGER);
         }
 
         return "healthcarePro_tutorial_update?faces-redirect=true";
@@ -547,8 +758,10 @@ public class HealthcareProManager implements Serializable{
     public void removeTutorial(int materialId) {
         try {
             tutorialBean.remove(materialId);
+        } catch (EntityDoesNotExistException e) {
+            FacesExceptionHandler.handleException(e, e.getMessage(), component, LOGGER);
         } catch (Exception e) {
-            LOGGER.warning("Error: problem in method removeTutorial");
+            FacesExceptionHandler.handleException(e, "Unexpected error! Try again latter!", component, LOGGER);
         }
     }
     
@@ -557,7 +770,6 @@ public class HealthcareProManager implements Serializable{
     // **********************************
     public String createText() {
         try {
-            
             textBean.create(
                     newText.getDescription(),
                     newText.getText()
@@ -568,8 +780,10 @@ public class HealthcareProManager implements Serializable{
             newText.reset();
 
             return "healthcarePro_index?faces-redirect=true";
+        } catch (MyConstraintViolationException e) {
+            FacesExceptionHandler.handleException(e, e.getMessage(), component, LOGGER);
         } catch (Exception e) {
-            LOGGER.warning("Error: problem in method createText");
+            FacesExceptionHandler.handleException(e, "Unexpected error! Try again latter!", component, LOGGER);
         }
 
         return "healthcarePro_text_create?faces-redirect=true";
@@ -579,7 +793,7 @@ public class HealthcareProManager implements Serializable{
         try {
             return textBean.getAll();
         } catch (Exception e) {
-            LOGGER.warning("Error: problem in method getAllTexts");
+            FacesExceptionHandler.handleException(e, "Unexpected error! Try again latter!", component, LOGGER);
         }
 
         return null;
@@ -596,8 +810,10 @@ public class HealthcareProManager implements Serializable{
             setFilteredMaterials(null);
             
             return "healthcarePro_index?faces-redirect=true";
+        } catch (EntityDoesNotExistException | MyConstraintViolationException e) {
+            FacesExceptionHandler.handleException(e, e.getMessage(), component, LOGGER);
         } catch (Exception e) {
-            LOGGER.warning("Error: problem in method updateText");
+            FacesExceptionHandler.handleException(e, "Unexpected error! Try again latter!", component, LOGGER);
         }
 
         return "healthcarePro_text_update?faces-redirect=true";
@@ -606,8 +822,10 @@ public class HealthcareProManager implements Serializable{
     public void removeText(int materialId) {
         try {
             textBean.remove(materialId);
+        } catch (EntityDoesNotExistException e) {
+            FacesExceptionHandler.handleException(e, e.getMessage(), component, LOGGER);
         } catch (Exception e) {
-            LOGGER.warning("Error: problem in method removeText");
+            FacesExceptionHandler.handleException(e, "Unexpected error! Try again latter!", component, LOGGER);
         }
     }
 
@@ -616,7 +834,6 @@ public class HealthcareProManager implements Serializable{
     // ***********************************
     public String createVideo() {
         try {
-     
             videoBean.create(
                     newVideo.getDescription(),
                     newVideo.getUrl()
@@ -627,8 +844,10 @@ public class HealthcareProManager implements Serializable{
             newVideo.reset();
 
             return "healthcarePro_index?faces-redirect=true";
+        } catch (MyConstraintViolationException e) {
+            FacesExceptionHandler.handleException(e, e.getMessage(), component, LOGGER);
         } catch (Exception e) {
-            LOGGER.warning("Error: problem in method createVideo");
+            FacesExceptionHandler.handleException(e, "Unexpected error! Try again latter!", component, LOGGER);
         }
 
         return "healthcarePro_video_create?faces-redirect=true";
@@ -638,7 +857,7 @@ public class HealthcareProManager implements Serializable{
         try {
             return videoBean.getAll();
         } catch (Exception e) {
-            LOGGER.warning("Error: problem in method getAllVideos");
+            FacesExceptionHandler.handleException(e, "Unexpected error! Try again latter!", component, LOGGER);
         }
 
         return null;
@@ -655,8 +874,10 @@ public class HealthcareProManager implements Serializable{
             setFilteredMaterials(null);
 
             return "healthcarePro_index?faces-redirect=true";
+        } catch (EntityDoesNotExistException | MyConstraintViolationException e) {
+            FacesExceptionHandler.handleException(e, e.getMessage(), component, LOGGER);
         } catch (Exception e) {
-            LOGGER.warning("Error: problem in method updateVideo");
+            FacesExceptionHandler.handleException(e, "Unexpected error! Try again latter!", component, LOGGER);
         }
 
         return "healthcarePro_video_update?faces-redirect=true";
@@ -665,8 +886,10 @@ public class HealthcareProManager implements Serializable{
     public void removeVideo(int materialId) {
         try {
             videoBean.remove(materialId);
+        } catch (EntityDoesNotExistException e) {
+            FacesExceptionHandler.handleException(e, e.getMessage(), component, LOGGER);
         } catch (Exception e) {
-            LOGGER.warning("Error: problem in method removeVideo");
+            FacesExceptionHandler.handleException(e, "Unexpected error! Try again latter!", component, LOGGER);
         }
     }
     
@@ -687,6 +910,30 @@ public class HealthcareProManager implements Serializable{
 
     public void setCurrentCaregiver(CaregiverDTO currentCaregiver) {
         this.currentCaregiver = currentCaregiver;
+    }
+
+    public PatientDTO getNewPatient() {
+        return newPatient;
+    }
+
+    public void setNewPatient(PatientDTO newPatient) {
+        this.newPatient = newPatient;
+    }
+
+    public PatientDTO getCurrentPatient() {
+        return currentPatient;
+    }
+
+    public void setCurrentPatient(PatientDTO currentPatient) {
+        this.currentPatient = currentPatient;
+    }
+
+    public NeedDTO getNewNeed() {
+        return newNeed;
+    }
+
+    public void setNewNeed(NeedDTO newNeed) {
+        this.newNeed = newNeed;
     }
 
     public NeedDTO getCurrentNeed() {
@@ -785,12 +1032,28 @@ public class HealthcareProManager implements Serializable{
         this.filteredCaregivers = filteredCaregivers;
     }
 
+    public List<PatientDTO> getFilteredPatients() {
+        return filteredPatients;
+    }
+
+    public void setFilteredPatients(List<PatientDTO> filteredPatients) {
+        this.filteredPatients = filteredPatients;
+    }
+
     public List<MaterialDTO> getFilteredMaterials() {
         return filteredMaterials;
     }
 
     public void setFilteredMaterials(List<MaterialDTO> filteredMaterials) {
         this.filteredMaterials = filteredMaterials;
+    }
+
+    public List<NeedDTO> getFilteredNeeds() {
+        return filteredNeeds;
+    }
+
+    public void setFilteredNeeds(List<NeedDTO> filteredNeeds) {
+        this.filteredNeeds = filteredNeeds;
     }
     
     public UIComponent getComponent() {

@@ -63,17 +63,14 @@ public class ProceedingBean {
             need.addProceeding(proceeding);
             caregiver.addProceeding(proceeding);
             
-            List<Counter> allCounters = (List<Counter>) em.createNamedQuery("getAllCounters").getResultList();
-            Counter counterToIncrement = null;
-            for (Counter counter : allCounters) {
-                if (counter.getCaregiver() == caregiver && counter.getResource().compareTo(material.getDescription()) == 0) {
-                    counter.incrementCounter();
-                    counterToIncrement = counter;
-                    break;
-                }
-            }
+            List<Counter> counters = (List<Counter>) em.createNamedQuery("getAllCountersCaregiverResource")
+                    .setParameter("caregiverUsername", caregiver.getUsername())
+                    .setParameter("resource", material.getDescription())
+                    .getResultList();
+            
+            counters.get(0).incrementCounter();
 
-            em.merge(counterToIncrement);
+            em.merge(counters.get(0));
         } catch (EntityDoesNotExistException e) {
             throw e;
         } catch (ConstraintViolationException e) {
@@ -83,9 +80,9 @@ public class ProceedingBean {
         }
     }
     
-    public void update(Long proceedingID, int materialID, String note)
+    public void update(Long proceedingID, String caregiverUsername, int materialID, String note)
             throws EntityDoesNotExistException, MyConstraintViolationException {
-        try {
+        try {          
             Proceeding proceeding = em.find(Proceeding.class, proceedingID);
             if (proceeding == null) {
                 throw new EntityDoesNotExistException("There is no proceeding with that id.");
@@ -96,10 +93,31 @@ public class ProceedingBean {
                 throw new EntityDoesNotExistException("There is no material with that id.");
             }
             
+            Caregiver caregiver = em.find(Caregiver.class, caregiverUsername);
+            if (caregiver == null) {
+                throw new EntityDoesNotExistException("There is no caregiver with that username.");
+            }
+            
+            proceeding.getMaterial().removeProceeding(proceeding);
+            List<Counter> counters = (List<Counter>) em.createNamedQuery("getAllCountersCaregiverResource")
+                    .setParameter("caregiverUsername", caregiver.getUsername())
+                    .setParameter("resource", proceeding.getMaterial().getDescription())
+                    .getResultList();
+            counters.get(0).decrementCounter();
+            em.merge(counters.get(0));
+            
             proceeding.setMaterial(material);
             proceeding.setNote(note);
             
             em.persist(proceeding);
+            
+            material.addProceeding(proceeding);
+            counters = (List<Counter>) em.createNamedQuery("getAllCountersCaregiverResource")
+                    .setParameter("caregiverUsername", caregiver.getUsername())
+                    .setParameter("resource", material.getDescription())
+                    .getResultList();
+            counters.get(0).incrementCounter();
+            em.merge(counters.get(0));
         } catch (EntityDoesNotExistException e) {
             throw e;
         } catch (ConstraintViolationException e) {
@@ -146,17 +164,13 @@ public class ProceedingBean {
             proceeding.getPatient().removeProceeding(proceeding);
             proceeding.getNeed().removeProceeding(proceeding);
             
-            List<Counter> allCounters = (List<Counter>) em.createNamedQuery("getAllCounters").getResultList();
-            Counter counterToRemove = null;
-            for (Counter counter : allCounters) {
-                if (counter.getCaregiver() == proceeding.getCaregiver() && 
-                        counter.getResource().compareTo(proceeding.getMaterial().getDescription()) == 0) {
-                    counterToRemove = counter;
-                    break;
-                }
-            }
+            List<Counter> counters = (List<Counter>) em.createNamedQuery("getAllCountersCaregiverResource")
+                    .setParameter("caregiverUsername", proceeding.getCaregiver().getUsername())
+                    .setParameter("resource", proceeding.getMaterial().getDescription())
+                    .getResultList();
+            counters.get(0).decrementCounter();
+            em.merge(counters.get(0));
             
-            em.remove(counterToRemove);
             em.remove(proceeding);
         } catch (EntityDoesNotExistException e) {
             throw e;
@@ -183,7 +197,7 @@ public class ProceedingBean {
     @Path("update")
     public void updateProceedingREST(ProceedingDTO p) throws EntityDoesNotExistException, MyConstraintViolationException{
         try {
-            update(p.getProceedingId(), p.getMaterialID(), p.getNote());
+            update(p.getProceedingId(),p.getCaregiverUsername(), p.getMaterialID(), p.getNote());
         } catch (EntityDoesNotExistException e) {
             throw e;
         } catch (ConstraintViolationException e) {
