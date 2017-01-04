@@ -21,12 +21,13 @@
         <h2>Proceedings from Patient "#{caregiverManager.currentPatient.name}"</h2>
         <h:form>
             <p:dataTable
-                id="patientProceedings"
+                id="patientProceedingsTable"
                 var="proceeding"
                 summary="Table of Patient Proceedings"
                 value="#{caregiverManager.patientsProceedingsREST}"
-                widgetVar="patientProceedings"
+                widgetVar="patientProceedingsTable"
                 emptyMessage="No proceedings from patient"
+                filteredValue="#{caregiverManager.filteredProceedings}"
                 rows="10"
                 paginator="true"
                 paginatorPosition="bottom"
@@ -35,28 +36,33 @@
                 style="margin-bottom:40px">
                 
                 <f:facet name="header">
-                    <p:outputPanel>
+                    <p:outputPanel style="text-align:center;">
                         <h:outputText value="Proceedings" />
+                    </p:outputPanel>
+                    
+                    <p:outputPanel style="text-align:right;">
+                        <h:outputText value="Search all fields:" />
+                        <p:inputText id="globalFilter" onkeyup="PF('patientProceedingsTable').filter()" style="width:150px" placeholder="Enter keyword"/>
                     </p:outputPanel>
                 </f:facet>
                 
-                <p:column headerText="Material Description" style="width: 15%">
+                <p:column filterBy="#{proceeding.materialDescription}" headerText="Material Description" filterMatchMode="contains" style="width: 15%">
                     <h:outputText value="#{proceeding.materialDescription}" />
                 </p:column>
                 
-                <p:column headerText="Caregiver Username"  style="width: 15%">
+                <p:column filterBy="#{proceeding.caregiverUsername}" headerText="Caregiver Username" filterMatchMode="contains" style="width: 15%">
                     <h:outputText value="#{proceeding.caregiverUsername}" />
                 </p:column>
                 
-                <p:column headerText="Patient Name" style="width: 15%">
+                <p:column filterBy="#{proceeding.patientName}" headerText="Patient Name" filterMatchMode="contains" style="width: 15%">
                     <h:outputText value="#{proceeding.patientName}" />
                 </p:column>
                 
-                <p:column headerText="Need Description" style="width: 15%">
+                <p:column filterBy="#{proceeding.needDescription}" headerText="Need Description" filterMatchMode="contains" style="width: 15%">
                     <h:outputText value="#{proceeding.needDescription}" />
                 </p:column>
                 
-                <p:column headerText="Date" style="width: 15%">
+                <p:column filterBy="#{proceeding.proceedingDate}" headerText="Date" filterMatchMode="contains" style="width: 15%">
                     <h:outputText value="#{proceeding.proceedingDate}" />
                 </p:column>
                 
@@ -64,20 +70,22 @@
                     <p:panelGrid columns="3" styleClass="noBorders">
                         <p:commandButton value="Details" 
                                          id="details" 
-                                         action="caregiver_patient_proceeding_details?faces-redirect=true">
+                                         action="caregiver_patient_proceeding_details?faces-redirect=true"
+                                         oncomplete="PF('patientProceedingsTable').clearFilters()">
                             <f:setPropertyActionListener target="#{caregiverManager.currentProceeding}" value="#{proceeding}" />
                         </p:commandButton>
                         
                         <p:commandButton value="Update" 
                                          id="update" 
-                                         action="caregiver_patient_proceeding_update?faces-redirect=true">
+                                         action="caregiver_patient_proceeding_update?faces-redirect=true"
+                                         oncomplete="PF('patientProceedingsTable').clearFilters()">
                             <f:setPropertyActionListener target="#{caregiverManager.currentProceeding}" value="#{proceeding}" />
                         </p:commandButton>
                         
                         <p:commandButton value="Remove"
                                          id="remove" 
                                          actionListener="#{caregiverManager.removeProceedingREST}"
-                                         update="patientProceedings">
+                                         update="patientProceedingsTable" oncomplete="PF('patientProceedingsTable').clearFilters()">
                             <f:param name="deleteProceedingId" id="deleteProceedingId" value="#{proceeding.proceedingId}" />
                         </p:commandButton>
                     </p:panelGrid>

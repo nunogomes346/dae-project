@@ -33,4 +33,8 @@ public class NeedDTO {
     public void setDescription(String description) {
         this.description = description;
     }
+    
+    public void reset() {
+        setDescription(null);
+    }
 }

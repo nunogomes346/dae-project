@@ -1,6 +1,5 @@
 package web;
 
-import dtos.CaregiverDTO;
 import dtos.EmergencyContactDTO;
 import dtos.FaqDTO;
 import dtos.MaterialDTO;
@@ -52,6 +51,7 @@ public class CaregiverManager implements Serializable {
     
     private ProceedingDTO newProceeding;
     private ProceedingDTO currentProceeding;
+    private List<ProceedingDTO> filteredProceedings;
     
     private int materialId;
 
@@ -199,6 +199,8 @@ public class CaregiverManager implements Serializable {
                 .request(MediaType.APPLICATION_XML)
                 .post(Entity.xml(newProceeding));
             
+            setFilteredProceedings(null);
+            
             newProceeding.reset();
         } catch (Exception e){
             FacesExceptionHandler.handleException(e, "Unexpected error! Try again latter!", LOGGER);
@@ -210,6 +212,8 @@ public class CaregiverManager implements Serializable {
             client.target(baseUri)
                     .path("/proceedings/update")
                     .request(MediaType.APPLICATION_XML).put(Entity.xml(currentProceeding));
+            
+            setFilteredProceedings(null);
             
             return "caregiver_patient_proceedings?faces-redirect=true";
         } catch (Exception e) {
@@ -361,6 +365,14 @@ public class CaregiverManager implements Serializable {
 
     public void setFilteredPatients(List<PatientDTO> filteredPatients) {
         this.filteredPatients = filteredPatients;
+    }
+
+    public List<ProceedingDTO> getFilteredProceedings() {
+        return filteredProceedings;
+    }
+
+    public void setFilteredProceedings(List<ProceedingDTO> filteredProceedings) {
+        this.filteredProceedings = filteredProceedings;
     }
     
     public UIComponent getComponent() {
