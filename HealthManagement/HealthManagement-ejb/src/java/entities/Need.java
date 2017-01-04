@@ -14,9 +14,14 @@ import javax.persistence.ManyToMany;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 
 @Entity
+@Table(name = "NEEDS", 
+    uniqueConstraints = 
+        @UniqueConstraint(columnNames = {"DESCRIPTION"}))
 @NamedQueries({
     @NamedQuery(name = "getAllNeeds",
     query = "SELECT n FROM Need n ORDER BY n.id ")

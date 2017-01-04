@@ -14,9 +14,11 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
+import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 @Entity
+@Table(name = "PATIENTS")
 @NamedQueries({
     @NamedQuery(name = "getAllPatients",
             query = "SELECT p FROM Patient p ORDER BY p.name")
